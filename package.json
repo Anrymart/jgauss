@@ -43,7 +43,7 @@
     "compodoc": "./node_modules/.bin/compodoc -p src/client/tsconfig.json",
     "serve.compodoc": "./node_modules/.bin/compodoc -s"
   },
-  "author": "Minko Gechev <mgechev>",
+  "author": "Andrey Martynenko",
   "license": "MIT",
   "devDependencies": {
     "@angular/compiler-cli": "^4.2.3",
