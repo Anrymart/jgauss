@@ -58,6 +58,8 @@ export class ProjectConfig extends SeedConfig {
 
     /* Add to or override NPM module configurations: */
     // this.PLUGIN_CONFIGS['browser-sync'] = { ghostMode: false };
+
+    this.ENABLE_SCSS = true;
   }
 
 }
