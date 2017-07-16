@@ -1,6 +1,7 @@
-import { join } from 'path';
+import {join} from "path";
 
-import { SeedConfig } from './seed.config';
+import {SeedConfig} from "./seed.config";
+import {ExtendPackages} from "./seed.config.interfaces";
 // import { ExtendPackages } from './seed.config.interfaces';
 
 /**
@@ -22,6 +23,7 @@ export class ProjectConfig extends SeedConfig {
     // Add `NPM` third-party libraries to be injected/bundled.
     this.NPM_DEPENDENCIES = [
       ...this.NPM_DEPENDENCIES,
+      {src: 'd3/build/d3.min.js', inject: 'libs'},
       // {src: 'jquery/dist/jquery.min.js', inject: 'libs'},
       // {src: 'lodash/lodash.min.js', inject: 'libs'},
     ];
@@ -60,6 +62,16 @@ export class ProjectConfig extends SeedConfig {
     // this.PLUGIN_CONFIGS['browser-sync'] = { ghostMode: false };
 
     this.ENABLE_SCSS = true;
+
+    let additionalPackages: ExtendPackages[] = [
+      {
+        name: 'd3',
+        path: 'node_modules/d3/build/d3.js'
+      }
+    ];
+
+    this.addPackagesBundles(additionalPackages);
+
   }
 
 }
