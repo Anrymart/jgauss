@@ -72,6 +72,7 @@ export class ProjectConfig extends SeedConfig {
 
     this.addPackagesBundles(additionalPackages);
 
+    this.PORT = 80;
   }
 
 }
