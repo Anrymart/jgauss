@@ -1,4 +1,5 @@
 import {Component, OnInit} from "@angular/core";
+import {VkUserDataService} from "../services/vk-user-data.sevice";
 
 declare const VK: any;
 
@@ -11,8 +12,16 @@ declare const VK: any;
 export class UserSearchComponent implements OnInit {
   _userQuery: string;
 
+  constructor(private userDataService: VkUserDataService) {
+
+  }
+
   searchUser(): void {
     console.log('search', this._userQuery);
+    this.userDataService.getUserData(this._userQuery).then((data) => {
+
+    });
+
   }
 
   ngOnInit(): void {

@@ -1,5 +1,5 @@
 import {Component} from "@angular/core";
-import {VkAuthService} from "../services/auth.sevice";
+import {VkAuthService} from "../services/vk-auth.sevice";
 
 declare const VK: any;
 

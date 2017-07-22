@@ -4,7 +4,7 @@ import {HomeRoutingModule} from "./home-routing.module";
 import {SharedModule} from "../shared/shared.module";
 import {GraphModule} from "./graph/graph.module";
 import {UserSearchModule} from "./user-search/user-search.module";
-import {VkAuthService} from "./services/auth.sevice";
+import {VkAuthService} from "./services/vk-auth.sevice";
 import {AuthFormModule} from "./auth-form/auth-form.module";
 
 @NgModule({

@@ -4,10 +4,9 @@ import {Http} from "@angular/http";
 declare const VK: any;
 
 @Injectable
-export class UserDataService {
+export class VkUserDataService {
 
   constructor(private http: Http) {
-
   }
 
   getUserData(user: string): Promise {

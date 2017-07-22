@@ -1,9 +1,6 @@
 import {Component} from "@angular/core";
-import {VkAuthService} from "./services/auth.sevice";
+import {VkAuthService} from "./services/vk-auth.sevice";
 
-/**
- * This class represents the lazy loaded HomeComponent.
- */
 @Component({
   moduleId: module.id,
   selector: 'jg-home',
