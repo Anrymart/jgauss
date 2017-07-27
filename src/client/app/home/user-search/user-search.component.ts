@@ -18,10 +18,16 @@ export class UserSearchComponent implements OnInit {
 
   searchUser(): void {
     console.log('search', this._userQuery);
-    this.userDataService.getUserData(this._userQuery).then((data) => {
+    // this.userDataService.getUserFriends(this._userQuery).then(function onFulfilled(data) {
+    //   console.log(data);
+    // });
+    // this.userDataService.getUserData(this._userQuery).then(function onFulfilled(data) {
+    //   console.log(data);
+    // });
 
+    this.userDataService.getUserSocialInfo().subscribe((data) => {
+      console.log(data);
     });
-
   }
 
   ngOnInit(): void {

@@ -1,11 +1,12 @@
-import {Injectable, OnDestroy} from "@angular/core";
+import {Injectable} from "@angular/core";
 import {Observable} from "rxjs/Observable";
 import {Observer} from "rxjs/Observer";
+import {VkOpenApi} from "../../../../types/vk";
 
-declare const VK: any;
+declare const VK: VkOpenApi;
 
 @Injectable()
-export class VkAuthService implements OnDestroy {
+export class VkAuthService {
 
   //todo: clarify type
   public sessionChange: Observable<any>;
@@ -37,9 +38,5 @@ export class VkAuthService implements OnDestroy {
     this.sessionChange = Observable.create((observer: Observer) => {
       VK.Observer.subscribe(observer.next, 'auth.sessionChange');
     });
-  }
-
-  ngOnDestroy(): void {
-
   }
 }

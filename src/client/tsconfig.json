@@ -5,7 +5,10 @@
     "declaration": false,
     "removeComments": true,
     "noLib": false,
-    "lib": ["es2016", "dom"],
+    "lib": [
+      "es2016",
+      "dom"
+    ],
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "sourceMap": true,
@@ -19,7 +22,9 @@
     "allowSyntheticDefaultImports": true,
     "typeRoots": [
       "../../node_modules/@types",
-      "../../node_modules"
+      "../../node_modules",
+      /*Added. Replace into package later.*/
+      "../types"
     ],
     "types": [
       "node",
