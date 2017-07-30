@@ -13,7 +13,7 @@ export class VkAuthService {
 
   constructor() {
     this.getLoginStatus();
-    this.initSubscription();
+    // this.initSubscription();
   }
 
   login(callback?: Function, settings?: number): void {

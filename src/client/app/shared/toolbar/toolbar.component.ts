@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import {Component} from "@angular/core";
+import {VkAuthService} from "../../home/services/vk-auth.sevice";
 
 /**
  * This class represents the toolbar component.
@@ -9,5 +10,8 @@ import { Component } from '@angular/core';
   templateUrl: 'toolbar.component.html',
   styleUrls: ['toolbar.component.css']
 })
-export class ToolbarComponent { }
+export class ToolbarComponent {
+  constructor(public _authService: VkAuthService) {
+  }
+}
 

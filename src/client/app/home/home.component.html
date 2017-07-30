@@ -1,7 +1,7 @@
 <p>Howdy! Find yourself and your friends in social networks and analyze social links and activity.</p>
 
-<jg-auth-form *ngIf="!_authService.isAuthorized()"></jg-auth-form>
-<div class="user-info" *ngIf="_authService.isAuthorized()">
-  <jg-user-search></jg-user-search>
+<jg-auth-form *ngIf="!_authorized"></jg-auth-form>
+<div class="user-info" *ngIf="_authorized">
+  <jg-user-search (onSearch)="onSearch($event)"></jg-user-search>
   <jg-graph></jg-graph>
 </div>

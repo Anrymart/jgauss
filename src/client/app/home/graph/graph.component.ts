@@ -51,10 +51,7 @@ export class GraphComponent implements AfterViewInit {
           .attr('class', 'links')
           .selectAll('line')
           .data(this._data.links)
-          .enter().append('line')
-          .attr('stroke-width', function (d) {
-            return Math.sqrt(d.value);
-          });
+          .enter().append('line');
 
         let node = svg.append('g')
           .attr('class', 'nodes')

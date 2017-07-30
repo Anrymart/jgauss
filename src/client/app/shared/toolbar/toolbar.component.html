@@ -1,2 +1,4 @@
 <h1>JGauss</h1>
-<div class="more"></div>
+<div class="more">
+  <a style="cursor: pointer" *ngIf="_authService.isAuthorized()" (click)="_authService.logout()">Выйти</a>
+</div>
