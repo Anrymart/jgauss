@@ -3,5 +3,5 @@
 <jg-auth-form *ngIf="!_authorized"></jg-auth-form>
 <div class="user-info" *ngIf="_authorized">
   <jg-user-search (onSearch)="onSearch($event)"></jg-user-search>
-  <jg-graph></jg-graph>
+  <jg-graph [data]="_graphData"></jg-graph>
 </div>

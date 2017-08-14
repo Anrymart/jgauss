@@ -1,6 +1,7 @@
-import {Component, DoCheck} from "@angular/core";
+import {ApplicationRef, Component, DoCheck} from "@angular/core";
 import {VkAuthService} from "./services/vk-auth.sevice";
 import {VkUserDataService} from "./services/vk-user-data.sevice";
+import {Subscription} from "rxjs/Subscription";
 
 @Component({
   moduleId: module.id,
@@ -11,14 +12,48 @@ import {VkUserDataService} from "./services/vk-user-data.sevice";
 export class HomeComponent implements DoCheck {
 
   _authorized: boolean;
+  _graphData: { nodes: any[], links: any[] } = {nodes: [], links: []};
+
+  private friendsSubscription: Subscription;
 
   constructor(public _authService: VkAuthService,
-              private userDataService: VkUserDataService) {
+              private userDataService: VkUserDataService,
+              private applicationRef: ApplicationRef) {
   }
 
-  onSearch(user): void {
-    this.userDataService.getUserSocialInfo(user).subscribe((data) => {
-      console.log(data);
+  onSearch(user: string): void {
+    if (this.friendsSubscription) {
+      this.friendsSubscription.unsubscribe();
+    }
+
+    this.userDataService.getUserFriends(user).then((result) => {
+      console.log(result);
+      let primaryLinks = result.response.map((friend: any) => {
+        return {source: +user, target: friend.user_id};
+      });
+      let nodes = result.response;
+      nodes.push({user_id: +user});
+      this._graphData = {nodes: nodes, links: primaryLinks};
+
+      let friendIds = nodes.map(function (friend: any) {
+        return friend.user_id;
+      });
+      this.friendsSubscription = this.userDataService
+        .getSocialInfo(result.response)
+        .subscribe((data) => {
+          let secondaryLinks: { source: number, target: number }[] = [];
+          data.response.forEach(function (friend: { id: number, l: number[] }) {
+            for (let targetId of friend.l) {
+              if (targetId > friend.id && friendIds.includes(targetId)) {
+                secondaryLinks.push(
+                  {source: friend.id, target: targetId}
+                );
+              }
+            }
+          });
+          this._graphData = {nodes: this._graphData.nodes, links: this._graphData.links.concat(secondaryLinks)};
+          console.log(data);
+        });
     });
   }
 

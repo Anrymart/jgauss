@@ -29,58 +29,52 @@ export class VkUserDataService {
   }
 
   /**
-   * Returns data for social graph. First, user friends are returned, then their friends' ids are returned.
-   * @param userId
    * @returns {any}
+   * @param userList
    */
-  getUserSocialInfo(userId?: string): Observable<any> {
-    return Observable.create((observer: Observer) => {
-      this.getUserFriends(userId)
-        .then((data) => {
-          let friends = data.response;
-          observer.next(friends);
+  getSocialInfo(userList: any): Observable<any> {
+    return Observable.create((observer: Observer<any>) => {
+      let requestQueue = new RequestQueue(100);
+      const step = 25;
+      let unfulfilled = 0;
+      for (let i = 0; i < userList.length; i += step) {
 
-          let requestQueue = new RequestQueue(100);
-          const step = 25;
-          let unfulfilled = 0;
-          for (let i = 0; i < friends.length; i += step) {
+        let requestCode = userList.slice(i, i + step).reduce(function reducer(code: string, friend: any) {
+          return code + `{id:${friend.user_id},l:API.friends.get({user_id:${friend.user_id}})},`;
+        }, '');
 
-            let requestCode = friends.slice(i, i + step).reduce(function reducer(code, friend) {
-              return code + `{id:${friend.user_id},l:API.friends.get({user_id:${friend.user_id}})},`;
-            }, '');
-
-            let executeRequest = function executeRequest() {
-              VK.Api.call('execute', {code: `return [${requestCode}];`}, function handleResponse(response) {
-                if (response.error) {
-                  console.log(response);
-                  requestQueue.push(executeRequest);
-                } else {
-                  observer.next(response);
-                  if (--unfulfilled == 0) {
-                    requestQueue.destroy();
-                    observer.complete();
-                  }
+        let executeRequest = function executeRequest() {
+          VK.Api.call('execute', {code: `return [${requestCode}];`},
+            function handleResponse(response: { error?: {} }) {
+              if (response.error) {
+                console.log(response);
+                requestQueue.push(executeRequest);
+              } else {
+                observer.next(response);
+                if (--unfulfilled == 0) {
+                  requestQueue.destroy();
+                  observer.complete();
                 }
-              });
-            };
+              }
+            });
+        };
 
-            requestQueue.push(executeRequest);
-            unfulfilled++;
-          }
-        });
+        requestQueue.push(executeRequest);
+        unfulfilled++;
+      }
     });
   }
 }
 
 class RequestQueue {
 
-  private requests: [Function] = [];
+  private requests: Array<any> = [];
   private timerId: number;
 
   constructor(private interval: number) {
-    this.timerId = setInterval(() => {
+    this.timerId = +setInterval(() => {
       if (this.requests.length) {
-        this.requests.splice(0, 1)[0]();
+        this.requests.shift()();
       }
     }, interval);
   }
