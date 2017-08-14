@@ -78,8 +78,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         let link = this.groups.link
           .selectAll('line')
           .data(this.data.links);
-        link = link.enter().append('line').merge(link);
         link.exit().remove();
+        link = link.enter().append('line').merge(link);
 
         if (!this.groups.node) {
           this.groups.node = svg.append('g')
@@ -89,6 +89,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         let node = this.groups.node
           .selectAll('circle')
           .data(this.data.nodes);
+        node.exit().remove();
         node = node.enter().append('circle').merge(node)
           .attr('r', 5)
           .attr('fill', function (d: any) {
@@ -98,7 +99,6 @@ export class GraphComponent implements AfterViewInit, OnChanges {
             .on('start', dragstarted)
             .on('drag', dragged)
             .on('end', dragended));
-        node.exit().remove();
 
         node.append('title')
           .text(function (d: any) {

@@ -26,6 +26,11 @@ export class HomeComponent implements DoCheck {
       this.friendsSubscription.unsubscribe();
     }
 
+    this._graphData = {links: [], nodes: []};
+    this.applicationRef.tick();
+    //Another way is ChangeDetectorRef.detectChanges()
+    //https://stackoverflow.com/questions/35105374/how-to-force-a-components-re-rendering-in-angular-2/35106069
+
     this.userDataService.getUserFriends(user).then((result) => {
       console.log(result);
       let primaryLinks = result.response.map((friend: any) => {
@@ -34,6 +39,7 @@ export class HomeComponent implements DoCheck {
       let nodes = result.response;
       nodes.push({user_id: +user});
       this._graphData = {nodes: nodes, links: primaryLinks};
+      this.applicationRef.tick();
 
       let friendIds = nodes.map(function (friend: any) {
         return friend.user_id;
@@ -52,10 +58,12 @@ export class HomeComponent implements DoCheck {
             }
           });
           this._graphData = {nodes: this._graphData.nodes, links: this._graphData.links.concat(secondaryLinks)};
+          this.applicationRef.tick();
           console.log(data);
         });
     });
   }
+
 
   ngDoCheck(): void {
     console.log("do check");

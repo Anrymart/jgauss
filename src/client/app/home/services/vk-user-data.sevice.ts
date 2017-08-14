@@ -64,6 +64,24 @@ export class VkUserDataService {
       }
     });
   }
+
+  getUserId(query: string): number {
+
+    //check if query is link
+    let linkRegExp = /vk.com\/([^?/]*)/;
+    let result = linkRegExp.exec(query);
+
+    if (result) {
+      //query is link-like
+      let idRegExp = /id(\d+)/;
+      let id = idRegExp.test(result[1]);
+
+    } else {
+      //query is not link-like
+
+    }
+    return 0;
+  }
 }
 
 class RequestQueue {
