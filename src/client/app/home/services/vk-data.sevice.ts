@@ -6,25 +6,40 @@ import {Observer} from "rxjs/Observer";
 declare const VK: VkOpenApi;
 
 @Injectable()
-export class VkUserDataService {
+export class VkDataService {
 
-  constructor() {
+  getUser(query: string): Promise<any> {
+
+    //check if query is link
+    let linkRegExp = /vk.com\/([^?/]*)/;
+    let domainQueryResult = linkRegExp.exec(query);
+
+    let getUserByDomain = (domain: string): any => {
+      return new Promise((resolve) => {
+        VK.Api.call('users.get', {user_ids: [domain]}, function handleResponse({response}: any) {
+          return resolve(response[0]);
+        });
+      });
+    };
+
+    if (domainQueryResult) {
+      //query is link-like
+      return getUserByDomain(domainQueryResult[1]);
+    }
+
+    //query is not link-like
+    return getUserByDomain(query);
   }
 
-  getUserData(user: string): Promise<any> {
-    return new Promise((resolve) => {
-      VK.Api.call('execute.getSecondLevelFriends', {}, resolve);
-    });
-  }
-
-  getUserFriends(userId?: string): Promise<any> {
+  getUserFriends(userId?: string | number): Promise<any> {
     return new Promise((resolve) => {
       let params: any = {fields: 'domain, nickname'};
       if (userId) {
         params.user_id = userId;
       }
-      console.log(params, userId);
-      VK.Api.call('friends.get', params, resolve);
+      VK.Api.call('friends.get', params, function handleResponse({response}: any) {
+        resolve(response);
+      });
     });
   }
 
@@ -32,7 +47,7 @@ export class VkUserDataService {
    * @returns {any}
    * @param userList
    */
-  getSocialInfo(userList: any): Observable<any> {
+  getSocialInfo(userList: Array<number | string>): Observable<any> {
     return Observable.create((observer: Observer<any>) => {
       let requestQueue = new RequestQueue(100);
       const step = 25;
@@ -40,7 +55,7 @@ export class VkUserDataService {
       for (let i = 0; i < userList.length; i += step) {
 
         let requestCode = userList.slice(i, i + step).reduce(function reducer(code: string, friend: any) {
-          return code + `{id:${friend.user_id},l:API.friends.get({user_id:${friend.user_id}})},`;
+          return code + `{id:${friend},l:API.friends.get({user_id:${friend}})},`;
         }, '');
 
         let executeRequest = function executeRequest() {
@@ -63,24 +78,6 @@ export class VkUserDataService {
         unfulfilled++;
       }
     });
-  }
-
-  getUserId(query: string): number {
-
-    //check if query is link
-    let linkRegExp = /vk.com\/([^?/]*)/;
-    let result = linkRegExp.exec(query);
-
-    if (result) {
-      //query is link-like
-      let idRegExp = /id(\d+)/;
-      let id = idRegExp.test(result[1]);
-
-    } else {
-      //query is not link-like
-
-    }
-    return 0;
   }
 }
 

@@ -9,8 +9,10 @@ import {
 } from '@angular/core';
 import * as d3 from 'd3';
 import {Simulation, SimulationLinkDatum, SimulationNodeDatum} from 'd3-force';
-import {MOCK_DATA} from "./mock-data";
-import {BaseType, Selection} from "d3-selection";
+import {MOCK_DATA} from './mock-data';
+import {BaseType, Selection} from 'd3-selection';
+import {GraphColors} from "./graph-colors";
+import {GraphData} from "./graph-data";
 
 @Component({
   moduleId: module.id,
@@ -23,7 +25,7 @@ import {BaseType, Selection} from "d3-selection";
 export class GraphComponent implements AfterViewInit, OnChanges {
 
   @Input()
-  private data: { links: any[], nodes: any[] };
+  private data: GraphData;
 
   private nodes: any[] = [];
   private links: any[] = [];
@@ -46,12 +48,13 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   }
 
   ngOnChanges(): void {
-    console.log("onChanges");
+    console.log('onChanges');
     this.restart();
   }
 
+  //todo: highlight current user
   restart() {
-    console.log("restart");
+    console.log('restart');
 
     this.zone.runOutsideAngular(() => {
         let svg = d3.select('svg'),
@@ -63,7 +66,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         if (!this.simulation) {
           this.simulation = d3.forceSimulation()
             .force('link', d3.forceLink().id(function (d: any) {
-              return d.user_id || d.id;
+              return d.uid;
             }))
             .force('charge', d3.forceManyBody())
             .force('center', d3.forceCenter(width / 2, height / 2));
@@ -92,9 +95,17 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         node.exit().remove();
         node = node.enter().append('circle').merge(node)
           .attr('r', 5)
-          .attr('fill', function (d: any) {
-            return color("");
-          })
+          .attr('fill', (d: any) => {
+              switch (+d.uid) {
+                case this.data.target && +this.data.target.uid:
+                  return GraphColors.target;
+                case this.data.owner && +this.data.owner.uid:
+                  return GraphColors.owner;
+                default:
+                  return color('');
+              }
+            }
+          )
           .call(d3.drag()
             .on('start', dragstarted)
             .on('drag', dragged)
@@ -170,20 +181,20 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     //   return d.id;
     // });
     // node.exit().remove();
-    // node = node.enter().append("circle").attr("fill", (d: any) => {
+    // node = node.enter().append('circle').attr('fill', (d: any) => {
     //   return this.color(d.id);
-    // }).attr("r", 8).merge(node);
+    // }).attr('r', 8).merge(node);
     //
     // // Apply the general update pattern to the links.
     // link = link.data(links, function (d: any) {
-    //   return d.source.id + "-" + d.target.id;
+    //   return d.source.id + '-' + d.target.id;
     // });
     // link.exit().remove();
-    // link = link.enter().append("line").merge(link);
+    // link = link.enter().append('line').merge(link);
     //
     // // Update and restart the simulation.
     // this.simulation.nodes(nodes);
-    // this.simulation.force<any>("link").links(links);
+    // this.simulation.force<any>('link').links(links);
     // this.simulation.restart();
   }
 
