@@ -12,3 +12,10 @@ input {
     //width: 300px;
   }
 }
+
+.user-search {
+  &__name {
+    color: $blue;
+    font-size: 16px;
+  }
+}

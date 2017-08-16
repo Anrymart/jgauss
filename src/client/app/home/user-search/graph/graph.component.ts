@@ -52,7 +52,6 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     this.restart();
   }
 
-  //todo: highlight current user
   restart() {
     console.log('restart');
 
@@ -111,6 +110,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
             .on('drag', dragged)
             .on('end', dragended));
 
+        //todo: fix multiple titles addition
         node.append('title')
           .text(function (d: any) {
             return `${d.first_name} ${d.last_name}`;
@@ -173,29 +173,6 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       }
     );
 
-    // let {node, link} = this.groups;
-    // let {nodes, links} = this.data;
-    //
-    // // Apply the general update pattern to the nodes.
-    // node = node.data(nodes, function (d: any) {
-    //   return d.id;
-    // });
-    // node.exit().remove();
-    // node = node.enter().append('circle').attr('fill', (d: any) => {
-    //   return this.color(d.id);
-    // }).attr('r', 8).merge(node);
-    //
-    // // Apply the general update pattern to the links.
-    // link = link.data(links, function (d: any) {
-    //   return d.source.id + '-' + d.target.id;
-    // });
-    // link.exit().remove();
-    // link = link.enter().append('line').merge(link);
-    //
-    // // Update and restart the simulation.
-    // this.simulation.nodes(nodes);
-    // this.simulation.force<any>('link').links(links);
-    // this.simulation.restart();
   }
 
   private setMockData(): void {

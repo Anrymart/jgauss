@@ -1,13 +1,13 @@
 import {NgModule} from "@angular/core";
 import {SharedModule} from "../../shared/shared.module";
 import {UserSearchComponent} from "./user-search.component";
-import {VkDataService} from "../services/vk-data.sevice";
+import {UserCardModule} from "./user-card/user-card.module";
+import {GraphModule} from "./graph/graph.module";
 
 @NgModule({
-  imports: [SharedModule],
+  imports: [SharedModule, GraphModule, UserCardModule],
   declarations: [UserSearchComponent],
-  exports: [UserSearchComponent],
-  providers: [VkDataService]
+  exports: [UserSearchComponent]
 })
 export class UserSearchModule {
 }

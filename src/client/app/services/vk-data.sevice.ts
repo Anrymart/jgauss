@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {VkOpenApi} from "../../../../types/vk";
+import {VkOpenApi} from "../../../types/vk";
 import {Observable} from "rxjs/Observable";
 import {Observer} from "rxjs/Observer";
 
@@ -8,6 +8,12 @@ declare const VK: VkOpenApi;
 @Injectable()
 export class VkDataService {
 
+  /**
+   * Searches user for given query. Query can be a link, user id or short name.
+   *
+   * @param {string} query
+   * @returns {Promise<any>}
+   */
   getUser(query: string): Promise<any> {
 
     //check if query is link

@@ -1,5 +1,5 @@
 import {Component} from "@angular/core";
-import {VkAuthService} from "../../home/services/vk-auth.sevice";
+import {VkAuthService} from "../../services/vk-auth.sevice";
 
 /**
  * This class represents the toolbar component.

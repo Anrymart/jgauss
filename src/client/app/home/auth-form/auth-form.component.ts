@@ -1,7 +1,5 @@
 import {Component} from "@angular/core";
-import {VkAuthService} from "../services/vk-auth.sevice";
-
-declare const VK: any;
+import {VkAuthService} from "../../services/vk-auth.sevice";
 
 @Component({
   moduleId: module.id,
@@ -15,7 +13,7 @@ export class AuthFormComponent {
   }
 
   login(): void {
-    this.authService.login(function (status) {
+    this.authService.login(function (status: any) {
       console.log(status);
     });
   }
