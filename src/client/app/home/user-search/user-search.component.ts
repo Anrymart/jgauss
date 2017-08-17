@@ -14,9 +14,11 @@ export class UserSearchComponent {
 
   _userQuery: string;
 
+  _userName: string;
+
   _graphData: GraphData = {nodes: [], links: []};
 
-  _userName: string;
+  // _selectedUser: any = {};
 
   private friendsSubscription: Subscription;
 
@@ -30,7 +32,7 @@ export class UserSearchComponent {
       this.friendsSubscription.unsubscribe();
     }
 
-    this._graphData = {links: [], nodes: []};
+    this.clearData();
     this.applicationRef.tick();
     //Another way is ChangeDetectorRef.detectChanges()
     //https://stackoverflow.com/questions/35105374/how-to-force-a-components-re-rendering-in-angular-2/35106069
@@ -78,6 +80,16 @@ export class UserSearchComponent {
       });
 
     this._graphData.owner = await this.dataService.getUser('');
+  }
+
+  // public _showUserCard(user: any): void {
+  //   this._selectedUser = user;
+  //   console.log(user);
+  // }
+  //
+  private clearData(): void {
+    this._userName = "";
+    this._graphData = {links: [], nodes: []};
   }
 
 }

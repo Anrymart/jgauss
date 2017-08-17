@@ -1,18 +1,18 @@
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
-  Component,
+  Component, EventEmitter,
   Input,
   NgZone,
-  OnChanges,
+  OnChanges, Output,
   ViewEncapsulation
 } from '@angular/core';
 import * as d3 from 'd3';
 import {Simulation, SimulationLinkDatum, SimulationNodeDatum} from 'd3-force';
 import {MOCK_DATA} from './mock-data';
 import {BaseType, Selection} from 'd3-selection';
-import {GraphColors} from "./graph-colors";
-import {GraphData} from "./graph-data";
+import {GraphColors} from './graph-colors';
+import {GraphData} from './graph-data';
 
 @Component({
   moduleId: module.id,
@@ -25,17 +25,17 @@ import {GraphData} from "./graph-data";
 export class GraphComponent implements AfterViewInit, OnChanges {
 
   @Input()
-  private data: GraphData;
+  data: GraphData;
 
-  private nodes: any[] = [];
-  private links: any[] = [];
+  @Output()
+  onUserSelect: EventEmitter<any> = new EventEmitter<any>();
 
   private simulation: Simulation<SimulationNodeDatum, SimulationLinkDatum<SimulationNodeDatum>>;
-  private svg: SVGElement;
   private groups: {
+    container: Selection<BaseType, {}, BaseType, any>,
     node: Selection<BaseType, {}, BaseType, any>,
     link: Selection<BaseType, {}, BaseType, any>
-  } = {node: null, link: null};
+  } = {node: null, link: null, container: null};
 
   constructor(private zone: NgZone) {
   }
@@ -62,6 +62,18 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
         let color = d3.scaleOrdinal(d3.schemeCategory20);
 
+        if (!this.groups.container) {
+          this.groups.container = svg.append('g');
+        }
+        let container = this.groups.container;
+
+        let zoom = d3.zoom()
+          .scaleExtent([0.4, 5])
+          .on('zoom', () => {
+            this.groups.container.attr('transform', d3.event.transform);
+          });
+        svg.call(zoom);
+
         if (!this.simulation) {
           this.simulation = d3.forceSimulation()
             .force('link', d3.forceLink().id(function (d: any) {
@@ -73,7 +85,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         let simulation = this.simulation;
 
         if (!this.groups.link) {
-          this.groups.link = svg.append('g')
+          this.groups.link = container.append('g')
             .attr('class', 'links');
         }
 
@@ -84,7 +96,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         link = link.enter().append('line').merge(link);
 
         if (!this.groups.node) {
-          this.groups.node = svg.append('g')
+          this.groups.node = container.append('g')
             .attr('class', 'nodes');
         }
 
@@ -92,7 +104,13 @@ export class GraphComponent implements AfterViewInit, OnChanges {
           .selectAll('circle')
           .data(this.data.nodes);
         node.exit().remove();
-        node = node.enter().append('circle').merge(node)
+        let addedNode = node.enter().append('circle')
+          .on('click', (data: any) => {
+            this.zone.run(() => {
+              this.onUserSelect.emit(data);
+            });
+          });
+        node = addedNode.merge(node)
           .attr('r', 5)
           .attr('fill', (d: any) => {
               switch (+d.uid) {
@@ -110,8 +128,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
             .on('drag', dragged)
             .on('end', dragended));
 
-        //todo: fix multiple titles addition
-        node.append('title')
+        addedNode.append('title')
           .text(function (d: any) {
             return `${d.first_name} ${d.last_name}`;
           });
@@ -172,7 +189,6 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         }
       }
     );
-
   }
 
   private setMockData(): void {

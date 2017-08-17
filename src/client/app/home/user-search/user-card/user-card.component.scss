@@ -1,2 +1,13 @@
 @import "../../../../scss/colors";
+@import "../../../../scss/mixins";
 
+:host {
+  position: absolute;
+  @include visibility-transition(0.3s);
+
+  top: 20px;
+  right: 20px;
+
+  border: 1px solid $blue;
+  background: white;
+}
