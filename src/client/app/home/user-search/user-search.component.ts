@@ -82,11 +82,6 @@ export class UserSearchComponent {
     this._graphData.owner = await this.dataService.getUser('');
   }
 
-  // public _showUserCard(user: any): void {
-  //   this._selectedUser = user;
-  //   console.log(user);
-  // }
-  //
   private clearData(): void {
     this._userName = "";
     this._graphData = {links: [], nodes: []};

@@ -1,4 +1,5 @@
 import {Component, Input} from "@angular/core";
+import {PropertyHandler} from "../../../util/property-handler";
 
 @Component({
   moduleId: module.id,
@@ -9,9 +10,19 @@ import {Component, Input} from "@angular/core";
 })
 export class UserCardComponent {
 
+  @PropertyHandler({
+    afterChange: function (value: any) {
+      if (value) {
+        this.visible = true;
+      }
+      this._userDataKeys = Object.keys(value);
+    }
+  })
   @Input()
   userData: any;
 
   @Input()
-  visible: boolean = true;
+  visible: boolean = false;
+
+  _userDataKeys: string[];
 }
