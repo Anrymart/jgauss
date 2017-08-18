@@ -6,16 +6,18 @@ import {RouterModule} from "@angular/router";
 import {ToolbarComponent} from "./toolbar/toolbar.component";
 import {NavbarComponent} from "./navbar/navbar.component";
 import {NameListService} from "./name-list/name-list.service";
+import {FooterComponent} from "./footer/footer.component";
 
 /**
  * Do not specify providers for modules that might be imported by a lazy loaded module.
  */
 
+const components: any = [ToolbarComponent, NavbarComponent, FooterComponent];
+
 @NgModule({
   imports: [CommonModule, RouterModule],
-  declarations: [ToolbarComponent, NavbarComponent],
-  exports: [ToolbarComponent, NavbarComponent,
-    CommonModule, FormsModule, RouterModule]
+  declarations: components,
+  exports: components.concat(CommonModule, FormsModule, RouterModule)
 })
 export class SharedModule {
   static forRoot(): ModuleWithProviders {

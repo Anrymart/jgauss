@@ -18,8 +18,6 @@ export class UserSearchComponent {
 
   _graphData: GraphData = {nodes: [], links: []};
 
-  // _selectedUser: any = {};
-
   private friendsSubscription: Subscription;
 
   constructor(public _authService: VkAuthService,
@@ -28,6 +26,10 @@ export class UserSearchComponent {
   }
 
   async onSearch(query: string = this._userQuery) {
+    if (!this._userQuery) {
+      this._userQuery = 'myself';
+    }
+
     if (this.friendsSubscription) {
       this.friendsSubscription.unsubscribe();
     }

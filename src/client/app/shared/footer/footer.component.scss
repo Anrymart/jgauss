@@ -1,0 +1,13 @@
+@import "../../../scss/colors";
+@import "../../../scss/variables";
+
+:host {
+  background-color: $background-light-color;
+  border-top: 1px solid $border-color;
+  min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: $light-font-color;
+}

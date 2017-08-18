@@ -1,0 +1,31 @@
+@import "../../../../scss/colors";
+@import "../../../../scss/mixins";
+
+:host {
+  position: absolute;
+  top: 0;
+  right: 20px;
+  @include visibility-transition(0.3s);
+  @include light-shadow();
+  width: 240px;
+  padding: 20px;
+  background: white;
+}
+
+.user-card {
+  display: flex;
+  flex-direction: column;
+
+  &__title {
+    font-weight: bolder;
+    color: $font;
+    text-align: center;
+
+  }
+}
+
+img {
+  align-self: center;
+  //border-radius: 4px;
+  @include light-shadow();
+}

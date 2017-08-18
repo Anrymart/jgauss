@@ -6,7 +6,7 @@ import {VkAuthService} from "../../services/vk-auth.sevice";
  */
 @Component({
   moduleId: module.id,
-  selector: 'sd-toolbar',
+  selector: 'jg-toolbar',
   templateUrl: 'toolbar.component.html',
   styleUrls: ['toolbar.component.css']
 })

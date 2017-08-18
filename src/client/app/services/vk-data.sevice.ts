@@ -8,6 +8,10 @@ declare const VK: VkOpenApi;
 @Injectable()
 export class VkDataService {
 
+  private static USER_FIELDS = 'nickname, domain, sex, bdate, city, country, timezone, photo_50, photo_100,' +
+    ' photo_200_orig, has_mobile, contacts, education, online, relation, last_seen, status,' +
+    ' can_write_private_message, can_see_all_posts, can_post, universities';
+
   /**
    * Searches user for given query. Query can be a link, user id or short name.
    *
@@ -22,7 +26,10 @@ export class VkDataService {
 
     let getUserByDomain = (domain: string): any => {
       return new Promise((resolve) => {
-        VK.Api.call('users.get', {user_ids: [domain]}, function handleResponse({response}: any) {
+        VK.Api.call('users.get', {
+          user_ids: [domain],
+          fields: VkDataService.USER_FIELDS
+        }, function handleResponse({response}: any) {
           return resolve(response[0]);
         });
       });
@@ -39,7 +46,7 @@ export class VkDataService {
 
   getUserFriends(userId?: string | number): Promise<any> {
     return new Promise((resolve) => {
-      let params: any = {fields: 'nickname, domain, sex, bdate, city, country, timezone, photo_50, photo_100, photo_200_orig, has_mobile, contacts, education, online, relation, last_seen, status, can_write_private_message, can_see_all_posts, can_post, universities'};
+      let params: any = {fields: VkDataService.USER_FIELDS};
       if (userId) {
         params.user_id = userId;
       }

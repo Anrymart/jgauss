@@ -1,7 +1,13 @@
-<form (submit)="onSearch()">
+<form class="search-form" (submit)="onSearch()">
+  <p>Howdy! Find yourself and your friends in social networks and analyze social links and activity.</p>
+
   <input [(ngModel)]="_userQuery" name="userQuery" placeholder="Search user">
   <button>Search</button>
 </form>
-<h2 class="user-search__name" [ngClass]="{_visible: _userName}">{{_userName}}</h2>
-<jg-graph [data]="_graphData" (onUserSelect)="userCard.userData = $event"></jg-graph>
-<jg-user-card #userCard [userData]="_selectedUser"></jg-user-card>
+<div class="results">
+  <h2 class="result-name" [ngClass]="{_visible: _userName}">{{_userName}}</h2>
+  <div class="graph-container">
+    <jg-graph [data]="_graphData" (onUserSelect)="userCard.userData = $event"></jg-graph>
+    <jg-user-card #userCard></jg-user-card>
+  </div>
+</div>

@@ -1,7 +1,10 @@
 @import "../../../../scss/colors";
+@import "../../../../scss/variables";
+
+$links-color: #888;
 
 .links line {
-  stroke: #999;
+  stroke: $links-color;
   stroke-opacity: 0.6;
   stroke-width: 0.5px;
 }
@@ -9,14 +12,11 @@
 .nodes circle {
   stroke: #fff;
   stroke-width: 1px;
-  //transition: stroke-width 100ms ease-in;
-
-  //&:hover {
-  //  fill-opacity: .6;
-  //}
 }
 
 svg {
-  border: 1px solid #dddddd;
-  margin: 0 20px;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  width: 100%;
+  height: 500px;
 }

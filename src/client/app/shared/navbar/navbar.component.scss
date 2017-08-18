@@ -1,9 +1,12 @@
+@import "../../../scss/colors";
+@import "../../../scss/variables";
+
 :host {
-  border: 0 solid #e1e1e1;
+  border: 0 solid $border-color;
   border-bottom-width: 1px;
   display: block;
   height: 48px;
-  padding: 0 16px;
+  padding: 0 $margin;
 }
 
 nav a {
@@ -18,5 +21,5 @@ nav a {
 }
 
 nav a.router-link-active {
-  color: #106cc8;
+  color: $base-color;
 }

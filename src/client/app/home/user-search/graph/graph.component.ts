@@ -56,9 +56,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     console.log('restart');
 
     this.zone.runOutsideAngular(() => {
-        let svg = d3.select('svg'),
-          width = +svg.attr('width'),
-          height = +svg.attr('height');
+        let svg = d3.select('svg');
+        let {width, height} = (<Element>svg.node()).getBoundingClientRect();
 
         let color = d3.scaleOrdinal(d3.schemeCategory20);
 

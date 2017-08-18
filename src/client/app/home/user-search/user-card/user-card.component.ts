@@ -11,11 +11,13 @@ import {PropertyHandler} from "../../../util/property-handler";
 export class UserCardComponent {
 
   @PropertyHandler({
-    afterChange: function (value: any) {
-      if (value) {
+    afterChange: function (userData: any) {
+      if (userData) {
         this.visible = true;
       }
-      this._userDataKeys = Object.keys(value);
+      this._userCardData = Object.keys(userData).map((key: string) => {
+        return {key: key, value: JSON.stringify(userData[key])};
+      });
     }
   })
   @Input()
@@ -24,5 +26,5 @@ export class UserCardComponent {
   @Input()
   visible: boolean = false;
 
-  _userDataKeys: string[];
+  _userCardData: any[];
 }

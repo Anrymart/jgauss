@@ -67,6 +67,6 @@ button {
   transition: all 200ms ease;
 
   &:hover {
-    background-color: $dark-blue;
+    background-color: lighten($green, 10%);
   }
 }
