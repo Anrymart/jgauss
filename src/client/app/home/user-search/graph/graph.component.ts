@@ -1,15 +1,15 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy,
-  Component, EventEmitter,
+  Component,
+  EventEmitter,
   Input,
   NgZone,
-  OnChanges, Output,
+  OnChanges,
+  Output,
   ViewEncapsulation
 } from '@angular/core';
 import * as d3 from 'd3';
 import {Simulation, SimulationLinkDatum, SimulationNodeDatum} from 'd3-force';
-import {MOCK_DATA} from './mock-data';
 import {BaseType, Selection} from 'd3-selection';
 import {GraphColors} from './graph-colors';
 import {GraphData} from './graph-data';
@@ -20,7 +20,7 @@ import {GraphData} from './graph-data';
   templateUrl: 'graph.component.html',
   styleUrls: ['graph.component.css'],
   encapsulation: ViewEncapsulation.None,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GraphComponent implements AfterViewInit, OnChanges {
 
@@ -28,7 +28,10 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   data: GraphData;
 
   @Output()
-  onUserSelect: EventEmitter<any> = new EventEmitter<any>();
+  onUserClick: EventEmitter<any> = new EventEmitter<any>();
+
+  _tipData: any;
+  _tipState: any = {};
 
   private simulation: Simulation<SimulationNodeDatum, SimulationLinkDatum<SimulationNodeDatum>>;
   private groups: {
@@ -41,14 +44,10 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   }
 
   ngAfterViewInit(): void {
-    if (!this.data) {
-      this.setMockData();
-    }
     this.restart();
   }
 
   ngOnChanges(): void {
-    console.log('onChanges');
     this.restart();
   }
 
@@ -106,9 +105,35 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         let addedNode = node.enter().append('circle')
           .on('click', (data: any) => {
             this.zone.run(() => {
-              this.onUserSelect.emit(data);
+              this.onUserClick.emit(data);
+            });
+          })
+          .on('mouseover', (data: any) => {
+            this.zone.run(() => {
+              if (!this._tipState.mouseDown) {
+                this._tipData = data;
+                this._tipState.visible = true;
+              }
+            });
+          })
+          .on('mouseout', (data: any) => {
+            this.zone.run(() => {
+              this._tipState.visible = false;
             });
           });
+        //todo: prevent flashing on drag
+        // .on('drag', (data: any) => {
+        //   this.zone.run(() => {
+        //     this._tipState.visible = false;
+        //     this._tipState.mouseDown = true;
+        //   });
+        // })
+        // .on('mouseup', (data: any) => {
+        //   this.zone.run(() => {
+        //     this._tipState.mouseDown = false;
+        //   });
+        // });
+
         node = addedNode.merge(node)
           .attr('r', 5)
           .attr('fill', (d: any) => {
@@ -127,10 +152,10 @@ export class GraphComponent implements AfterViewInit, OnChanges {
             .on('drag', dragged)
             .on('end', dragended));
 
-        addedNode.append('title')
-          .text(function (d: any) {
-            return `${d.first_name} ${d.last_name}`;
-          });
+        // addedNode.append('title')
+        //   .text(function (d: any) {
+        //     return `${d.first_name} ${d.last_name}`;
+        //   });
 
         simulation
           .nodes(this.data.nodes)
@@ -188,10 +213,6 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         }
       }
     );
-  }
-
-  private setMockData(): void {
-    this.data = MOCK_DATA;
   }
 
 }

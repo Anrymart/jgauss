@@ -4,10 +4,15 @@
   <input [(ngModel)]="_userQuery" name="userQuery" placeholder="Search user">
   <button>Search</button>
 </form>
-<div class="results">
-  <h2 class="result-name" [ngClass]="{_visible: _userName}">{{_userName}}</h2>
+<div class="search-result">
+  <h2 class="result-name" [ngClass]="{_visible: _resultUser}" *ngIf="_resultUser">
+    <img src="{{_resultUser.photo_100}}"/>
+    {{_resultUser.first_name + " " + _resultUser.last_name}}
+  </h2>
   <div class="graph-container">
-    <jg-graph [data]="_graphData" (onUserSelect)="userCard.userData = $event"></jg-graph>
     <jg-user-card #userCard></jg-user-card>
+    <jg-graph [data]="_graphData"
+              (onUserClick)="userCard.show($event)"
+    ></jg-graph>
   </div>
 </div>

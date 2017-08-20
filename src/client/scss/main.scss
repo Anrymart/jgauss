@@ -46,7 +46,7 @@ li {
 }
 
 input {
-  border: 1px solid $green;
+  border: 1px solid $accent-color;
   font-size: 14px;
   height: 40px;
   outline: none;
@@ -54,9 +54,9 @@ input {
 }
 
 button {
-  background-color: $green;
+  background-color: $accent-color;
   border-style: none;
-  color: rgba(255, 255, 255, 0.87);
+  color: $font-light-color;
   cursor: pointer;
   display: inline-block;
   font-size: 14px;
@@ -67,6 +67,6 @@ button {
   transition: all 200ms ease;
 
   &:hover {
-    background-color: lighten($green, 10%);
+    background-color: lighten($accent-color, 10%);
   }
 }

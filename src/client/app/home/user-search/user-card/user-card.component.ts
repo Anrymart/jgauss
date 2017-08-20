@@ -1,5 +1,4 @@
 import {Component, Input} from "@angular/core";
-import {PropertyHandler} from "../../../util/property-handler";
 
 @Component({
   moduleId: module.id,
@@ -10,16 +9,6 @@ import {PropertyHandler} from "../../../util/property-handler";
 })
 export class UserCardComponent {
 
-  @PropertyHandler({
-    afterChange: function (userData: any) {
-      if (userData) {
-        this.visible = true;
-      }
-      this._userCardData = Object.keys(userData).map((key: string) => {
-        return {key: key, value: JSON.stringify(userData[key])};
-      });
-    }
-  })
   @Input()
   userData: any;
 
@@ -27,4 +16,12 @@ export class UserCardComponent {
   visible: boolean = false;
 
   _userCardData: any[];
+
+  show(userData: any): void {
+    this.visible = true;
+    this.userData = userData;
+    this._userCardData = Object.keys(userData).map((key: string) => {
+      return {key: key, value: JSON.stringify(userData[key])};
+    });
+  }
 }

@@ -1,31 +1,38 @@
 @import "../../../../scss/colors";
 @import "../../../../scss/mixins";
+@import "../../../../scss/variables";
+
+$img-size: 36px;
 
 :host {
+  top: 500px;
+  left: 300px;
+  z-index: 10;
   position: absolute;
-  top: 0;
-  right: 20px;
-  @include visibility-transition(0.3s);
-  @include light-shadow();
-  width: 240px;
-  padding: 20px;
-  background: white;
+  @include visibility-transition(0.1s);
 }
 
-.user-card {
+.container {
   display: flex;
-  flex-direction: column;
-
-  &__title {
-    font-weight: bolder;
-    color: $font;
-    text-align: center;
-
-  }
+  align-items: stretch;
+  height: $img-size;
 }
 
 img {
-  align-self: center;
-  //border-radius: 4px;
+  border: 1px solid #2e2e2e;
+  border-radius: $border-radius;
   @include light-shadow();
+  height: $img-size;
+  width: $img-size;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  background: $background-dark-color;
+  color: $font-light-color;
+  border-radius: $border-radius;
+  @include light-shadow();
+  padding: 10px;
+  margin-left: 3px;
 }

@@ -15,7 +15,7 @@
   input {
     width: 300px;
     border-radius: $border-radius;
-    border-color: $dark-border-color;
+    border-color: $border-dark-color;
     background-color: white;
 
     &:-webkit-autofill {
@@ -28,8 +28,20 @@
   }
 }
 
-.results {
+.search-result {
   padding: 20px $margin;
+
+  h2 {
+
+    img {
+      @include light-shadow;
+      border-radius: $border-radius;
+      margin-right: 20px;
+    }
+
+    display: flex;
+    align-items: center;
+  }
 }
 
 .graph-container {

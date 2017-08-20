@@ -1,12 +1,14 @@
-@mixin visibility-transition($duration: 0.3s) {
+@mixin visibility-transition($duration: 0.1s) {
   visibility: hidden;
   opacity: 0;
-  transition: visibility 0s linear $duration, opacity $duration linear;
+  transform: scale(0.9);
+  transition: visibility 0s linear $duration, opacity $duration linear, transform $duration linear;
 
   &._visible {
     visibility: visible;
     opacity: 1;
     transition-delay: 0s;
+    transform: scale(1);
   }
 }
 

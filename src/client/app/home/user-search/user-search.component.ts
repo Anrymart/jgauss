@@ -14,7 +14,7 @@ export class UserSearchComponent {
 
   _userQuery: string;
 
-  _userName: string;
+  _resultUser: any;
 
   _graphData: GraphData = {nodes: [], links: []};
 
@@ -39,9 +39,8 @@ export class UserSearchComponent {
     //Another way is ChangeDetectorRef.detectChanges()
     //https://stackoverflow.com/questions/35105374/how-to-force-a-components-re-rendering-in-angular-2/35106069
 
-    let user = await this.dataService.getUser(query);
+    let user = this._resultUser = await this.dataService.getUser(query);
     let userId = user.uid;
-    this._userName = `${user.first_name} ${user.last_name}`;
 
     let userFriends = await this.dataService.getUserFriends(userId);
     console.log(userFriends);
@@ -85,7 +84,7 @@ export class UserSearchComponent {
   }
 
   private clearData(): void {
-    this._userName = "";
+    this._resultUser = {};
     this._graphData = {links: [], nodes: []};
   }
 
