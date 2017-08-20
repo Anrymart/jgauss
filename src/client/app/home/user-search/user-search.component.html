@@ -5,10 +5,20 @@
   <button>Search</button>
 </form>
 <div class="search-result">
-  <h2 class="result-name" [ngClass]="{_visible: _resultUser}" *ngIf="_resultUser">
+
+  <div class="result-user-info" [ngClass]="{_visible: _resultUser}" *ngIf="_resultUser">
     <img src="{{_resultUser.photo_100}}"/>
-    {{_resultUser.first_name + " " + _resultUser.last_name}}
-  </h2>
+    <div>
+      <h2 class="result-user-name">
+        {{_resultUser.first_name}} {{_resultUser.last_name}}
+      </h2>
+      <span *ngIf="_resultUser.linkDensity">
+        Плотность дружеских связей
+        {{_resultUser.linkDensity}}%
+      </span>
+    </div>
+  </div>
+
   <div class="graph-container">
     <jg-user-card #userCard></jg-user-card>
     <jg-graph [data]="_graphData"

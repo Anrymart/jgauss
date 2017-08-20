@@ -3,12 +3,13 @@
 @import "../../../../scss/variables";
 
 $img-size: 36px;
+$target-indent: 15px;
 
 :host {
-  top: 500px;
-  left: 300px;
   z-index: 10;
   position: absolute;
+  margin-top: -$target-indent - $img-size;
+  margin-left: $target-indent;
   @include visibility-transition(0.1s);
 }
 
@@ -16,14 +17,19 @@ $img-size: 36px;
   display: flex;
   align-items: stretch;
   height: $img-size;
+  flex-wrap: nowrap;
 }
 
-img {
-  border: 1px solid #2e2e2e;
+img, .loading {
+  border: 1px solid $background-dark-color;
+  background: $background-dark-color;
   border-radius: $border-radius;
   @include light-shadow();
   height: $img-size;
   width: $img-size;
+  //color: $font-light-color;
+  //font-size: 24px;
+  flex-shrink: 0;
 }
 
 .label {

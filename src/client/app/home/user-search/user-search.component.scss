@@ -30,28 +30,27 @@
 
 .search-result {
   padding: 20px $margin;
+}
 
-  h2 {
+.result-user-info {
+  padding: 20px 0;
+  display: flex;
+  align-items: center;
+  @include visibility-transition(0.3s);
 
-    img {
-      @include light-shadow;
-      border-radius: $border-radius;
-      margin-right: 20px;
-    }
-
-    display: flex;
-    align-items: center;
+  img {
+    @include light-shadow;
+    border-radius: $border-radius;
+    margin-right: 20px;
   }
+}
+
+.result-user-name {
+  color: $base-color;
+  font-size: 20px;
+  font-weight: normal;
 }
 
 .graph-container {
   position: relative;
-}
-
-.result-name {
-  color: $base-color;
-  font-size: 20px;
-  font-weight: normal;
-
-  @include visibility-transition(0.3s);
 }

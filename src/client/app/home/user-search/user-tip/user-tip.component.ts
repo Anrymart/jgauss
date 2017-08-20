@@ -11,19 +11,30 @@ import {PropertyHandler} from "../../../util/property-handler";
 export class UserTipComponent {
 
   @PropertyHandler({
-    afterChange(userData: any) {
-      let elementStyle = this.elementRef.nativeElement.style;
-      let shift = 5;
-      elementStyle.left = userData.x + shift + "px";
-      elementStyle.top = userData.y - 36 - shift + "px";
+    afterChange() {
+      this.updatePosition();
+      this._imageLoaded = false;
     }
   })
   @Input()
   userData: any;
 
+  @PropertyHandler({
+    afterChange() {
+      this.updatePosition();
+    }
+  })
   @Input()
   visible: boolean;
 
+  _imageLoaded: boolean;
+
   constructor(private elementRef: ElementRef) {
+  }
+
+  private updatePosition() {
+    let elementStyle = this.elementRef.nativeElement.style;
+    elementStyle.left = this.userData.event.offsetX + "px";
+    elementStyle.top = this.userData.event.offsetY + "px";
   }
 }

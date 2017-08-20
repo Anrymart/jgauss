@@ -4,23 +4,20 @@
 :host {
   background-color: $base-color;
   color: $font-light-color;
-  display: block;
-  height: 48px;
+  display: flex;
+  align-items: center;
+  height: 60px;
   padding: 0 $margin;
 }
 
 h1 {
   display: inline;
-  font-size: 20px;
+  font-size: 24px;
   font-weight: normal;
-  letter-spacing: 0.1px;
+  letter-spacing: 0.5px;
   line-height: 48px;
+  flex-grow: 1;
 }
 
-.more {
-  //background: url("./assets/svg/more.svg");
-  float: right;
-  line-height: 48px;
-  //margin-top: 12px;
-  //width: 24px;
+.right {
 }

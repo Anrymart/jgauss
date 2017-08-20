@@ -3,4 +3,5 @@ export interface GraphData {
   nodes: any[],
   target?: any,
   owner?: any
+  sort?: boolean
 }

@@ -31,7 +31,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   onUserClick: EventEmitter<any> = new EventEmitter<any>();
 
   _tipData: any;
-  _tipState: any = {};
+  _tipVisible: boolean;
+  _nodeDrag: boolean;
 
   private simulation: Simulation<SimulationNodeDatum, SimulationLinkDatum<SimulationNodeDatum>>;
   private groups: {
@@ -109,30 +110,19 @@ export class GraphComponent implements AfterViewInit, OnChanges {
             });
           })
           .on('mouseover', (data: any) => {
-            this.zone.run(() => {
-              if (!this._tipState.mouseDown) {
+            if (!this._nodeDrag) {
+              this.zone.run(() => {
+                data.event = d3.event;
                 this._tipData = data;
-                this._tipState.visible = true;
-              }
-            });
+                this._tipVisible = true;
+              });
+            }
           })
           .on('mouseout', (data: any) => {
             this.zone.run(() => {
-              this._tipState.visible = false;
+              this._tipVisible = false;
             });
           });
-        //todo: prevent flashing on drag
-        // .on('drag', (data: any) => {
-        //   this.zone.run(() => {
-        //     this._tipState.visible = false;
-        //     this._tipState.mouseDown = true;
-        //   });
-        // })
-        // .on('mouseup', (data: any) => {
-        //   this.zone.run(() => {
-        //     this._tipState.mouseDown = false;
-        //   });
-        // });
 
         node = addedNode.merge(node)
           .attr('r', 5)
@@ -146,16 +136,36 @@ export class GraphComponent implements AfterViewInit, OnChanges {
                   return color('');
               }
             }
-          )
-          .call(d3.drag()
-            .on('start', dragstarted)
-            .on('drag', dragged)
-            .on('end', dragended));
+          );
 
-        // addedNode.append('title')
-        //   .text(function (d: any) {
-        //     return `${d.first_name} ${d.last_name}`;
-        //   });
+        let dragstarted = (d: any) => {
+          if (!d3.event.active) {
+            simulation.alphaTarget(0.3).restart();
+          }
+          d.fx = d.x;
+          d.fy = d.y;
+
+          this._nodeDrag = true;
+        };
+
+        let dragged = (d: any) => {
+          d.fx = d3.event.x;
+          d.fy = d3.event.y;
+        };
+
+        let dragended = (d: any) => {
+          if (!d3.event.active) {
+            simulation.alphaTarget(0);
+          }
+          d.fx = null;
+          d.fy = null;
+          this._nodeDrag = false;
+        };
+
+        node.call(d3.drag()
+          .on('start', dragstarted)
+          .on('drag', dragged)
+          .on('end', dragended));
 
         simulation
           .nodes(this.data.nodes)
@@ -190,29 +200,21 @@ export class GraphComponent implements AfterViewInit, OnChanges {
               return d.y;
             });
         }
-
-        function dragstarted(d: any) {
-          if (!d3.event.active) {
-            simulation.alphaTarget(0.3).restart();
-          }
-          d.fx = d.x;
-          d.fy = d.y;
-        }
-
-        function dragged(d: any) {
-          d.fx = d3.event.x;
-          d.fy = d3.event.y;
-        }
-
-        function dragended(d: any) {
-          if (!d3.event.active) {
-            simulation.alphaTarget(0);
-          }
-          d.fx = null;
-          d.fy = null;
-        }
       }
     );
+  }
+
+  _repaint(): void {
+    let color = d3.scaleOrdinal(d3.schemeCategory20);
+
+    let node = this.groups.node
+      .selectAll('circle')
+      .transition()
+      .duration(500)
+      .attr('fill', (d: any) => {
+          return GraphColors.sex[<1 | 2>d.sex];
+        }
+      )
   }
 
 }

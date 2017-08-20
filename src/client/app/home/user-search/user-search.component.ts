@@ -64,21 +64,28 @@ export class UserSearchComponent {
     this.friendsSubscription = this.dataService
       .getSocialInfo(friendIds)
       .subscribe((data) => {
-        let secondaryLinks: { source: number, target: number }[] = [];
-        data.response.forEach(function (friend: { id: number, l: number[] }) {
-          for (let targetId of friend.l) {
-            if (targetId > friend.id && friendIds.includes(targetId)) {
-              secondaryLinks.push(
-                {source: friend.id, target: targetId}
-              );
+          let secondaryLinks: { source: number, target: number }[] = [];
+          data.response.forEach(function (friend: { id: number, l: number[] }) {
+            for (let targetId of friend.l) {
+              if (targetId > friend.id && friendIds.includes(targetId)) {
+                secondaryLinks.push(
+                  {source: friend.id, target: targetId}
+                );
+              }
             }
-          }
+          });
+          this._graphData.links = this._graphData.links.concat(secondaryLinks);
+          this._graphData = Object.assign({}, this._graphData);
+          this.applicationRef.tick();
+          console.log(data);
+        },
+        null,
+        () => {
+          console.log('complete');
+          this._resultUser.linkDensity =
+            Math.round(2 * this._graphData.links.length / (userFriends.length * (userFriends.length - 1)) * 100);
+          this.applicationRef.tick();
         });
-        this._graphData.links = this._graphData.links.concat(secondaryLinks);
-        this._graphData = Object.assign({}, this._graphData);
-        this.applicationRef.tick();
-        console.log(data);
-      });
 
     this._graphData.owner = await this.dataService.getUser('');
   }
