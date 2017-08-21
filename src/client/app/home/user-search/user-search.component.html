@@ -2,7 +2,7 @@
   <p>Howdy! Find yourself and your friends in social networks and analyze social links and activity.</p>
 
   <input [(ngModel)]="_userQuery" name="userQuery" placeholder="Search user">
-  <button>Search</button>
+  <button class="accent">Search</button>
 </form>
 <div class="search-result">
 
@@ -13,14 +13,14 @@
         {{_resultUser.first_name}} {{_resultUser.last_name}}
       </h2>
       <span *ngIf="_resultUser.linkDensity">
-        Плотность дружеских связей
+        Плотность связей
         {{_resultUser.linkDensity}}%
       </span>
     </div>
   </div>
 
   <div class="graph-container">
-    <jg-user-card #userCard></jg-user-card>
+    <jg-user-card (onUserSwitch)="onSearch($event.domain)" #userCard></jg-user-card>
     <jg-graph [data]="_graphData"
               (onUserClick)="userCard.show($event)"
     ></jg-graph>

@@ -1,4 +1,5 @@
 @import "colors";
+@import "variables";
 
 /* Reset */
 html, body, div {
@@ -24,7 +25,7 @@ body {
 
 /* Set up a default font and some padding to provide breathing room */
 body {
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 16px;
 }
 
@@ -47,14 +48,17 @@ li {
 
 input {
   border: 1px solid $accent-color;
+  border-radius: $border-radius;
   font-size: 14px;
   height: 40px;
   outline: none;
   padding: 8px;
+  font-family: inherit;
 }
 
 button {
-  background-color: $accent-color;
+  border-radius: $border-radius;
+  background-color: $primary-color;
   border-style: none;
   color: $font-light-color;
   cursor: pointer;
@@ -63,9 +67,17 @@ button {
   height: 40px;
   padding: 8px 18px;
   text-decoration: none;
+  font-family: inherit;
 
   transition: all 200ms ease;
 
+  &:hover {
+    background-color: lighten($primary-color, 10%);
+  }
+}
+
+button.accent {
+  background-color: $accent-color;
   &:hover {
     background-color: lighten($accent-color, 10%);
   }

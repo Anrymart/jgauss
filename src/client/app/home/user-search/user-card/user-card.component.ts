@@ -1,4 +1,4 @@
-import {Component, Input} from "@angular/core";
+import {Component, EventEmitter, Input, Output} from "@angular/core";
 
 @Component({
   moduleId: module.id,
@@ -15,6 +15,9 @@ export class UserCardComponent {
   @Input()
   visible: boolean = false;
 
+  @Output()
+  onUserSwitch: EventEmitter<any> = new EventEmitter<any>();
+
   _userCardData: any[];
 
   show(userData: any): void {
@@ -23,5 +26,9 @@ export class UserCardComponent {
     this._userCardData = Object.keys(userData).map((key: string) => {
       return {key: key, value: JSON.stringify(userData[key])};
     });
+  }
+
+  onUserClick(): void {
+    this.onUserSwitch.emit(this.userData);
   }
 }

@@ -3,13 +3,13 @@
 @import "../../../../scss/variables";
 
 :host {
-  position: fixed;
+  position: absolute;
   display: block;
   top: 20px;
   right: 20px;
   @include visibility-transition();
   @include light-shadow();
-  max-width: 300px;
+  max-width: 240px;
   background: white;
   border-radius: $border-radius;
 }
@@ -22,7 +22,7 @@
   &__title {
     text-align: center;
     font-weight: normal;
-    font-size: 18px;
+    font-size: 16px;
 
     a {
       color: $base-color;

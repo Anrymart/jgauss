@@ -19,8 +19,7 @@ import {GraphData} from './graph-data';
   selector: 'jg-graph',
   templateUrl: 'graph.component.html',
   styleUrls: ['graph.component.css'],
-  encapsulation: ViewEncapsulation.None,
-  // changeDetection: ChangeDetectionStrategy.OnPush
+  encapsulation: ViewEncapsulation.None
 })
 export class GraphComponent implements AfterViewInit, OnChanges {
 
@@ -35,6 +34,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   _nodeDrag: boolean;
 
   private simulation: Simulation<SimulationNodeDatum, SimulationLinkDatum<SimulationNodeDatum>>;
+
   private groups: {
     container: Selection<BaseType, {}, BaseType, any>,
     node: Selection<BaseType, {}, BaseType, any>,
@@ -53,7 +53,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   }
 
   restart() {
-    console.log('restart');
+    console.log('restart graph');
 
     this.zone.runOutsideAngular(() => {
         let svg = d3.select('svg');
@@ -67,7 +67,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         let container = this.groups.container;
 
         let zoom = d3.zoom()
-          .scaleExtent([0.4, 5])
+          .scaleExtent([0.3, 5])
           .on('zoom', () => {
             this.groups.container.attr('transform', d3.event.transform);
           });
@@ -204,17 +204,60 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     );
   }
 
-  _repaint(): void {
+  _sort(sort: string): void {
     let color = d3.scaleOrdinal(d3.schemeCategory20);
 
+    let paint = (d: any) => {
+      return color(d);
+    };
+    switch (sort) {
+      case 'sex':
+        paint = (d: { sex: 1 | 2 }) => {
+          return GraphColors.sex[d.sex];
+        };
+        break;
+      case 'online':
+        paint = (d: { online: 0 | 1 }) => {
+          return GraphColors.online[d.online];
+        };
+        break;
+      case 'friends':
+        paint = (d: any) => {
+          switch (+d.uid) {
+            case this.data.target && +this.data.target.uid:
+              return GraphColors.target;
+            case this.data.owner && +this.data.owner.uid:
+              return GraphColors.owner;
+            default:
+              return color(null);
+          }
+        };
+        break;
+      case 'university':
+        paint = (d: { university?: string }) => {
+          return color(d.university);
+        };
+        break;
+      case 'recent-friends':
+        break;
+      default:
+        paint = (d: any) => {
+          switch (+d.uid) {
+            case this.data.target && +this.data.target.uid:
+              return GraphColors.target;
+            case this.data.owner && +this.data.owner.uid:
+              return GraphColors.owner;
+            default:
+              return color(null);
+          }
+        };
+        break;
+    }
     let node = this.groups.node
       .selectAll('circle')
       .transition()
       .duration(500)
-      .attr('fill', (d: any) => {
-          return GraphColors.sex[<1 | 2>d.sex];
-        }
-      )
+      .attr('fill', paint)
   }
 
 }

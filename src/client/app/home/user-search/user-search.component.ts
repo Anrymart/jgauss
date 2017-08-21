@@ -26,9 +26,7 @@ export class UserSearchComponent {
   }
 
   async onSearch(query: string = this._userQuery) {
-    if (!this._userQuery) {
-      this._userQuery = 'myself';
-    }
+    this._userQuery = query;
 
     if (this.friendsSubscription) {
       this.friendsSubscription.unsubscribe();

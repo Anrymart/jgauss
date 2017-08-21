@@ -1,3 +1,7 @@
 <svg></svg>
-<button (click)="_repaint()">Пол</button>
+<button (click)="_sort()">Default</button>
+<button (click)="_sort('sex')">Пол</button>
+<button (click)="_sort('online')">Онлайн</button>
+<button (click)="_sort('friends')">Общие друзья</button>
+<button (click)="_sort('university')">Университет</button>
 <jg-user-tip [visible]="_tipVisible" [userData]="_tipData"></jg-user-tip>
