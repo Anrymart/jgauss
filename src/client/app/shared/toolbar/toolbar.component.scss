@@ -1,5 +1,8 @@
 @import "../../../scss/colors";
 @import "../../../scss/variables";
+@import "../../../scss/mixins";
+
+$user-picture-size: 36px;
 
 :host {
   background-color: $base-color;
@@ -11,6 +14,16 @@
 }
 
 .right {
-  text-align: right;
+  display: flex;
+  justify-content: flex-end;
   flex-grow: 1;
+  align-items: center;
+}
+
+.user-picture {
+  border-radius: 100%;
+  width: $user-picture-size;
+  height: $user-picture-size;
+  @include light-shadow();
+  margin-right: 10px;
 }

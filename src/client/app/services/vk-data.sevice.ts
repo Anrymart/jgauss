@@ -13,14 +13,14 @@ export class VkDataService {
     ' can_write_private_message, can_see_all_posts, can_post, universities';
 
   /**
-   * Searches user for given query. Query can be a link, user id or short name.
+   * Searches user for given query. Query can be a src, user id or short name.
    *
    * @param {string} query
    * @returns {Promise<any>}
    */
-  getUser(query: string): Promise<any> {
+  getUser(query?: string): Promise<any> {
 
-    //check if query is link
+    //check if query is src
     let linkRegExp = /vk.com\/([^?/]*)/;
     let domainQueryResult = linkRegExp.exec(query);
 
@@ -36,11 +36,11 @@ export class VkDataService {
     };
 
     if (domainQueryResult) {
-      //query is link-like
+      //query is src-like
       return getUserByDomain(domainQueryResult[1]);
     }
 
-    //query is not link-like
+    //query is not src-like
     return getUserByDomain(query);
   }
 

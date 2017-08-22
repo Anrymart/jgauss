@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   EventEmitter,
+  HostListener,
   Input,
   NgZone,
   OnChanges,
@@ -33,6 +34,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   _tipVisible: boolean;
   _nodeDrag: boolean;
 
+  _searchQuery: string;
+
   private simulation: Simulation<SimulationNodeDatum, SimulationLinkDatum<SimulationNodeDatum>>;
 
   private groups: {
@@ -45,6 +48,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   }
 
   ngAfterViewInit(): void {
+    this.resize();
     this.restart();
   }
 
@@ -106,6 +110,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         let addedNode = node.enter().append('circle')
           .on('click', (data: any) => {
             this.zone.run(() => {
+              this._tipVisible = false;
               this.onUserClick.emit(data);
             });
           })
@@ -204,13 +209,13 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     );
   }
 
-  _sort(sort: string): void {
+  _sortByType(sortType: string): void {
     let color = d3.scaleOrdinal(d3.schemeCategory20);
 
     let paint = (d: any) => {
       return color(d);
     };
-    switch (sort) {
+    switch (sortType) {
       case 'sex':
         paint = (d: { sex: 1 | 2 }) => {
           return GraphColors.sex[d.sex];
@@ -253,11 +258,55 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         };
         break;
     }
+
     let node = this.groups.node
       .selectAll('circle')
       .transition()
       .duration(500)
       .attr('fill', paint)
+  }
+
+  private sortByUid(uids: any[]): void {
+    let color = d3.scaleOrdinal(d3.schemeCategory20);
+
+    let paint = (d: any) => {
+      if (~uids.indexOf(+d.uid)) {
+        return '#206CAF';
+      }
+      return '#CCCCCC';
+    };
+
+    let node = this.groups.node
+      .selectAll('circle')
+      .transition()
+      .duration(500)
+      .attr('fill', paint)
+  }
+
+  @HostListener('window: resize')
+  resize(): void {
+    let height = document.documentElement.clientHeight;
+    document.getElementById('jgauss-graph').style.height = 0.7 * height + 'px';
+  }
+
+  _onSearch() {
+    if (!this._searchQuery) {
+      this._sortByType();
+      return;
+    }
+    let searchRegexp = new RegExp(this._searchQuery, 'i');
+    let searchFields = ['first_name', 'last_name', 'domain', 'university_name', 'faculty_name'];
+    let matchedNodes: number[] = [];
+    this.data.nodes.forEach((node: any) => {
+      for (let field of searchFields) {
+        if (typeof node[field] == 'string' && node[field].search(searchRegexp) != -1) {
+          matchedNodes.push(node.uid);
+          break;
+        }
+      }
+    });
+    this.sortByUid(matchedNodes);
+    console.log(this._searchQuery, matchedNodes);
   }
 
 }

@@ -1,0 +1,14 @@
+@import "../../../scss/colors";
+
+:host {
+  display: block;
+}
+
+input {
+  width: 300px;
+  //transition: all 300ms ease;
+
+  &:focus {
+    //width: 300px;
+  }
+}

@@ -8,12 +8,22 @@ declare const VK: VkOpenApi;
 @Injectable()
 export class VkAuthService {
 
-  //todo: clarify type
-  public sessionChange: Observable<any>;
+  private sessionChange: Observable<any>;
 
   constructor() {
     this.getLoginStatus();
-    // this.initSubscription();
+  }
+
+  getSessionChange(): Observable<any> {
+    if (!this.sessionChange) {
+      this.sessionChange = Observable.create((observer: Observer<any>) => {
+        let subscriber = (status: any) => {
+          observer.next(status);
+        };
+        VK.Observer.subscribe('auth.sessionChange', subscriber);
+      });
+    }
+    return this.sessionChange;
   }
 
   login(callback?: any, settings?: number): void {
@@ -34,9 +44,4 @@ export class VkAuthService {
     });
   }
 
-  private initSubscription(): void {
-    this.sessionChange = Observable.create((observer: Observer<any>) => {
-      VK.Observer.subscribe(observer.next, 'auth.sessionChange');
-    });
-  }
 }

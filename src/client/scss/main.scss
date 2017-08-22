@@ -9,8 +9,7 @@ html, body, div {
 }
 
 html, body {
-  height: 100%;
-  width: 100%;
+  color: rgba(0, 0, 0, .85);
 }
 
 body {
@@ -47,8 +46,9 @@ li {
 }
 
 input {
-  border: 1px solid $accent-color;
   border-radius: $border-radius;
+  background-color: white;
+  border: 1px solid $border-dark-color;
   font-size: 14px;
   height: 40px;
   outline: none;

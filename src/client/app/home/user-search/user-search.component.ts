@@ -61,7 +61,7 @@ export class UserSearchComponent {
 
     this.friendsSubscription = this.dataService
       .getSocialInfo(friendIds)
-      .subscribe((data) => {
+      .subscribe((data: any) => {
           let secondaryLinks: { source: number, target: number }[] = [];
           data.response.forEach(function (friend: { id: number, l: number[] }) {
             for (let targetId of friend.l) {

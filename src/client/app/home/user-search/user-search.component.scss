@@ -4,7 +4,6 @@
 
 :host {
   display: block;
-  position: relative;
 }
 
 .search-form {
@@ -38,7 +37,9 @@
   align-items: center;
   @include visibility-transition(0.3s);
 
-  img {
+  jg-image {
+    width: 100px;
+    height: 100px;
     @include light-shadow;
     border-radius: $border-radius;
     margin-right: 20px;
@@ -46,7 +47,6 @@
 }
 
 .result-user-name {
-  color: $base-color;
   font-size: 20px;
   font-weight: normal;
 }

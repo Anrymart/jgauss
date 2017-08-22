@@ -1,0 +1,7 @@
+@import "../../../scss/mixins";
+
+:host {
+  display: block;
+  @include visibility-transition(0.1s);
+  overflow: hidden;
+}

@@ -48,7 +48,7 @@ export interface VkAuthUser {
   first_name: string;
 
   /**
-   * Page link in `https://vk.com/domain` format
+   * Page src in `https://vk.com/domain` format
    */
   href: string;
 
@@ -82,9 +82,9 @@ export interface VkWidgets {
 }
 
 export interface VkObserver {
-  subscribe(handler: Function, event: VkObservableEventType): void;
+  subscribe(event: VkObservableEventType, handler: Function): void;
 
-  unsubscribe(handler: Function, event: VkObservableEventType): void;
+  unsubscribe(event: VkObservableEventType, handler: Function): void;
 }
 
 export declare type VkObservableEventType =

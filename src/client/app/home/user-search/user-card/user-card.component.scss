@@ -3,18 +3,17 @@
 @import "../../../../scss/variables";
 
 :host {
+}
+
+.user-card {
   position: absolute;
-  display: block;
+  z-index: 5;
   top: 20px;
   right: 20px;
-  @include visibility-transition();
   @include light-shadow();
   max-width: 240px;
   background: white;
   border-radius: $border-radius;
-}
-
-.user-card {
   padding: 20px;
   display: flex;
   flex-direction: column;
