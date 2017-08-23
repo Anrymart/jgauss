@@ -6,7 +6,8 @@
 }
 
 .user-card {
-  position: absolute;
+  position: fixed;
+  overflow: auto;
   z-index: 5;
   top: 20px;
   right: 20px;
@@ -34,8 +35,9 @@
   }
 }
 
-img {
+jg-image {
   align-self: center;
+  min-height: 200px;
+  @include light-shadow;
   border-radius: $border-radius;
-  @include light-shadow();
 }

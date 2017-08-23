@@ -3,8 +3,7 @@ import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import {RouterModule} from "@angular/router";
 
-import {ToolbarComponent} from "./toolbar/toolbar.component";
-import {NavbarComponent} from "./navbar/navbar.component";
+import {HeaderComponent} from "./header/header.component";
 import {NameListService} from "./spec-example/name-list.service";
 import {FooterComponent} from "./footer/footer.component";
 import {ImageModule} from "./image/image.module";
@@ -15,8 +14,7 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
  */
 
 const components: any = [
-  ToolbarComponent,
-  NavbarComponent,
+  HeaderComponent,
   FooterComponent
 ];
 

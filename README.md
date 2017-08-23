@@ -363,7 +363,7 @@ Forks of this project demonstrate how to extend and integrate with other librari
 │       │   │       ├── index.ts
 │       │   │       ├── toolbar.component.css
 │       │   │       ├── toolbar.component.html
-│       │   │       └── toolbar.component.ts
+│       │   │       └── header.component.ts
 │       │   └── system-config.ts
 │       ├── assets
 │       │   ├── data.json

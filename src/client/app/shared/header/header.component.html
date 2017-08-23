@@ -1,0 +1,15 @@
+<div class="page-margin-container">
+  <img src="/assets/jgauss.png" height="30"/>
+  <nav>
+    <a [routerLink]="['/']" [routerLinkActive]="['_router-active']" [routerLinkActiveOptions]="{exact:true}">Home</a>
+    <a [routerLink]="['/about']" [routerLinkActive]="['_router-active']"
+       [routerLinkActiveOptions]="{exact:true}">About</a>
+  </nav>
+  <div class="right">
+    <!--Log out link-->
+    <!--<a style="cursor: pointer; margin-right: 10px" *ngIf="_authService.isAuthorized()" (click)="_authService.logout()">Выйти</a>-->
+    {{currentUser?.first_name}}
+    <jg-image class="user-picture" [src]="currentUser?.photo_50"></jg-image>
+    <i class="fa fa-caret-down" aria-hidden="true"></i>
+  </div>
+</div>

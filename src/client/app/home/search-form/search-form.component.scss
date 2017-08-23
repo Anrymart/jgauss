@@ -1,0 +1,22 @@
+@import "../../../scss/colors";
+@import "../../../scss/variables";
+
+.search-form {
+  padding: 40px 0;
+  text-align: center;
+
+  input {
+    width: 300px;
+    border-radius: $border-radius;
+    border-color: $border-dark-color;
+    background-color: white;
+
+    &:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0 30px white inset;
+    }
+  }
+
+  button {
+    border-radius: $border-radius;
+  }
+}

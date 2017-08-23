@@ -1,13 +1,14 @@
-<label>
-  Поиск в графе
-  <input [(ngModel)]="_searchQuery" (change)="_onSearch()"/>
-</label>
 <div class="graph-container">
+  <!--<form (submit)="_onSearch()">-->
+  <!--<label>-->
+  <!--Поиск в графе-->
+  <!--<input name="graphSearch" [(ngModel)]="_searchQuery"/>-->
+  <!--</label>-->
+  <!--</form>-->
   <svg id="jgauss-graph"></svg>
   <jg-user-tip [visible]="_tipVisible" [userData]="_tipData"></jg-user-tip>
 </div>
 <button (click)="_sortByType()">Default</button>
 <button (click)="_sortByType('sex')">Пол</button>
+<button (click)="_sortByType('owner-friends')">Мои друзья</button>
 <button (click)="_sortByType('online')">Онлайн</button>
-<button (click)="_sortByType('friends')">Общие друзья</button>
-<button (click)="_sortByType('university')">Университет</button>

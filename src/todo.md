@@ -1,12 +1,11 @@
 # TODO list
 
 ### Major priority
-- Add graph search
-- Fix card image loading
-- Toolbar logo
 - Add url params in accordance with search query (+add footer link to my page)
 
 ### Minor priority
+- Stop animation button on graph
+- Add graph resize
 - Add sorting to graph:
   - university (show legend)
   - recent friends

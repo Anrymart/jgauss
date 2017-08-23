@@ -44,11 +44,10 @@ export class VkDataService {
     return getUserByDomain(query);
   }
 
-  getUserFriends(userId?: string | number): Promise<any> {
+  getUserFriends(params?: any): Promise<any> {
     return new Promise((resolve) => {
-      let params: any = {fields: VkDataService.USER_FIELDS};
-      if (userId) {
-        params.user_id = userId;
+      if (params.fields == '*') {
+        params.fields = VkDataService.USER_FIELDS;
       }
       VK.Api.call('friends.get', params, function handleResponse({response}: any) {
         resolve(response);

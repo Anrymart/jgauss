@@ -9,7 +9,7 @@ html, body, div {
 }
 
 html, body {
-  color: rgba(0, 0, 0, .85);
+  color: $font-dark-color;
 }
 
 body {
@@ -72,7 +72,7 @@ button {
   transition: all 200ms ease;
 
   &:hover {
-    background-color: lighten($primary-color, 10%);
+    background-color: lighten($primary-color, 8%);
   }
 }
 
@@ -81,4 +81,10 @@ button.accent {
   &:hover {
     background-color: lighten($accent-color, 10%);
   }
+}
+
+.page-margin-container {
+  margin: 0 auto;
+  max-width: 1024px;
+  padding: 0 20px;
 }

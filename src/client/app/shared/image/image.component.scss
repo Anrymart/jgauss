@@ -1,7 +1,7 @@
 @import "../../../scss/mixins";
 
 :host {
-  display: block;
+  display: flex;
   @include visibility-transition(0.1s);
   overflow: hidden;
 }

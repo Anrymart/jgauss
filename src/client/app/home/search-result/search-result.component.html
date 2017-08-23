@@ -1,0 +1,21 @@
+<div class="page-margin-container">
+  <div class="result-user-info" [ngClass]="{_visible: _targetUser}" *ngIf="_targetUser">
+    <jg-image [src]="_targetUser.photo_100"></jg-image>
+    <div>
+      <h2 class="result-user-name">
+        {{_targetUser.first_name}} {{_targetUser.last_name}}
+      </h2>
+      <span *ngIf="_targetUser.linkDensity">
+        Плотность связей
+        {{_targetUser.linkDensity}}%
+      </span>
+    </div>
+  </div>
+
+  <div class="graph-container">
+    <jg-user-card (onUserSwitch)="search($event.domain)" #userCard></jg-user-card>
+    <jg-graph [data]="_graphData"
+              (onUserClick)="userCard.show($event)"
+    ></jg-graph>
+  </div>
+</div>

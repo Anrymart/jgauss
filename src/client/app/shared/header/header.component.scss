@@ -1,0 +1,67 @@
+@import "../../../scss/colors";
+@import "../../../scss/variables";
+@import "../../../scss/mixins";
+
+$header-height: 50px;
+$user-picture-size: 36px;
+
+:host {
+  @include light-shadow;
+  background-color: $base-color;
+  color: $font-light-color;
+  display: block;
+  justify-content: center;
+  align-items: stretch;
+  font-size: 14px;
+}
+
+.page-margin-container {
+  display: flex;
+  align-items: center;
+  height: $header-height;
+}
+
+nav {
+  display: flex;
+  align-items: stretch;
+  margin-left: 20px;
+  height: 100%;
+
+  a {
+    color: $font-light-color;
+    font-weight: 500;
+    padding: 0 10px;
+    margin: 0 2px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all .3s ease;
+    line-height: $header-height;
+    text-transform: uppercase;
+    border-bottom: 4px solid transparent;
+
+    &:hover {
+      background-color: darken($base-color, 5%);
+    }
+
+    &._router-active {
+      //border-color: $font-light-color;
+      background-color: darken($base-color, 5%);
+      cursor: default;
+    }
+  }
+}
+
+.right {
+  display: flex;
+  justify-content: flex-end;
+  flex-grow: 1;
+  align-items: center;
+}
+
+.user-picture {
+  border-radius: 100%;
+  width: $user-picture-size;
+  height: $user-picture-size;
+  @include light-shadow();
+  margin: 0 10px;
+}

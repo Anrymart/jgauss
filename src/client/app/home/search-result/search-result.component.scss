@@ -2,35 +2,6 @@
 @import "../../../scss/mixins";
 @import "../../../scss/variables";
 
-:host {
-  display: block;
-}
-
-.search-form {
-  background: $background-light-color;
-  padding: 20px $margin;
-  border-bottom: 1px solid $border-color;
-
-  input {
-    width: 300px;
-    border-radius: $border-radius;
-    border-color: $border-dark-color;
-    background-color: white;
-
-    &:-webkit-autofill {
-      -webkit-box-shadow: 0 0 0 30px white inset;
-    }
-  }
-
-  button {
-    border-radius: $border-radius;
-  }
-}
-
-.search-result {
-  padding: 20px $margin;
-}
-
 .result-user-info {
   padding: 20px 0;
   display: flex;

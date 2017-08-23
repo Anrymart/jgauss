@@ -7,24 +7,24 @@ import {VkDataService} from "../../services/vk-data.sevice";
  */
 @Component({
   moduleId: module.id,
-  selector: 'jg-toolbar',
-  templateUrl: 'toolbar.component.html',
-  styleUrls: ['toolbar.component.css']
+  selector: 'jg-header',
+  templateUrl: 'header.component.html',
+  styleUrls: ['header.component.css']
 })
-export class ToolbarComponent {
+export class HeaderComponent {
 
-  userPictureUrl: string;
+  currentUser: any;
 
   constructor(public _authService: VkAuthService,
               public _dataService: VkDataService) {
     //todo: getUser is not optimal, add field params
     this._authService.getSessionChange().subscribe((response: any) => {
-      if (response.session && !this.userPictureUrl) {
+      if (response.session && !this.currentUser) {
         this._dataService.getUser().then((response: any) => {
-          this.userPictureUrl = response.photo_50;
+          this.currentUser = response;
         });
       } else {
-        this.userPictureUrl = null;
+        this.currentUser = null;
       }
     });
   }

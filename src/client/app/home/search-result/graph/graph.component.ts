@@ -209,7 +209,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     );
   }
 
-  _sortByType(sortType: string): void {
+  _sortByType(sortType?: string): void {
     let color = d3.scaleOrdinal(d3.schemeCategory20);
 
     let paint = (d: any) => {
@@ -226,22 +226,18 @@ export class GraphComponent implements AfterViewInit, OnChanges {
           return GraphColors.online[d.online];
         };
         break;
-      case 'friends':
-        paint = (d: any) => {
-          switch (+d.uid) {
-            case this.data.target && +this.data.target.uid:
-              return GraphColors.target;
-            case this.data.owner && +this.data.owner.uid:
+      case 'owner-friends':
+        if (this.data.owner && this.data.owner.friends) {
+          paint = (d: any) => {
+            if (~this.data.owner.friends.indexOf(d.uid)) {
+              return '#206CAF';
+            }
+            if (d.uid == this.data.owner.uid) {
               return GraphColors.owner;
-            default:
-              return color(null);
-          }
-        };
-        break;
-      case 'university':
-        paint = (d: { university?: string }) => {
-          return color(d.university);
-        };
+            }
+            return '#CCCCCC';
+          };
+        }
         break;
       case 'recent-friends':
         break;
