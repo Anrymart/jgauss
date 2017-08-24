@@ -5,17 +5,23 @@
       <h2 class="result-user-name">
         {{_targetUser.first_name}} {{_targetUser.last_name}}
       </h2>
-      <span *ngIf="_targetUser.linkDensity">
-        Плотность связей
-        {{_targetUser.linkDensity}}%
-      </span>
+      <p>
+        <span *ngIf="_targetUser?.friendsCount">
+          {{_targetUser.friendsCount | numeral: '{"1": "друг", "2": "друга", "5": "друзей"}'}},
+        </span>
+        <span *ngIf="_graphData?.links">
+          {{_graphData.links.length | numeral: '{"1": "связь", "2": "связи", "5": "связей"}'}}
+        </span>
+      </p>
+      <!--<p *ngIf="_targetUser.linkDensity">-->
+      <!--Плотность связей-->
+      <!--{{_targetUser.linkDensity}}%-->
+      <!--</p>-->
     </div>
   </div>
 
   <div class="graph-container">
     <jg-user-card (onUserSwitch)="search($event.domain)" #userCard></jg-user-card>
-    <jg-graph [data]="_graphData"
-              (onUserClick)="userCard.show($event)"
-    ></jg-graph>
+    <jg-graph #graph [data]="_graphData" [loading]="_loading" (onUserClick)="userCard.show($event)"></jg-graph>
   </div>
 </div>

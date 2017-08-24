@@ -1,0 +1,72 @@
+@import "../../../../scss/colors";
+@import "../../../../scss/mixins";
+@import "../../../../scss/variables";
+
+$transition: all .4s ease;
+$icon-size: 30px;
+
+i {
+  width: $icon-size;
+  height: $icon-size;
+  transition: $transition;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: $primary-color;
+  }
+}
+
+.graph-toolbar {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  color: $font-grey-color;
+  margin: 10px;
+}
+
+.graph-search-form {
+
+  label {
+    position: relative;
+    display: inline-block;
+    min-width: $icon-size;
+  }
+
+  input {
+    width: $icon-size;
+    opacity: 0;
+    transition: $transition;
+    height: 30px;
+
+    &:focus {
+      width: 200px;
+      opacity: 1;
+      padding-right: $icon-size;
+    }
+  }
+
+  i {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+  }
+
+  i:hover, input:focus + i {
+    color: $primary-color;
+  }
+}
+
+.loading-indicator {
+  opacity: 0;
+  visibility: hidden;
+
+  &._visible {
+    color: $primary-color;
+    opacity: 1;
+    visibility: visible;
+  }
+}

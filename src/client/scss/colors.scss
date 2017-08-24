@@ -1,6 +1,5 @@
-//$blue: #106cc8;
-$base-color: #206CAF;
-$accent-color: #8BC34A;
+$base-color: #206caf;
+$accent-color: #8bc34a;
 
 $primary-color: #559fe0;
 
@@ -10,11 +9,6 @@ $background-dark-color: #2e2e2e;
 $border-color: #e6e6e6;
 $border-dark-color: #cccccc;
 
-$font-dark-color: rgba(0, 0, 0, .85);
+$font-default-color: rgba(0, 0, 0, .85);
 $font-light-color: rgba(255, 255, 255, .85);
-$font-grey-color: #8f8f8f;
-
-$dark-grey: #2E2E2E;
-$font: #212529;
-$dark-blue: #28739e;
-$blue: #106cc8;
+$font-grey-color: $border-color;

@@ -1,20 +1,17 @@
 # TODO list
 
 ### Major priority
+- Fix animation restart on click
 - Add url params in accordance with search query (+add footer link to my page)
+- Refactor: remove countless modules, combine all in one home or search-result module
 
 ### Minor priority
 - Stop animation button on graph
-- Add graph resize
 - Add sorting to graph:
-  - university (show legend)
   - recent friends
-  - shared friends with current user
-  - probable friends
-  - university friends
   - top rated friends (sharedFriends / friendsCount * C(friendsCount))
+  - probable friends
 - Add user menu on right click
-- Add loading indicator
 - Add initial scale button to graph
 - Change html page title in accordance with query
 

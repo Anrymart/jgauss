@@ -1,11 +1,10 @@
 <div class="graph-container">
-  <!--<form (submit)="_onSearch()">-->
-  <!--<label>-->
-  <!--Поиск в графе-->
-  <!--<input name="graphSearch" [(ngModel)]="_searchQuery"/>-->
-  <!--</label>-->
-  <!--</form>-->
-  <svg id="jgauss-graph"></svg>
+  <jg-graph-toolbar [loading]="loading"
+                    [paused]="_paused"
+                    (onSearch)="_search($event)"
+                    (onPause)="_pause($event)">
+  </jg-graph-toolbar>
+  <svg id="jgauss-graph" resize></svg>
   <jg-user-tip [visible]="_tipVisible" [userData]="_tipData"></jg-user-tip>
 </div>
 <button (click)="_sortByType()">Default</button>

@@ -1,25 +1,11 @@
 @import "../../../../scss/colors";
 @import "../../../../scss/variables";
-
-$links-color: #888;
-
-:host {
-  display: block;
-}
-
-.links line {
-  stroke: $links-color;
-  stroke-opacity: 0.6;
-  stroke-width: 0.5px;
-}
-
-.nodes circle {
-  stroke: #fff;
-  stroke-width: 1px;
-}
+@import "../../../../scss/mixins";
 
 .graph-container {
   position: relative;
+  display: flex;
+  margin: 10px 0;
 }
 
 svg {
@@ -29,6 +15,3 @@ svg {
   height: 500px;
 }
 
-form {
-
-}

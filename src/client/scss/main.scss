@@ -1,5 +1,6 @@
 @import "colors";
 @import "variables";
+@import "./graph/graph.scss";
 
 /* Reset */
 html, body, div {
@@ -9,7 +10,7 @@ html, body, div {
 }
 
 html, body {
-  color: $font-dark-color;
+  color: $font-default-color;
 }
 
 body {
@@ -87,4 +88,21 @@ button.accent {
   margin: 0 auto;
   max-width: 1024px;
   padding: 0 20px;
+}
+
+.resize-handle {
+  $handle-size: 8px;
+  position: absolute;
+  right: $handle-size;
+  bottom: $handle-size;
+  width: $handle-size;
+  height: $handle-size;
+  border-radius: $border-radius;
+  background-color: $font-grey-color;
+  cursor: nw-resize;
+  transition: all .4s ease;
+
+  &._active, &:hover {
+    background-color: $primary-color;
+  }
 }

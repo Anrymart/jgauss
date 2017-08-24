@@ -1,0 +1,12 @@
+@import "../colors";
+
+.links line {
+  stroke: #888;
+  stroke-opacity: 0.6;
+  stroke-width: 0.5px;
+}
+
+.nodes circle {
+  stroke: #fff;
+  stroke-width: 1px;
+}

@@ -2,7 +2,7 @@
   visibility: hidden;
   opacity: 0;
   transform: scale(0.9);
-  transition: visibility 0s linear $duration, opacity $duration linear, transform $duration linear;
+  transition: visibility 0s linear $duration, opacity $duration ease, transform $duration ease;
 
   &._visible {
     visibility: visible;

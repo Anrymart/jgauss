@@ -13,15 +13,15 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
  * Do not specify providers for modules that might be imported by a lazy loaded module.
  */
 
-const components: any = [
+const COMPONENTS: any = [
   HeaderComponent,
   FooterComponent
 ];
 
 @NgModule({
   imports: [CommonModule, RouterModule, ImageModule],
-  declarations: components,
-  exports: components.concat(CommonModule, FormsModule, BrowserAnimationsModule, RouterModule, ImageModule)
+  declarations: COMPONENTS,
+  exports: COMPONENTS.concat(CommonModule, FormsModule, BrowserAnimationsModule, RouterModule, ImageModule)
 })
 export class SharedModule {
   static forRoot(): ModuleWithProviders {

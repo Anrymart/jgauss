@@ -23,6 +23,7 @@ export class SearchResultComponent {
   _targetUser: any;
 
   _graphData: GraphData = {nodes: [], links: []};
+  _loading: boolean;
 
   private friendsSubscription: Subscription;
 
@@ -38,7 +39,6 @@ export class SearchResultComponent {
     }
 
     this.clearData();
-    this.changeDetectorRef.detectChanges();
 
     let targetUser = this._targetUser = await this.dataService.getUser(query);
     let targetUserId = targetUser.uid;
@@ -49,6 +49,8 @@ export class SearchResultComponent {
         fields: '*'
       });
     console.log(targetUserFriends);
+
+    this._targetUser.friendsCount = targetUserFriends.length;
 
     let primaryLinks = targetUserFriends.map((friend: any) => {
       return {source: +targetUserId, target: friend.uid};
@@ -92,6 +94,7 @@ export class SearchResultComponent {
         null,
         () => {
           console.log('complete');
+          this._loading = false;
           this._targetUser.linkDensity =
             Math.round(2 * this._graphData.links.length / (targetUserFriends.length * (targetUserFriends.length - 1)) * 100);
           this.changeDetectorRef.detectChanges();
@@ -108,8 +111,10 @@ export class SearchResultComponent {
   }
 
   private clearData(): void {
+    this._loading = true;
     this._targetUser = {};
     this._graphData = {links: [], nodes: []};
+    this.changeDetectorRef.detectChanges();
   }
 
 }

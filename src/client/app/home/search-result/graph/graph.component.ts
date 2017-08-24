@@ -1,13 +1,6 @@
 import {
-  AfterViewInit,
-  Component,
-  EventEmitter,
-  HostListener,
-  Input,
-  NgZone,
-  OnChanges,
-  Output,
-  ViewEncapsulation
+  AfterViewInit, ChangeDetectorRef, Component, EventEmitter, HostListener, Input, NgZone, OnChanges,
+  Output
 } from '@angular/core';
 import * as d3 from 'd3';
 import {Simulation, SimulationLinkDatum, SimulationNodeDatum} from 'd3-force';
@@ -19,23 +12,25 @@ import {GraphData} from './graph-data';
   moduleId: module.id,
   selector: 'jg-graph',
   templateUrl: 'graph.component.html',
-  styleUrls: ['graph.component.css'],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['graph.component.css']
 })
 export class GraphComponent implements AfterViewInit, OnChanges {
 
   @Input()
   data: GraphData;
 
+  @Input()
+  loading: boolean;
+
   @Output()
   onUserClick: EventEmitter<any> = new EventEmitter<any>();
 
   _tipData: any;
   _tipVisible: boolean;
+  // Is node being dragged by user. Responsible for hiding user tip.
   _nodeDrag: boolean;
 
-  _searchQuery: string;
-
+  _paused: boolean;
   private simulation: Simulation<SimulationNodeDatum, SimulationLinkDatum<SimulationNodeDatum>>;
 
   private groups: {
@@ -48,7 +43,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   }
 
   ngAfterViewInit(): void {
-    this.resize();
+    // this.resize();
     this.restart();
   }
 
@@ -58,6 +53,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
   restart() {
     console.log('restart graph');
+    if (this._paused) {
+      return;
+    }
 
     this.zone.runOutsideAngular(() => {
         let svg = d3.select('svg');
@@ -145,6 +143,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
         let dragstarted = (d: any) => {
           if (!d3.event.active) {
+            this.zone.run(() => {
+              this._paused = false;
+            });
             simulation.alphaTarget(0.3).restart();
           }
           d.fx = d.x;
@@ -262,6 +263,10 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .attr('fill', paint)
   }
 
+  public stopSimulation() {
+    this.simulation.stop();
+  }
+
   private sortByUid(uids: any[]): void {
     let color = d3.scaleOrdinal(d3.schemeCategory20);
 
@@ -283,14 +288,11 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   resize(): void {
     let height = document.documentElement.clientHeight;
     document.getElementById('jgauss-graph').style.height = 0.7 * height + 'px';
+    document.getElementById('jgauss-graph').parentElement.style.height = 0.7 * height + 'px';
   }
 
-  _onSearch() {
-    if (!this._searchQuery) {
-      this._sortByType();
-      return;
-    }
-    let searchRegexp = new RegExp(this._searchQuery, 'i');
+  _search(searchQuery: string) {
+    let searchRegexp = new RegExp(searchQuery, 'i');
     let searchFields = ['first_name', 'last_name', 'domain', 'university_name', 'faculty_name'];
     let matchedNodes: number[] = [];
     this.data.nodes.forEach((node: any) => {
@@ -302,7 +304,20 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       }
     });
     this.sortByUid(matchedNodes);
-    console.log(this._searchQuery, matchedNodes);
+    console.log(searchQuery, matchedNodes);
+  }
+
+  _pause(isPaused: boolean) {
+    if (isPaused != this._paused) {
+      this._paused = isPaused;
+      this.zone.runOutsideAngular(() => {
+        if (isPaused) {
+          this.simulation.stop();
+        } else {
+          this.simulation.restart();
+        }
+      });
+    }
   }
 
 }
