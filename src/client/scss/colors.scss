@@ -2,13 +2,17 @@ $base-color: #206caf;
 $accent-color: #8bc34a;
 
 $primary-color: #559fe0;
+$base-transparent-color: transparentize($base-color, .9);
 
-$background-light-color: #fafafa;
+$background-light-color: #ffffff;
 $background-dark-color: #2e2e2e;
 
 $border-color: #e6e6e6;
 $border-dark-color: #cccccc;
 
-$font-default-color: rgba(0, 0, 0, .85);
-$font-light-color: rgba(255, 255, 255, .85);
+$font-default-color: rgba(0, 0, 0, .8);
+$font-light-color: rgba(255, 255, 255, .8);
 $font-grey-color: $border-color;
+
+// social colors
+$vk-color: #507299;

@@ -1,6 +1,6 @@
 <div class="graph-container">
   <jg-graph-toolbar [loading]="loading"
-                    [paused]="_paused"
+                    [paused]="_simulationState.paused"
                     (onSearch)="_search($event)"
                     (onPause)="_pause($event)">
   </jg-graph-toolbar>

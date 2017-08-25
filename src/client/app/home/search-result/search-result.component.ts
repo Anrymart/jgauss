@@ -113,7 +113,7 @@ export class SearchResultComponent {
   private clearData(): void {
     this._loading = true;
     this._targetUser = {};
-    this._graphData = {links: [], nodes: []};
+    this._graphData = null;
     this.changeDetectorRef.detectChanges();
   }
 

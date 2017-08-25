@@ -1,11 +1,12 @@
-<div class="page-margin-container">
-  <form class="search-form" (submit)="_onSearch()">
-    <p>Howdy! Find yourself and your friends in social networks and analyze social links and activity.</p>
+<div class="search-form-container">
+  <p>Находите друзей, стройте социальные графы и исследуйте дружеские связи и социальные группы</p>
 
-    <input [(ngModel)]="searchQuery" name="searchQuery" placeholder="Search user">
+  <form class="search-form" (submit)="_onSearch()">
+    <i class="fa fa-vk" aria-hidden="true"></i>
+    <input [(ngModel)]="searchQuery" name="searchQuery" placeholder="Поиск">
     <button class="accent">
-      Поиск
-      <!--<i class="fa fa-search" aria-hidden="true"></i>-->
+      <!--Поиск-->
+      <i class="fa fa-search" aria-hidden="true"></i>
     </button>
   </form>
 </div>

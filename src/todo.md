@@ -1,11 +1,13 @@
 # TODO list
 
 ### Major priority
-- Fix animation restart on click
+- Fix graph sort, does't work after play click
+- Show social links: facebook, instagram and others
 - Add url params in accordance with search query (+add footer link to my page)
 - Refactor: remove countless modules, combine all in one home or search-result module
 
 ### Minor priority
+- Add initial data to graph, for example from
 - Stop animation button on graph
 - Add sorting to graph:
   - recent friends

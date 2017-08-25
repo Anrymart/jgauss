@@ -1,12 +1,12 @@
 @import "../../../scss/colors";
 @import "../../../scss/variables";
 
-$footer-background-color: #505458;
+.footer {
+  display: flex;
+  justify-content: space-between;
 
-:host {
   margin-top: 40px;
-  border-top: 1px solid $font-light-color;
-  padding: 60px 0;
-  display: block;
+  padding: 40px 0;
   font-size: 14px;
+  border-top: 1px solid $border-color;
 }

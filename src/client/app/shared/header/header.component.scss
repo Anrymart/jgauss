@@ -5,6 +5,15 @@
 $header-height: 50px;
 $user-picture-size: 36px;
 
+$item-active-color: darken($base-color, 5%);
+$item-hover-color: darken($base-color, 3%);
+
+$item-hover-background: $base-transparent-color;
+
+@mixin item-transition() {
+  transition: all .2s ease;
+}
+
 :host {
   @include light-shadow;
   background-color: $base-color;
@@ -29,23 +38,20 @@ nav {
 
   a {
     color: $font-light-color;
-    font-weight: 500;
-    padding: 0 10px;
-    margin: 0 2px;
+    padding: 0 16px;
     text-decoration: none;
     cursor: pointer;
-    transition: all .3s ease;
+    @include item-transition;
     line-height: $header-height;
-    text-transform: uppercase;
-    border-bottom: 4px solid transparent;
+    //text-transform: uppercase;
+    //letter-spacing: .5px;
 
     &:hover {
-      background-color: darken($base-color, 5%);
+      background-color: $item-hover-color;
     }
 
     &._router-active {
-      //border-color: $font-light-color;
-      background-color: darken($base-color, 5%);
+      background-color: $item-active-color;
       cursor: default;
     }
   }
@@ -55,7 +61,25 @@ nav {
   display: flex;
   justify-content: flex-end;
   flex-grow: 1;
-  align-items: center;
+  height: 100%;
+}
+
+.user-block {
+  height: 100%;
+  position: relative;
+  padding: 0 10px;
+  cursor: pointer;
+  @include item-transition;
+
+  &:hover {
+    background-color: $item-hover-color;
+  }
+
+  &._menu_opened {
+    &, &:hover {
+      background-color: $item-active-color;
+    }
+  }
 }
 
 .user-picture {
@@ -64,4 +88,61 @@ nav {
   height: $user-picture-size;
   @include light-shadow();
   margin: 0 10px;
+}
+
+.user-title {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.user-menu {
+  color: $font-default-color;
+  padding: 5px 0;
+  border-radius: $border-radius;
+  position: absolute;
+  background-color: $background-light-color;
+  top: $header-height + 20px;
+  right: 0;
+  @include light-shadow;
+  width: 100%;
+
+  @include item-transition;
+  visibility: hidden;
+  opacity: 0;
+
+  ._menu_opened & {
+    top: $header-height + 10px;
+    visibility: visible;
+    opacity: 1;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  a {
+    display: block;
+    margin: 0;
+    padding: 0 10px;
+    line-height: 30px;
+    cursor: pointer;
+    @include item-transition;
+
+    &:hover {
+      background: $item-hover-background;
+    }
+  }
+
+  .current-user {
+
+  }
 }

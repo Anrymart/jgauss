@@ -1,12 +1,10 @@
-import {
-  AfterViewInit, ChangeDetectorRef, Component, EventEmitter, HostListener, Input, NgZone, OnChanges,
-  Output
-} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, HostListener, Input, NgZone, OnChanges, Output} from '@angular/core';
 import * as d3 from 'd3';
 import {Simulation, SimulationLinkDatum, SimulationNodeDatum} from 'd3-force';
 import {BaseType, Selection} from 'd3-selection';
 import {GraphColors} from './graph-colors';
 import {GraphData} from './graph-data';
+import {PropertyHandler} from '../../../util/property-handler';
 
 @Component({
   moduleId: module.id,
@@ -16,6 +14,15 @@ import {GraphData} from './graph-data';
 })
 export class GraphComponent implements AfterViewInit, OnChanges {
 
+  @PropertyHandler({
+    afterChange(data: GraphData) {
+      if (!data) {
+        this.data = {nodes: [], links: []};
+        // run simulation
+        this._simulationState.paused = false;
+      }
+    }
+  })
   @Input()
   data: GraphData;
 
@@ -27,10 +34,12 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
   _tipData: any;
   _tipVisible: boolean;
-  // Is node being dragged by user. Responsible for hiding user tip.
-  _nodeDrag: boolean;
 
-  _paused: boolean;
+  _simulationState: {
+    nodeDrag?: boolean,   // is node being dragged by user, responsible for hiding user tip.
+    paused?: boolean // is simulation paused
+  } = {};
+
   private simulation: Simulation<SimulationNodeDatum, SimulationLinkDatum<SimulationNodeDatum>>;
 
   private groups: {
@@ -53,7 +62,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
   restart() {
     console.log('restart graph');
-    if (this._paused) {
+
+    if (this._simulationState.paused) {
       return;
     }
 
@@ -107,13 +117,14 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         node.exit().remove();
         let addedNode = node.enter().append('circle')
           .on('click', (data: any) => {
+            d3.event.preventDefault();
             this.zone.run(() => {
               this._tipVisible = false;
               this.onUserClick.emit(data);
             });
           })
           .on('mouseover', (data: any) => {
-            if (!this._nodeDrag) {
+            if (!this._simulationState.nodeDrag) {
               this.zone.run(() => {
                 data.event = d3.event;
                 this._tipData = data;
@@ -142,16 +153,16 @@ export class GraphComponent implements AfterViewInit, OnChanges {
           );
 
         let dragstarted = (d: any) => {
+          if (this._simulationState.paused) {
+            return;
+          }
           if (!d3.event.active) {
-            this.zone.run(() => {
-              this._paused = false;
-            });
             simulation.alphaTarget(0.3).restart();
           }
           d.fx = d.x;
           d.fy = d.y;
 
-          this._nodeDrag = true;
+          this._simulationState.nodeDrag = true;
         };
 
         let dragged = (d: any) => {
@@ -165,7 +176,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
           }
           d.fx = null;
           d.fy = null;
-          this._nodeDrag = false;
+
+          this._simulationState.nodeDrag = false;
         };
 
         node.call(d3.drag()
@@ -263,10 +275,6 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       .attr('fill', paint)
   }
 
-  public stopSimulation() {
-    this.simulation.stop();
-  }
-
   private sortByUid(uids: any[]): void {
     let color = d3.scaleOrdinal(d3.schemeCategory20);
 
@@ -308,13 +316,13 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   }
 
   _pause(isPaused: boolean) {
-    if (isPaused != this._paused) {
-      this._paused = isPaused;
+    if (isPaused != this._simulationState.paused) {
+      this._simulationState.paused = isPaused;
       this.zone.runOutsideAngular(() => {
         if (isPaused) {
           this.simulation.stop();
         } else {
-          this.simulation.restart();
+          this.restart();
         }
       });
     }

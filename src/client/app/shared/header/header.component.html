@@ -1,15 +1,28 @@
 <div class="page-margin-container">
   <img src="/assets/jgauss.png" height="30"/>
   <nav>
-    <a [routerLink]="['/']" [routerLinkActive]="['_router-active']" [routerLinkActiveOptions]="{exact:true}">Home</a>
+    <a [routerLink]="['/']" [routerLinkActive]="['_router-active']" [routerLinkActiveOptions]="{exact:true}">Главная</a>
     <a [routerLink]="['/about']" [routerLinkActive]="['_router-active']"
-       [routerLinkActiveOptions]="{exact:true}">About</a>
+       [routerLinkActiveOptions]="{exact:true}">О сервисе</a>
   </nav>
   <div class="right">
-    <!--Log out link-->
-    <!--<a style="cursor: pointer; margin-right: 10px" *ngIf="_authService.isAuthorized()" (click)="_authService.logout()">Выйти</a>-->
-    {{currentUser?.first_name}}
-    <jg-image class="user-picture" [src]="currentUser?.photo_50"></jg-image>
-    <i class="fa fa-caret-down" aria-hidden="true"></i>
+    <div class="user-block" [ngClass]="{'_menu_opened': _menuOpened}" *ngIf="_currentUser">
+      <div class="user-title" (click)="_onUserMenuClick($event)">
+        {{_currentUser?.first_name}}
+        <jg-image class="user-picture" [src]="_currentUser?.photo_50"></jg-image>
+        <i class="fa fa-caret-down" aria-hidden="true"></i>
+      </div>
+
+      <div class="user-menu">
+        <ul>
+          <li>
+            <a style="cursor: pointer" *ngIf="_authService.isAuthorized()"
+               (click)="_authService.logout()">
+              Выйти
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </div>

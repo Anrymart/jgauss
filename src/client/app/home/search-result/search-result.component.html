@@ -1,27 +1,21 @@
-<div class="page-margin-container">
-  <div class="result-user-info" [ngClass]="{_visible: _targetUser}" *ngIf="_targetUser">
-    <jg-image [src]="_targetUser.photo_100"></jg-image>
-    <div>
-      <h2 class="result-user-name">
-        {{_targetUser.first_name}} {{_targetUser.last_name}}
-      </h2>
-      <p>
+<div class="result-user-info" [ngClass]="{_visible: _targetUser}" *ngIf="_targetUser">
+  <jg-image [src]="_targetUser.photo_100"></jg-image>
+  <div>
+    <h2 class="result-user-name">
+      {{_targetUser.first_name}} {{_targetUser.last_name}}
+    </h2>
+    <p>
         <span *ngIf="_targetUser?.friendsCount">
           {{_targetUser.friendsCount | numeral: '{"1": "друг", "2": "друга", "5": "друзей"}'}},
         </span>
-        <span *ngIf="_graphData?.links">
+      <span *ngIf="_graphData?.links">
           {{_graphData.links.length | numeral: '{"1": "связь", "2": "связи", "5": "связей"}'}}
         </span>
-      </p>
-      <!--<p *ngIf="_targetUser.linkDensity">-->
-      <!--Плотность связей-->
-      <!--{{_targetUser.linkDensity}}%-->
-      <!--</p>-->
-    </div>
+    </p>
   </div>
+</div>
 
-  <div class="graph-container">
-    <jg-user-card (onUserSwitch)="search($event.domain)" #userCard></jg-user-card>
-    <jg-graph #graph [data]="_graphData" [loading]="_loading" (onUserClick)="userCard.show($event)"></jg-graph>
-  </div>
+<div class="graph-container">
+  <jg-user-card (onUserSwitch)="search($event.domain)" #userCard></jg-user-card>
+  <jg-graph #graph [data]="_graphData" [loading]="_loading" (onUserClick)="userCard.show($event)"></jg-graph>
 </div>
