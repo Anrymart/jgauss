@@ -3,6 +3,7 @@
   <div>
     <h2 class="result-user-name">
       {{_targetUser.first_name}} {{_targetUser.last_name}}
+      <i class="fa fa-external-link" aria-hidden="true"></i>
     </h2>
     <p>
         <span *ngIf="_targetUser?.friendsCount">
@@ -17,5 +18,5 @@
 
 <div class="graph-container">
   <jg-user-card (onUserSwitch)="search($event.domain)" #userCard></jg-user-card>
-  <jg-graph #graph [data]="_graphData" [loading]="_loading" (onUserClick)="userCard.show($event)"></jg-graph>
+  <jg-graph #graph [data]="_graphData" [loading]="_loading" (onUserClick)="userCard.load($event)"></jg-graph>
 </div>

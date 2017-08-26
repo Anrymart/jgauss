@@ -1,9 +1,10 @@
 # TODO list
 
 ### Major priority
-- Fix graph sort, does't work after play click
-- Show social links: facebook, instagram and others
+- Fix double SearchFormComponent._search() call
+- onCheck is called after graph node hover
 - Add url params in accordance with search query (+add footer link to my page)
+- Show social links: facebook, instagram and others
 - Refactor: remove countless modules, combine all in one home or search-result module
 
 ### Minor priority

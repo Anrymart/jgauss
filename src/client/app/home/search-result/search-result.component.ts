@@ -1,5 +1,5 @@
-import {ChangeDetectorRef, Component, Input} from "@angular/core";
-import {GraphData} from "./graph/graph-data";
+import {ChangeDetectorRef, Component, Input, OnInit} from "@angular/core";
+import {GraphData} from "./graph/graph-data.model";
 import {Subscription} from "rxjs/Subscription";
 import {VkDataService} from "../../services/vk-data.sevice";
 import {PropertyHandler} from "../../util/property-handler";
@@ -10,7 +10,7 @@ import {PropertyHandler} from "../../util/property-handler";
   templateUrl: 'search-result.component.html',
   styleUrls: ['search-result.component.css']
 })
-export class SearchResultComponent {
+export class SearchResultComponent implements OnInit {
 
   @PropertyHandler({
     afterChange(query: string) {
@@ -31,16 +31,17 @@ export class SearchResultComponent {
               private changeDetectorRef: ChangeDetectorRef) {
   }
 
-  async search(query: string) {
-    console.log(query);
+  ngOnInit(): void {
+    console.log('Search result init');
+  }
 
-    if (this.friendsSubscription) {
-      this.friendsSubscription.unsubscribe();
-    }
+  async load(targetUser: any) {
 
-    this.clearData();
+    console.log('Loading results');
+    this.refresh();
 
-    let targetUser = this._targetUser = await this.dataService.getUser(query);
+    this._targetUser = targetUser;
+
     let targetUserId = targetUser.uid;
 
     let targetUserFriends = await this.dataService.getUserFriends(
@@ -50,7 +51,7 @@ export class SearchResultComponent {
       });
     console.log(targetUserFriends);
 
-    this._targetUser.friendsCount = targetUserFriends.length;
+    targetUser.friendsCount = targetUserFriends.length;
 
     let primaryLinks = targetUserFriends.map((friend: any) => {
       return {source: +targetUserId, target: friend.uid};
@@ -95,7 +96,7 @@ export class SearchResultComponent {
         () => {
           console.log('complete');
           this._loading = false;
-          this._targetUser.linkDensity =
+          targetUser.linkDensity =
             Math.round(2 * this._graphData.links.length / (targetUserFriends.length * (targetUserFriends.length - 1)) * 100);
           this.changeDetectorRef.detectChanges();
         });
@@ -110,7 +111,10 @@ export class SearchResultComponent {
       });
   }
 
-  private clearData(): void {
+  private refresh(): void {
+    if (this.friendsSubscription) {
+      this.friendsSubscription.unsubscribe();
+    }
     this._loading = true;
     this._targetUser = {};
     this._graphData = null;

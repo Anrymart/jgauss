@@ -1,10 +1,13 @@
-import {AfterViewInit, Component, EventEmitter, HostListener, Input, NgZone, OnChanges, Output} from '@angular/core';
+import {
+  AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, NgZone, OnChanges,
+  Output
+} from '@angular/core';
 import * as d3 from 'd3';
 import {Simulation, SimulationLinkDatum, SimulationNodeDatum} from 'd3-force';
 import {BaseType, Selection} from 'd3-selection';
-import {GraphColors} from './graph-colors';
-import {GraphData} from './graph-data';
+import {GraphData} from './graph-data.model';
 import {PropertyHandler} from '../../../util/property-handler';
+import {GraphSearchService} from "./graph-search.service";
 
 @Component({
   moduleId: module.id,
@@ -18,9 +21,10 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     afterChange(data: GraphData) {
       if (!data) {
         this.data = {nodes: [], links: []};
-        // run simulation
         this._simulationState.paused = false;
       }
+      this.searchService.reset();
+      this.searchService.setData(this.data);
     }
   })
   @Input()
@@ -48,19 +52,21 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     link: Selection<BaseType, {}, BaseType, any>
   } = {node: null, link: null, container: null};
 
-  constructor(private zone: NgZone) {
+  constructor(private zone: NgZone, private searchService: GraphSearchService, private elementRef: ElementRef) {
   }
 
   ngAfterViewInit(): void {
-    // this.resize();
+    this.resize();
     this.restart();
+
+    // this.elementRef.nativeElement.addEventListener('', );
   }
 
   ngOnChanges(): void {
     this.restart();
   }
 
-  restart() {
+  restart(): void {
     console.log('restart graph');
 
     if (this._simulationState.paused) {
@@ -140,17 +146,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
         node = addedNode.merge(node)
           .attr('r', 5)
-          .attr('fill', (d: any) => {
-              switch (+d.uid) {
-                case this.data.target && +this.data.target.uid:
-                  return GraphColors.target;
-                case this.data.owner && +this.data.owner.uid:
-                  return GraphColors.owner;
-                default:
-                  return color('');
-              }
-            }
-          );
+          .attr('fill', this.searchService.getColorFunction());
 
         let dragstarted = (d: any) => {
           if (this._simulationState.paused) {
@@ -222,110 +218,43 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     );
   }
 
-  _sortByType(sortType?: string): void {
-    let color = d3.scaleOrdinal(d3.schemeCategory20);
-
-    let paint = (d: any) => {
-      return color(d);
-    };
-    switch (sortType) {
-      case 'sex':
-        paint = (d: { sex: 1 | 2 }) => {
-          return GraphColors.sex[d.sex];
-        };
-        break;
-      case 'online':
-        paint = (d: { online: 0 | 1 }) => {
-          return GraphColors.online[d.online];
-        };
-        break;
-      case 'owner-friends':
-        if (this.data.owner && this.data.owner.friends) {
-          paint = (d: any) => {
-            if (~this.data.owner.friends.indexOf(d.uid)) {
-              return '#206CAF';
-            }
-            if (d.uid == this.data.owner.uid) {
-              return GraphColors.owner;
-            }
-            return '#CCCCCC';
-          };
-        }
-        break;
-      case 'recent-friends':
-        break;
-      default:
-        paint = (d: any) => {
-          switch (+d.uid) {
-            case this.data.target && +this.data.target.uid:
-              return GraphColors.target;
-            case this.data.owner && +this.data.owner.uid:
-              return GraphColors.owner;
-            default:
-              return color(null);
-          }
-        };
-        break;
-    }
-
-    let node = this.groups.node
-      .selectAll('circle')
-      .transition()
-      .duration(500)
-      .attr('fill', paint)
-  }
-
-  private sortByUid(uids: any[]): void {
-    let color = d3.scaleOrdinal(d3.schemeCategory20);
-
-    let paint = (d: any) => {
-      if (~uids.indexOf(+d.uid)) {
-        return '#206CAF';
-      }
-      return '#CCCCCC';
-    };
-
-    let node = this.groups.node
-      .selectAll('circle')
-      .transition()
-      .duration(500)
-      .attr('fill', paint)
-  }
-
   @HostListener('window: resize')
   resize(): void {
     let height = document.documentElement.clientHeight;
-    document.getElementById('jgauss-graph').style.height = 0.7 * height + 'px';
-    document.getElementById('jgauss-graph').parentElement.style.height = 0.7 * height + 'px';
-  }
-
-  _search(searchQuery: string) {
-    let searchRegexp = new RegExp(searchQuery, 'i');
-    let searchFields = ['first_name', 'last_name', 'domain', 'university_name', 'faculty_name'];
-    let matchedNodes: number[] = [];
-    this.data.nodes.forEach((node: any) => {
-      for (let field of searchFields) {
-        if (typeof node[field] == 'string' && node[field].search(searchRegexp) != -1) {
-          matchedNodes.push(node.uid);
-          break;
-        }
-      }
-    });
-    this.sortByUid(matchedNodes);
-    console.log(searchQuery, matchedNodes);
-  }
-
-  _pause(isPaused: boolean) {
-    if (isPaused != this._simulationState.paused) {
-      this._simulationState.paused = isPaused;
-      this.zone.runOutsideAngular(() => {
-        if (isPaused) {
-          this.simulation.stop();
-        } else {
-          this.restart();
-        }
-      });
+    let graphElement = document.getElementById('jgauss-graph');
+    if (graphElement) {
+      let graphHeight = .7 * height + 'px';
+      graphElement.style.height = graphHeight;
+      graphElement.parentElement.style.height = graphHeight;
     }
   }
 
+  _pause(isPaused: boolean) {
+    this._simulationState.paused = isPaused;
+    this.zone.runOutsideAngular(() => {
+      if (isPaused) {
+        this.simulation.stop();
+      } else {
+        this.restart();
+      }
+    });
+  }
+
+  _search(searchQuery: string) {
+    let color = this.searchService.search(searchQuery).getColorFunction();
+    this.repaint(color);
+  }
+
+  _sort(sortType?: string): void {
+    let color = this.searchService.sort(sortType).getColorFunction();
+    this.repaint(color);
+  }
+
+  private repaint(color: (data: any) => string): void {
+    this.groups.node
+      .selectAll('circle')
+      .transition()
+      .duration(500)
+      .attr('fill', color)
+  }
 }

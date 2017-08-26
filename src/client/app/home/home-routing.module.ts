@@ -5,7 +5,8 @@ import {HomeComponent} from './home.component';
 @NgModule({
   imports: [
     RouterModule.forChild([
-      {path: '', component: HomeComponent}
+      {path: ':id', component: HomeComponent},
+      {path: '', redirectTo: '/go', pathMatch: 'full'}
     ])
   ],
   exports: [RouterModule]

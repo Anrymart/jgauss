@@ -1,4 +1,7 @@
-import {Component, EventEmitter, Output} from "@angular/core";
+import {Component, EventEmitter, Input, Output} from "@angular/core";
+import {Router} from "@angular/router";
+import {PropertyHandler} from "../../util/property-handler";
+import {VkDataService} from "../../services/vk-data.sevice";
 
 @Component({
   moduleId: module.id,
@@ -8,12 +11,37 @@ import {Component, EventEmitter, Output} from "@angular/core";
 })
 export class SearchFormComponent {
 
+  @PropertyHandler({
+    beforeChange(value: string): boolean | void {
+      if (value == 'go') {
+        return false;
+      }
+
+      // user has manually changed url
+      this._onSearch(value);
+    }
+  })
+  @Input()
+  query: string;
+
   @Output()
-  onSearch: EventEmitter<string> = new EventEmitter<string>();
+  onSearch: EventEmitter<any> = new EventEmitter<any>();
 
-  searchQuery: string;
+  _inputQuery: string;
 
-  _onSearch() {
-    this.onSearch.emit(this.searchQuery);
+  constructor(private router: Router,
+              private dataService: VkDataService) {
+  }
+
+  async _onSearch(query: string) {
+    this._inputQuery = query;
+
+    let targetUser = await this.dataService.getUser(query);
+
+    // noinspection JSIgnoredPromiseFromCall
+    this.router.navigate(['/', `id${targetUser.uid}`]);
+
+    this.onSearch.emit(targetUser);
+    // this.onSearch.emit(JSON.stringify(targetUser));
   }
 }
