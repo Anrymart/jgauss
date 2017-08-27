@@ -1,7 +1,7 @@
 <div class="page-margin-container">
   <jg-auth-form *ngIf="!_authorized"></jg-auth-form>
   <div *ngIf="_authorized">
-    <jg-search-form #searchForm [query]="_urlParam" (onSearch)="searchResult.load($event)"></jg-search-form>
+    <jg-search-form #searchForm (onSearch)="searchResult.load($event)"></jg-search-form>
     <jg-search-result #searchResult [searchQuery]="_searchQuery"></jg-search-result>
   </div>
 </div>

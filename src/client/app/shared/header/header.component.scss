@@ -136,6 +136,8 @@ nav {
     line-height: 30px;
     cursor: pointer;
     @include item-transition;
+    text-decoration: none;
+    color: $font-default-color;
 
     &:hover {
       background: $item-hover-background;

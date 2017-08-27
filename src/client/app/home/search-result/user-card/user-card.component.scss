@@ -18,22 +18,16 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
+}
 
-  &__title {
-    text-align: center;
-    font-weight: normal;
-    font-size: 16px;
+.user-name {
+  text-align: center;
+  font-weight: normal;
+  font-size: 16px;
+}
 
-    a {
-      color: $font-default-color;
-      text-decoration: none;
-      transition: all .2s ease;
-
-      &:hover {
-        color: $base-color;
-      }
-    }
-  }
+.profile-link {
+  margin-left: 5px;
 }
 
 jg-image {

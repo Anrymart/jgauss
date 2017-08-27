@@ -1,9 +1,9 @@
 <div class="result-user-info" [ngClass]="{_visible: _targetUser}" *ngIf="_targetUser">
-  <jg-image [src]="_targetUser.photo_100"></jg-image>
+  <jg-image [src]="_targetUser.photo_200"></jg-image>
   <div>
     <h2 class="result-user-name">
       {{_targetUser.first_name}} {{_targetUser.last_name}}
-      <i class="fa fa-external-link" aria-hidden="true"></i>
+      <a href="//vk.com/{{_targetUser.domain}}" class="fa fa-external-link" aria-hidden="true"></a>
     </h2>
     <p>
         <span *ngIf="_targetUser?.friendsCount">
@@ -13,10 +13,21 @@
           {{_graphData.links.length | numeral: '{"1": "связь", "2": "связи", "5": "связей"}'}}
         </span>
     </p>
+    <p>Вуз: МФТИ (ГУ)</p>
+    <p>Факультет: Радиотехники и кибернетики</p>
+  </div>
+  <div>
+    <p>
+      <!--todo: create jg-social-icon-->
+      <a target="blank" *ngIf="_targetUser.instagram" href="//instagram.com/{{_targetUser.instagram}}"
+         class="fa fa-instagram" aria-hidden="true"></a>
+      <a target="blank" *ngIf="_targetUser.twitter" href="//twitter.com/{{_targetUser.twitter}}"
+         class="fa fa-twitter" aria-hidden="true"></a>
+    </p>
   </div>
 </div>
 
 <div class="graph-container">
   <jg-user-card (onUserSwitch)="search($event.domain)" #userCard></jg-user-card>
-  <jg-graph #graph [data]="_graphData" [loading]="_loading" (onUserClick)="userCard.load($event)"></jg-graph>
+  <jg-graph #graph [data]="_graphData" [loading]="_loading" (onUserClick)="userCard.show($event)"></jg-graph>
 </div>

@@ -13,9 +13,13 @@ html, body {
   color: $font-default-color;
 }
 
-body {
-  display: flex;
-  flex-direction: column;
+a {
+  color: $base-color;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 /* Box-sizing border-box */

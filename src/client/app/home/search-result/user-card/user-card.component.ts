@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, Output} from "@angular/core";
 import {PropertyHandler} from "../../../util/property-handler";
 import {animate, keyframes, state, style, transition, trigger} from "@angular/animations";
+import {Router} from "@angular/router";
 
 @Component({
   moduleId: module.id,
@@ -44,15 +45,14 @@ export class UserCardComponent {
 
   _userCardData: any[];
 
+  constructor(private router: Router) {
+  }
+
   show(userData: any): void {
     this.visible = true;
     this.userData = userData;
     this._userCardData = Object.keys(userData).map((key: string) => {
       return {key: key, value: JSON.stringify(userData[key])};
     });
-  }
-
-  onUserClick(): void {
-    this.onUserSwitch.emit(this.userData);
   }
 }
