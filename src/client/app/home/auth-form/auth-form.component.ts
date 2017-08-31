@@ -15,6 +15,6 @@ export class AuthFormComponent {
   login(): void {
     this.authService.login(function (status: any) {
       console.log(status);
-    });
+    }, 2);
   }
 }

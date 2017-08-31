@@ -30,6 +30,11 @@ $item-hover-background: $base-transparent-color;
   height: $header-height;
 }
 
+.header-logo {
+  opacity: .9;
+  margin-bottom: 4px;
+}
+
 nav {
   display: flex;
   align-items: stretch;
@@ -101,7 +106,7 @@ nav {
   padding: 5px 0;
   border-radius: $border-radius;
   position: absolute;
-  background-color: $background-light-color;
+  background-color: $background-primary-color;
   top: $header-height + 20px;
   right: 0;
   @include light-shadow;

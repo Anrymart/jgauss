@@ -2,20 +2,28 @@
 @import "../../../scss/mixins";
 @import "../../../scss/variables";
 
+:host {
+  display: block;
+}
+
 .result-user-info {
-  padding: 20px 0;
   display: flex;
-  //align-items: center;
   @include visibility-transition(0.3s);
   font-size: 14px;
 
   jg-image {
-    @include light-shadow;
+    @include container-shadow;
     border-radius: $border-radius;
+    background-color: $background-primary-color;
   }
 
-  & > * {
-    margin-right: 20px;
+  & > div {
+    padding: 20px;
+    margin-left: 20px;
+    flex-grow: 1;
+    @include container-shadow;
+    border-radius: $border-radius;
+    background-color: $background-primary-color;
   }
 
   a {
@@ -29,5 +37,9 @@
 }
 
 .graph-container {
+  margin-top: 20px;
   position: relative;
+  @include container-shadow;
+  border-radius: $border-radius;
+  background-color: $background-primary-color;
 }

@@ -43,8 +43,10 @@
     height: $height;
     border-radius: $border-radius;
     border-color: $border-dark-color;
+    border-style: none;
     background-color: white;
     padding-right: $search-button-width;
+    @include light-shadow;
 
     &:-webkit-autofill {
       -webkit-box-shadow: 0 0 0 30px white inset;
