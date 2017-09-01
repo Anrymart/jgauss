@@ -1,0 +1,33 @@
+@import "../../../scss/mixins";
+@import "../../../scss/colors";
+
+.social-icon {
+  margin-right: 12px;
+  display: inline-block;
+
+  a {
+    font-size: 18px;
+    padding: 0;
+    text-decoration: none;
+  }
+}
+
+.fa-vk {
+  color: $vk-color;
+}
+
+.fa-facebook {
+  color: $facebook-color;
+}
+
+.fa-twitter {
+  color: $twitter-color;
+}
+
+.fa-instagram {
+  color: $instagram-color;
+}
+
+.fa-linkedin {
+  color: $linkedin-color;
+}

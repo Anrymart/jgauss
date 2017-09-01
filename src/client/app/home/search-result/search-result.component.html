@@ -1,25 +1,29 @@
-<div class="result-user-info" [ngClass]="{_visible: _targetUser}" *ngIf="_targetUser">
+<div class="profile-container" [ngClass]="{_visible: _targetUser}" *ngIf="_targetUser">
   <jg-image [src]="_targetUser.photo_200"></jg-image>
-  <div>
-    <h2 class="result-user-name">
-      {{_targetUser.first_name}} {{_targetUser.last_name}}
-      <a target="_blank" href="//vk.com/{{_targetUser.domain}}" class="fa fa-external-link" aria-hidden="true"></a>
-
-      <a target="blank" *ngIf="_targetUser.instagram" href="//instagram.com/{{_targetUser.instagram}}"
-         class="fa fa-instagram" aria-hidden="true"></a>
-      <a target="blank" *ngIf="_targetUser.twitter" href="//twitter.com/{{_targetUser.twitter}}"
-         class="fa fa-twitter" aria-hidden="true"></a>
-    </h2>
-    <p>
+  <div class="profile-info">
+    <div class="profile-header">
+      <div class="profile-name">
+        <h2>
+          {{_targetUser.first_name}} {{_targetUser.last_name}}
+        </h2>
+      </div>
+      <div class="focus-out">
         <span *ngIf="_targetUser?.friendsCount">
           {{_targetUser.friendsCount | numeral: '{"1": "друг", "2": "друга", "5": "друзей"}'}},
         </span>
-      <span *ngIf="_graphData?.links">
+        <span *ngIf="_graphData?.links">
           {{_graphData.links.length | numeral: '{"1": "связь", "2": "связи", "5": "связей"}'}}
         </span>
-    </p>
-    <p>Вуз: МФТИ (ГУ)</p>
-    <p>Факультет: Радиотехники и кибернетики</p>
+      </div>
+      <div style="flex-basis: 100%; margin-bottom: 8px;">
+        <jg-social-icon [service]="'vk'" [profile]="_targetUser.domain"></jg-social-icon>
+        <jg-social-icon [service]="'instagram'" [profile]="_targetUser.instagram"></jg-social-icon>
+        <jg-social-icon [service]="'twitter'" [profile]="_targetUser.twitter"></jg-social-icon>
+      </div>
+    </div>
+    <p><span class="focus-out" *ngIf="_targetUser.home_town">Родной город:</span> {{_targetUser.home_town}}</p>
+    <p><span class="focus-out" *ngIf="_targetUser.university_name">Вуз:</span> {{_targetUser.university_name}}</p>
+    <p><span class="focus-out" *ngIf="_targetUser.faculty_name">Факультет:</span> {{_targetUser.faculty_name}}</p>
   </div>
 </div>
 

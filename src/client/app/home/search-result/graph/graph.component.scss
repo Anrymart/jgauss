@@ -9,9 +9,13 @@
 }
 
 svg {
-  border-bottom: 1px solid $border-color;
-  //border-radius: $border-radius;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
   width: 100%;
   height: 500px;
+}
+
+.graph-sort-toolbar {
+  margin: 10px 0;
 }
 

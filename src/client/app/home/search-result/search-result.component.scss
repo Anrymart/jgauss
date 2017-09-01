@@ -6,40 +6,52 @@
   display: block;
 }
 
-.result-user-info {
+.profile-container {
   display: flex;
+  flex-wrap: wrap;
   @include visibility-transition(0.3s);
   font-size: 14px;
-
-  jg-image {
-    @include container-shadow;
-    border-radius: $border-radius;
-    background-color: $background-primary-color;
-  }
-
-  & > div {
-    padding: 20px;
-    margin-left: 20px;
-    flex-grow: 1;
-    @include container-shadow;
-    border-radius: $border-radius;
-    background-color: $background-primary-color;
-  }
 
   a {
     color: $font-default-color;
   }
 }
 
-.result-user-name {
-  font-size: 20px;
-  font-weight: normal;
+jg-image {
+  border-radius: 2 * $border-radius;
+  margin-right: 30px;
+}
+
+.profile-info {
+  flex-grow: 1;
+}
+
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid $border-color;
+  border-bottom: 1px solid $border-color;
+  flex-wrap: wrap;
+}
+
+.profile-name {
+  display: flex;
+  align-items: center;
+  //flex-wrap: wrap;
+
+  h2 {
+    //width: 100%;
+    font-size: 20px;
+    font-weight: normal;
+  }
+}
+
+.focus-out {
+  color: #939393;
 }
 
 .graph-container {
-  margin-top: 20px;
+  margin-top: 30px;
   position: relative;
-  @include container-shadow;
-  border-radius: $border-radius;
-  background-color: $background-primary-color;
 }
