@@ -1,8 +1,11 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from "@angular/core";
+import {ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild} from "@angular/core";
 import {GraphData} from "./graph/graph-data.model";
 import {Subscription} from "rxjs/Subscription";
-import {VkDataService} from "../../services/vk-data.sevice";
+import {VkCity, VkDataService} from "../../services/vk-data.sevice";
 import {PropertyHandler} from "../../util/property-handler";
+import {VkOpenApi} from "../../../../types/vk";
+
+declare const VK: VkOpenApi;
 
 @Component({
   moduleId: module.id,
@@ -24,6 +27,9 @@ export class SearchResultComponent implements OnInit {
 
   _graphData: GraphData = {nodes: [], links: []};
   _loading: boolean;
+
+  @ViewChild('comments')
+  comments: ElementRef;
 
   private friendsSubscription: Subscription;
 
@@ -74,12 +80,12 @@ export class SearchResultComponent implements OnInit {
           let secondaryLinks: { source: number, target: number }[] = [];
           data.response.forEach(function (friend: { id: number, l: number[] }) {
 
-            // // add loaded friends to graph node
-            // for (let f of targetUserFriends) {
-            //   if (f.id == friend.id) {
-            //     f.friends = friend.l;
-            //   }
-            // }
+            // add loaded friends to graph node
+            for (let f of targetUserFriends) {
+              if (f.id == friend.id) {
+                f.friends = friend.l;
+              }
+            }
 
             // add links to graph data
             for (let targetId of friend.l) {
@@ -107,7 +113,13 @@ export class SearchResultComponent implements OnInit {
     this.getOwnerInfo();
 
     // noinspection JSIgnoredPromiseFromCall
-    this.getCitiesInfo();
+    this.getCityTitles();
+
+    let commentsElement = this.comments.nativeElement;
+    while (commentsElement.firstChild) {
+      commentsElement.removeChild(commentsElement.firstChild);
+    }
+    VK.Widgets.Comments('vk-comments', {}, targetUserId);
   }
 
   async getOwnerInfo(): Promise<{ friends: any[] }> {
@@ -120,15 +132,23 @@ export class SearchResultComponent implements OnInit {
       });
   }
 
-  async getCitiesInfo() {
-    let cityCodes: number[] = [];
+  async getCityTitles() {
+    let cityIds: number[] = [];
     this._graphData.nodes.forEach((node) => {
-      if (!cityCodes.includes(node.city)) {
-        cityCodes.push(node.city);
+      if (!cityIds.includes(node.city)) {
+        cityIds.push(node.city);
       }
     });
 
-    // Vk.Api.call('database.getCitiesById');
+    let cityList = await this.dataService.getCitiesById(cityIds);
+    let cities: any = {};
+    cityList.forEach((city: VkCity) => {
+      cities[city.cid] = city.name;
+    });
+
+    this._graphData.nodes.forEach((node: any) => {
+      node.city_name = cities[node.city];
+    });
   }
 
   private refresh(): void {

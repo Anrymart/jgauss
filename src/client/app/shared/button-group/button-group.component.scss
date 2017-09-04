@@ -25,11 +25,15 @@ button {
     border-bottom-right-radius: $border-radius;
   }
 
-  &._active {
+  &._active, &._active:hover {
     background-color: $base-color;
     border-color: $base-color;
     color: white;
     position: relative;
     z-index: 2;
+  }
+
+  &:hover {
+    background-color: $base-transparent-color;
   }
 }

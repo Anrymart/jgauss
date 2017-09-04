@@ -100,6 +100,20 @@ export class VkDataService {
       }
     });
   }
+
+  getCitiesById(cityIds: number[]): Promise<VkCity[]> {
+    return new Promise((resolve) => {
+      VK.Api.call('database.getCitiesById', {city_ids: cityIds},
+        function handleResponse({response}: any) {
+          resolve(response);
+        });
+    });
+  }
+}
+
+export interface VkCity {
+  cid: number;
+  name: string;
 }
 
 class RequestQueue {

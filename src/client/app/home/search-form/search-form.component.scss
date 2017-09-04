@@ -47,10 +47,9 @@
     width: 360px;
     height: $height;
     border-radius: $border-radius;
-    border-color: $border-dark-color;
-    border-style: none;
-    background-color: white;
+    border: none $border-dark-color;
     padding-right: $search-button-width;
+    padding-left: 12px;
     @include light-shadow;
 
     &:-webkit-autofill {
