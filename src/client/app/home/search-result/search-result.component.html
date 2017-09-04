@@ -1,5 +1,5 @@
 <div class="profile-container" [ngClass]="{_visible: _targetUser}" *ngIf="_targetUser">
-  <jg-image [src]="_targetUser.photo_200"></jg-image>
+  <jg-image [src]="_targetUser.photo_200 || _targetUser.photo_200_orig"></jg-image>
   <div class="profile-info">
     <div class="profile-header">
       <div class="profile-name">
@@ -21,13 +21,15 @@
         <jg-social-icon [service]="'twitter'" [profile]="_targetUser.twitter"></jg-social-icon>
       </div>
     </div>
-    <p><span class="focus-out" *ngIf="_targetUser.home_town">Родной город:</span> {{_targetUser.home_town}}</p>
-    <p><span class="focus-out" *ngIf="_targetUser.university_name">Вуз:</span> {{_targetUser.university_name}}</p>
-    <p><span class="focus-out" *ngIf="_targetUser.faculty_name">Факультет:</span> {{_targetUser.faculty_name}}</p>
+    <div class="profile-params">
+      <p *ngIf="_targetUser.home_town"><span>Родной город:</span> {{_targetUser.home_town}}</p>
+      <p *ngIf="_targetUser.university_name"><span>Вуз:</span> {{_targetUser.university_name}}</p>
+      <p *ngIf="_targetUser.faculty_name"><span>Факультет:</span> {{_targetUser.faculty_name}}</p>
+    </div>
   </div>
 </div>
 
-<div class="graph-container">
+<div class="graph-container" *ngIf="_targetUser">
   <jg-user-card (onUserSwitch)="search($event.domain)" #userCard></jg-user-card>
   <jg-graph #graph [data]="_graphData" [loading]="_loading" (onUserClick)="userCard.show($event)"></jg-graph>
 </div>

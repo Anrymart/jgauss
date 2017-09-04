@@ -4,9 +4,8 @@
 .footer {
   display: flex;
   justify-content: space-between;
-
   margin-top: 40px;
   padding: 40px 0;
-  font-size: 14px;
   border-top: 1px solid $border-color;
+  color: $font-disguise-color;
 }

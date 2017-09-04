@@ -47,8 +47,16 @@ jg-image {
   }
 }
 
+.profile-params {
+  span {
+    display: inline-block;
+    color: $font-disguise-color;
+    width: 120px;
+  }
+}
+
 .focus-out {
-  color: #939393;
+  color: $font-disguise-color;
 }
 
 .graph-container {

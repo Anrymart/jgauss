@@ -1,13 +1,11 @@
-import {
-  AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, NgZone, OnChanges,
-  Output
-} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, HostListener, Input, NgZone, OnChanges, Output} from '@angular/core';
 import * as d3 from 'd3';
 import {Simulation, SimulationLinkDatum, SimulationNodeDatum} from 'd3-force';
 import {BaseType, Selection} from 'd3-selection';
 import {GraphData} from './graph-data.model';
 import {PropertyHandler} from '../../../util/property-handler';
 import {GraphSearchService} from "./graph-search.service";
+import {ButtonGroupButtonModel} from "../../../shared/button-group/button-group.component";
 
 @Component({
   moduleId: module.id,
@@ -24,6 +22,11 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         this._simulationState.paused = false;
       }
       this.searchService.reset();
+      this._buttonGroupModel = [
+        {name: 'default', text: 'Я', active: true},
+        {name: 'owner-friends', text: 'Мои друзья'},
+        {name: 'sex', text: 'Девушки/парни'},
+        {name: 'online', text: 'Пользователи онлайн'}];
       this.searchService.setData(this.data);
     }
   })
@@ -44,6 +47,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     paused?: boolean // is simulation paused
   } = {};
 
+  _buttonGroupModel: ButtonGroupButtonModel[] = [];
+
   private simulation: Simulation<SimulationNodeDatum, SimulationLinkDatum<SimulationNodeDatum>>;
 
   private groups: {
@@ -52,14 +57,13 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     link: Selection<BaseType, {}, BaseType, any>
   } = {node: null, link: null, container: null};
 
-  constructor(private zone: NgZone, private searchService: GraphSearchService, private elementRef: ElementRef) {
+  constructor(private zone: NgZone, private searchService: GraphSearchService) {
+    console.log('graphConstructor');
   }
 
   ngAfterViewInit(): void {
     this.resize();
     this.restart();
-
-    // this.elementRef.nativeElement.addEventListener('', );
   }
 
   ngOnChanges(): void {

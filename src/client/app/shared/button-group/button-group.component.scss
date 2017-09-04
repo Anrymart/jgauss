@@ -1,0 +1,35 @@
+@import "../../../scss/variables";
+@import "../../../scss/colors";
+
+:host {
+  display: flex;
+}
+
+button {
+  color: $base-color;
+  border-radius: 0;
+  height: auto;
+  padding: 8px 16px;
+  border: 1px solid $border-color;
+  background-color: transparent;
+  margin-left: -1px;
+  outline: none;
+
+  &:first-child {
+    border-top-left-radius: $border-radius;
+    border-bottom-left-radius: $border-radius;
+  }
+
+  &:last-child {
+    border-top-right-radius: $border-radius;
+    border-bottom-right-radius: $border-radius;
+  }
+
+  &._active {
+    background-color: $base-color;
+    border-color: $base-color;
+    color: white;
+    position: relative;
+    z-index: 2;
+  }
+}

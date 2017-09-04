@@ -35,6 +35,7 @@ export class SearchResultComponent implements OnInit {
     console.log('Search result init');
   }
 
+  //todo: replace to service
   async load(targetUser: any) {
 
     console.log('Loading results');
@@ -53,7 +54,7 @@ export class SearchResultComponent implements OnInit {
 
     targetUser.friendsCount = targetUserFriends.length;
 
-    let primaryLinks = targetUserFriends.map((friend: any) => {
+    let initialLinks = targetUserFriends.map((friend: any) => {
       return {source: +targetUserId, target: friend.uid};
     });
 
@@ -62,7 +63,7 @@ export class SearchResultComponent implements OnInit {
     targetUserFriends.push(targetUser);
     this._graphData = {
       nodes: targetUserFriends,
-      links: primaryLinks,
+      links: initialLinks,
       target: targetUser
     };
     this.changeDetectorRef.detectChanges();
@@ -100,15 +101,34 @@ export class SearchResultComponent implements OnInit {
             Math.round(2 * this._graphData.links.length / (targetUserFriends.length * (targetUserFriends.length - 1)) * 100);
           this.changeDetectorRef.detectChanges();
         });
-
     //todo: manage errors
 
+    // noinspection JSIgnoredPromiseFromCall
+    this.getOwnerInfo();
+
+    // noinspection JSIgnoredPromiseFromCall
+    this.getCitiesInfo();
+  }
+
+  async getOwnerInfo(): Promise<{ friends: any[] }> {
+    //todo: simplify request
     let owner = this._graphData.owner = await this.dataService.getUser('');
     console.log(owner);
-    owner.friends = await this.dataService.getUserFriends(
+    return owner.friends = await this.dataService.getUserFriends(
       {
         uid: owner.uid
       });
+  }
+
+  async getCitiesInfo() {
+    let cityCodes: number[] = [];
+    this._graphData.nodes.forEach((node) => {
+      if (!cityCodes.includes(node.city)) {
+        cityCodes.push(node.city);
+      }
+    });
+
+    // Vk.Api.call('database.getCitiesById');
   }
 
   private refresh(): void {

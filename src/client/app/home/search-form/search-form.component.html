@@ -1,12 +1,14 @@
 <div class="search-form-container">
-  <p class="description">Находите друзей, стройте социальные графы и исследуйте дружеские связи и социальные группы</p>
+  <p class="description">
+    Находите друзей, стройте социальные графы и исследуйте дружеские связи и социальные группы
+  </p>
 
-  <form class="search-form" (submit)="_onSearch(_inputQuery)">
+  <form class="search-form" (submit)="_onSearch(_searchQuery)">
     <div class="social-logo">
       <i class="fa fa-vk" aria-hidden="true"></i>
     </div>
     <div class="input-container">
-      <input [(ngModel)]="_inputQuery" name="query" placeholder="Поиск">
+      <input [(ngModel)]="_searchQuery" name="query" placeholder="Ссылка на профиль ВКонтакте" autocomplete="off">
       <button class="search-button">
         <i class="fa fa-search" aria-hidden="true"></i>
       </button>

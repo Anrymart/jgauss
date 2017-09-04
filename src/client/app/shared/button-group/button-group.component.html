@@ -1,0 +1,5 @@
+<button *ngFor="let button of buttons"
+        (click)="_onClick(button.name)"
+        [ngClass]="{'_active': button.active}">
+  {{button.text}}
+</button>
