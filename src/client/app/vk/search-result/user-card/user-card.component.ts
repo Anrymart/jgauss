@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, Output} from "@angular/core";
 import {PropertyHandler} from "../../../util/property-handler";
-import {animate, keyframes, state, style, transition, trigger} from "@angular/animations";
+import {animate, keyframes, style, transition, trigger} from "@angular/animations";
 import {Router} from "@angular/router";
 
 @Component({

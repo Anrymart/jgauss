@@ -322,8 +322,8 @@ Forks of this project demonstrate how to extend and integrate with other librari
 │       │   │   ├── about.component.e2e-spec.ts
 │       │   │   ├── about.component.html
 │       │   │   ├── about.component.spec.ts
-│       │   │   ├── about.component.ts
-│       │   │   ├── about.module.ts
+│       │   │   ├── vk.component.ts
+│       │   │   ├── vk.module.ts
 │       │   │   ├── about.routes.ts
 │       │   │   └── index.ts
 │       │   ├── app.component.e2e-spec.ts
@@ -337,8 +337,8 @@ Forks of this project demonstrate how to extend and integrate with other librari
 │       │   │   ├── home.component.e2e-spec.ts
 │       │   │   ├── home.component.html
 │       │   │   ├── home.component.spec.ts
-│       │   │   ├── home.component.ts
-│       │   │   ├── home.module.ts
+│       │   │   ├── vk.component.ts
+│       │   │   ├── vk.module.ts
 │       │   │   ├── home.routes.ts
 │       │   │   └── index.ts
 │       │   ├── i18n.providers.ts

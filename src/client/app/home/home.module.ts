@@ -1,17 +1,12 @@
-import {NgModule} from "@angular/core";
-import {HomeComponent} from "./home.component";
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {HomeRoutingModule} from "./home-routing.module";
-import {SharedModule} from "../shared/shared.module";
-import {VkAuthService} from "../services/vk-auth.sevice";
-import {AuthFormModule} from "./auth-form/auth-form.module";
-import {SearchResultModule} from "./search-result/search-result.module";
-import {SearchFormModule} from "./search-form/search-form.module";
+import {HomeComponent} from "./home.component";
 
 @NgModule({
-  imports: [HomeRoutingModule, SharedModule, SearchFormModule, SearchResultModule, AuthFormModule],
+  imports: [CommonModule, HomeRoutingModule],
   declarations: [HomeComponent],
-  exports: [HomeComponent],
-  providers: [VkAuthService]
+  exports: [HomeComponent]
 })
 export class HomeModule {
 }

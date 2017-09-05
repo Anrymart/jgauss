@@ -1,10 +1,8 @@
-<div class="page-margin-container">
-  <jg-auth-form *ngIf="!_authorized"></jg-auth-form>
-  <div *ngIf="_authorized">
-    <jg-search-form #searchForm
-                    (onSearch)="searchResult.load($event)">
+<h1>Jgauss</h1>
 
-    </jg-search-form>
-    <jg-search-result #searchResult [searchQuery]="_searchQuery"></jg-search-result>
-  </div>
-</div>
+<h3>
+  Войдите, чтобы просматривать социальные графы вас и ваших знакомых.
+</h3>
+<p>
+  <a routerLink="vk">Войти через ВКонтакте</a>
+</p>

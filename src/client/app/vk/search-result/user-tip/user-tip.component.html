@@ -1,7 +1,6 @@
 <div class="container" *ngIf="userData">
-  <img [hidden]="!_imageLoaded" (load)="_imageLoaded = true" [src]="userData.photo_50"/>
+  <img [hidden]="!_imageLoaded" (load)="_onLoad()" [src]="userData.photo_50"/>
   <div [hidden]="_imageLoaded" class="loading">
-    <!--<i class="fa fa-spinner fa-spin fa-fw"></i>-->
   </div>
   <div class="label">{{userData.first_name}} {{userData.last_name}}</div>
 </div>

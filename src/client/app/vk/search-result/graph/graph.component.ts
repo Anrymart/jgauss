@@ -1,4 +1,7 @@
-import {AfterViewInit, Component, EventEmitter, HostListener, Input, NgZone, OnChanges, Output} from '@angular/core';
+import {
+  AfterViewInit, ChangeDetectorRef, Component, EventEmitter, HostListener, Input, NgZone, OnChanges,
+  Output
+} from '@angular/core';
 import * as d3 from 'd3';
 import {Simulation, SimulationLinkDatum, SimulationNodeDatum} from 'd3-force';
 import {BaseType, Selection} from 'd3-selection';
@@ -57,8 +60,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     link: Selection<BaseType, {}, BaseType, any>
   } = {node: null, link: null, container: null};
 
-  constructor(private zone: NgZone, private searchService: GraphSearchService) {
-    console.log('graphConstructor');
+  constructor(private zone: NgZone,
+              private changeDetectorRef: ChangeDetectorRef,
+              private searchService: GraphSearchService) {
   }
 
   ngAfterViewInit(): void {
@@ -135,17 +139,19 @@ export class GraphComponent implements AfterViewInit, OnChanges {
           })
           .on('mouseover', (data: any) => {
             if (!this._simulationState.nodeDrag) {
-              this.zone.run(() => {
-                data.event = d3.event;
-                this._tipData = data;
-                this._tipVisible = true;
-              });
+              // this.zone.run(() => {
+              data.event = d3.event;
+              this._tipData = data;
+              this._tipVisible = true;
+              this.changeDetectorRef.detectChanges();
+              // });
             }
           })
           .on('mouseout', (data: any) => {
-            this.zone.run(() => {
-              this._tipVisible = false;
-            });
+            // this.zone.run(() => {
+            this._tipVisible = false;
+            this.changeDetectorRef.detectChanges();
+            // });
           });
 
         node = addedNode.merge(node)

@@ -1,8 +1,9 @@
+@import "../../scss/colors";
+
 :host {
   display: block;
-  padding: 0;
 }
 
-.user-info {
-  transition: all 400ms ease;
+h3 {
+  color: $font-disguise-color;
 }

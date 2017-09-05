@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild} from "@angular/core";
+import {ChangeDetectorRef, Component, ElementRef, Input, ViewChild} from "@angular/core";
 import {GraphData} from "./graph/graph-data.model";
 import {Subscription} from "rxjs/Subscription";
 import {VkCity, VkDataService} from "../../services/vk-data.sevice";
@@ -13,7 +13,7 @@ declare const VK: VkOpenApi;
   templateUrl: 'search-result.component.html',
   styleUrls: ['search-result.component.css']
 })
-export class SearchResultComponent implements OnInit {
+export class SearchResultComponent {
 
   @PropertyHandler({
     afterChange(query: string) {
@@ -29,7 +29,7 @@ export class SearchResultComponent implements OnInit {
   _loading: boolean;
 
   @ViewChild('comments')
-  comments: ElementRef;
+  private comments: ElementRef;
 
   private friendsSubscription: Subscription;
 
@@ -37,15 +37,13 @@ export class SearchResultComponent implements OnInit {
               private changeDetectorRef: ChangeDetectorRef) {
   }
 
-  ngOnInit(): void {
-    console.log('Search result init');
-  }
-
   //todo: replace to service
   async load(targetUser: any) {
 
-    console.log('Loading results');
     this.refresh();
+    if (!targetUser) {
+      return;
+    }
 
     this._targetUser = targetUser;
 
@@ -56,7 +54,6 @@ export class SearchResultComponent implements OnInit {
         uid: targetUserId,
         fields: '*'
       });
-    console.log(targetUserFriends);
 
     targetUser.friendsCount = targetUserFriends.length;
 
@@ -82,8 +79,15 @@ export class SearchResultComponent implements OnInit {
 
             // add loaded friends to graph node
             for (let f of targetUserFriends) {
-              if (f.id == friend.id) {
+              if (f.uid == friend.id) {
+                if (!friend.l) {
+                  friend.l = [];
+                }
                 f.friends = friend.l;
+                f.common_friends = friend.l.filter((id) => {
+                  return targetFriendIds.includes(id);
+                });
+                break;
               }
             }
 
@@ -97,14 +101,13 @@ export class SearchResultComponent implements OnInit {
           this._graphData.links = this._graphData.links.concat(secondaryLinks);
           this._graphData = Object.assign({}, this._graphData);
           this.changeDetectorRef.detectChanges();
-          console.log(data);
         },
         null,
         () => {
           console.log('complete');
           this._loading = false;
-          targetUser.linkDensity =
-            Math.round(2 * this._graphData.links.length / (targetUserFriends.length * (targetUserFriends.length - 1)) * 100);
+          // targetUser.linkDensity =
+          //   Math.round(2 * this._graphData.links.length / (targetUserFriends.length * (targetUserFriends.length - 1)) * 100);
           this.changeDetectorRef.detectChanges();
         });
     //todo: manage errors
@@ -115,11 +118,7 @@ export class SearchResultComponent implements OnInit {
     // noinspection JSIgnoredPromiseFromCall
     this.getCityTitles();
 
-    let commentsElement = this.comments.nativeElement;
-    while (commentsElement.firstChild) {
-      commentsElement.removeChild(commentsElement.firstChild);
-    }
-    VK.Widgets.Comments('vk-comments', {}, targetUserId);
+    this.updateComments(targetUserId);
   }
 
   async getOwnerInfo(): Promise<{ friends: any[] }> {
@@ -151,12 +150,20 @@ export class SearchResultComponent implements OnInit {
     });
   }
 
+  private updateComments(userId: number) {
+    let commentsElement = this.comments.nativeElement;
+    while (commentsElement.firstChild) {
+      commentsElement.removeChild(commentsElement.firstChild);
+    }
+    VK.Widgets.Comments('vk-comments', {}, userId);
+  }
+
   private refresh(): void {
     if (this.friendsSubscription) {
       this.friendsSubscription.unsubscribe();
     }
     this._loading = true;
-    this._targetUser = {};
+    this._targetUser = null;
     this._graphData = null;
     this.changeDetectorRef.detectChanges();
   }

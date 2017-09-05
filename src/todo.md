@@ -1,11 +1,9 @@
 # TODO list
 
 ### Major priority
-- Add comments
+- Add not found label
 - Add sorting to graph:
-  - recent friends (not permitted by vk)
-  - top rated friends (sharedFriends / friendsCount * C(friendsCount))
-  - probable friends
+  - top rated friends (sharedFriends / friendsCount * C(``friendsCount))
 - Make user-panel on body level
 - Add possibility to show friends of every person
 - Fix user param position if they dont't fit

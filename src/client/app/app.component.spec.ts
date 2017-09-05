@@ -13,7 +13,7 @@ import {
   RouterTestingModule
 } from '@angular/router/testing';
 import { AppComponent } from './app.component';
-import { HomeComponent } from './home/home.component';
+import { HomeComponent } from './vk/home.component';
 import { AboutComponent } from './about/about.component';
 import { HeaderComponent } from './shared/header/header.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';

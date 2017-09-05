@@ -14,9 +14,6 @@ export class SearchFormComponent {
   @Output()
   onSearch: EventEmitter<any> = new EventEmitter<any>();
 
-  @Output()
-  onStartPageOpen: EventEmitter<boolean> = new EventEmitter<boolean>();
-
   _searchQuery: string;
 
   constructor(private route: ActivatedRoute,
@@ -30,7 +27,8 @@ export class SearchFormComponent {
       let urlParam = params.get('id');
 
       if (urlParam == 'go') {
-        this.title.setTitle(`Jgauss, social network graphs`);
+        this.title.setTitle(`ВКонтакте | Jgauss`);
+        this.onSearch.emit(null);
         return;
       }
 
@@ -52,7 +50,7 @@ export class SearchFormComponent {
 
     this.title.setTitle(`${targetUser.first_name} ${targetUser.last_name} | Jgauss`);
     // noinspection JSIgnoredPromiseFromCall
-    this.router.navigate(['/', userPath]);
+    this.router.navigate(['vk/', userPath]);
     this.onSearch.emit(targetUser);
   }
 }

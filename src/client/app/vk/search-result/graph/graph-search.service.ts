@@ -1,6 +1,5 @@
 import {Injectable} from "@angular/core";
 import {GraphData} from "./graph-data.model";
-import * as d3 from "d3";
 
 const COLORS = {
   blue: '#206caf',
@@ -10,10 +9,11 @@ const COLORS = {
   grey: '#cccccc'
 };
 
-const color = d3.scaleOrdinal(d3.schemeCategory20);
-
 @Injectable()
 export class GraphSearchService {
+
+  private static readonly SEARCH_FIELDS: string[] =
+    ['first_name', 'last_name', 'domain', 'university_name', 'faculty_name', 'city_name', 'home_town'];
 
   private data: GraphData;
 
@@ -75,11 +75,10 @@ export class GraphSearchService {
 
   search(query: string): this {
     let searchRegexp = new RegExp(query, 'i');
-    let searchFields = ['first_name', 'last_name', 'domain', 'university_name', 'faculty_name'];
     let matchedNodes: number[] = [];
 
     this.data.nodes.forEach((node: any) => {
-      for (let field of searchFields) {
+      for (let field of GraphSearchService.SEARCH_FIELDS) {
         if (typeof node[field] == 'string' && node[field].search(searchRegexp) != -1) {
           matchedNodes.push(node.uid);
           break;
@@ -94,7 +93,8 @@ export class GraphSearchService {
       return COLORS.grey;
     };
 
-    console.log(query, matchedNodes);
+    this.getBestFriends();
+
     return this;
   }
 
@@ -122,4 +122,25 @@ export class GraphSearchService {
     };
   }
 
+  private getBestFriends(): number[] {
+    if (this.data.target.bestFriends) {
+      return this.data.target.bestFriends;
+    }
+    let rankedFriends = this.data.nodes
+      .filter((node: any) => {
+        return node.uid != this.data.target.uid
+      })
+      .map((node: any) => {
+        return {
+          name: node.first_name + ' ' + node.last_name,
+          id: node.uid,
+          rank: node.common_friends.length / Math.cbrt(node.friends.length)
+        };
+      })
+      .sort((a: any, b: any): number => {
+        return b.rank - a.rank;
+      });
+    console.log(rankedFriends);
+    return this.data.target.bestFriends;
+  }
 }

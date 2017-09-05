@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input} from "@angular/core";
+import {ChangeDetectorRef, Component, ElementRef, Input} from "@angular/core";
 import {PropertyHandler} from "../../../util/property-handler";
 
 @Component({
@@ -29,12 +29,20 @@ export class UserTipComponent {
 
   _imageLoaded: boolean;
 
-  constructor(private elementRef: ElementRef) {
+  constructor(private elementRef: ElementRef,
+              private changeDetectorRef: ChangeDetectorRef) {
   }
 
   private updatePosition() {
-    let elementStyle = this.elementRef.nativeElement.style;
-    elementStyle.left = this.userData.event.offsetX + "px";
-    elementStyle.top = this.userData.event.offsetY + "px";
+    if (this.userData) {
+      let elementStyle = this.elementRef.nativeElement.style;
+      elementStyle.left = this.userData.event.offsetX + "px";
+      elementStyle.top = this.userData.event.offsetY + "px";
+    }
+  }
+
+  _onLoad() {
+    this._imageLoaded = true;
+    this.changeDetectorRef.detectChanges();
   }
 }

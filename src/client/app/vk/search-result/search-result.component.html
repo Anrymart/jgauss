@@ -27,7 +27,6 @@
       <p *ngIf="_targetUser.home_town && _targetUser.home_town != _targetUser.city_name">
         <span>Родной город:</span> {{_targetUser.home_town}}
       </p>
-      <!--occupation: {"type":"work","id":48561952,"name":"Сбербанк-Технологии | СберТех"}-->
       <p *ngIf="_targetUser.occupation">
         <ng-container [ngSwitch]="_targetUser.occupation.type">
           <ng-container *ngSwitchCase="'work'">
@@ -39,18 +38,20 @@
         </ng-container>
       </p>
       <p *ngIf="_targetUser.university_name"><span>Вуз:</span> {{_targetUser.university_name}}</p>
+      <p *ngIf="!_targetUser.university_name && _targetUser.occupation?.type == 'university'">
+        <span>Место учёбы:</span> {{_targetUser.occupation.name}}</p>
       <p *ngIf="_targetUser.faculty_name"><span>Факультет:</span> {{_targetUser.faculty_name}}</p>
     </div>
-
-    <jg-user-card (onUserSwitch)="search($event.domain)" #userCard></jg-user-card>
-    <jg-graph *ngIf="_targetUser" #graph [data]="_graphData" [loading]="_loading"
-              (onUserClick)="userCard.show($event)"></jg-graph>
-
-    <div class="comments">
-      <div id="vk-comments" #comments></div>
-    </div>
-
 
   </div>
 </div>
 
+<ng-container *ngIf="_targetUser">
+  <jg-user-card (onUserSwitch)="search($event.domain)" #userCard></jg-user-card>
+  <jg-graph #graph [data]="_graphData" [loading]="_loading"
+            (onUserClick)="userCard.show($event)"></jg-graph>
+
+  <div class="comments">
+    <div id="vk-comments" #comments></div>
+  </div>
+</ng-container>

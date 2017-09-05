@@ -33,6 +33,6 @@ export function main() {
 
 @Component({
   selector: 'test-cmp',
-  template: '<sd-about></sd-about>'
+  template: '<jg-about></jg-about>'
 })
 class TestComponent {}
