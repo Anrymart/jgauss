@@ -34,12 +34,15 @@ export class VkDataService {
     let domainQueryResult = linkRegExp.exec(query);
 
     let getUserByDomain = (domain: string): any => {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
         VK.Api.call('users.get', {
           user_ids: [domain],
           fields: VkDataService.USER_FIELDS
-        }, function handleResponse({response}: any) {
-          return resolve(response[0]);
+        }, function handleResponse(data: any) {
+          if (data.error) {
+            return reject(data.error);
+          }
+          return resolve(data.response[0]);
         });
       });
     };

@@ -20,8 +20,8 @@
 
 .social-logo {
   font-size: 24px;
-  padding-right: 16px;
-  text-align: center;
+  width: 40px;
+  text-align: left;
 
   .fa-vk {
     color: $vk-color;
@@ -58,17 +58,22 @@
   }
 
   .search-button {
+    position: relative;
     width: $search-button-width;
     height: $height;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: -$search-button-width;
+    left: -$search-button-width;
 
     background-color: transparent;
     border: none;
     outline: none;
     color: $base-color;
   }
+}
 
+.not-found-error {
+  color: $error-color;
+  padding-top: 60px;
 }

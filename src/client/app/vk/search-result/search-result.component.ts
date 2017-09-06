@@ -28,9 +28,6 @@ export class SearchResultComponent {
   _graphData: GraphData = {nodes: [], links: []};
   _loading: boolean;
 
-  @ViewChild('comments')
-  private comments: ElementRef;
-
   private friendsSubscription: Subscription;
 
   constructor(private dataService: VkDataService,
@@ -118,7 +115,7 @@ export class SearchResultComponent {
     // noinspection JSIgnoredPromiseFromCall
     this.getCityTitles();
 
-    this.updateComments(targetUserId);
+    this.updateWidgets(targetUserId);
   }
 
   async getOwnerInfo(): Promise<{ friends: any[] }> {
@@ -150,12 +147,16 @@ export class SearchResultComponent {
     });
   }
 
-  private updateComments(userId: number) {
-    let commentsElement = this.comments.nativeElement;
-    while (commentsElement.firstChild) {
-      commentsElement.removeChild(commentsElement.firstChild);
-    }
+  private updateWidgets(userId: number) {
+    let removeChildren = (element: HTMLElement) => {
+      while (element.firstChild) {
+        element.removeChild(element.firstChild);
+      }
+    };
+    removeChildren(document.getElementById('vk-comments'));
+    removeChildren(document.getElementById('vk-like'));
     VK.Widgets.Comments('vk-comments', {}, userId);
+    VK.Widgets.Like('vk-like', {}, userId);
   }
 
   private refresh(): void {

@@ -3,6 +3,8 @@ $accent-color: #8bc34a;
 
 $primary-color: #559fe0;
 
+$error-color: #ef5350;
+
 $base-transparent-color: transparentize($base-color, .9);
 
 $background-primary-color: #ffffff;
@@ -14,7 +16,6 @@ $border-dark-color: #cccccc;
 $font-default-color: rgba(0, 0, 0, .8);
 $font-light-color: rgba(255, 255, 255, .8);
 $font-disguise-color: rgba(0, 0, 0, .5);
-$font-grey-color: $border-color;
 
 // social colors
 $vk-color: #507299;

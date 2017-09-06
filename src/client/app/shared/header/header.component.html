@@ -16,8 +16,13 @@
       <div class="user-menu">
         <ul>
           <li>
-            <a style="cursor: pointer" *ngIf="_authService.isAuthorized()"
-               (click)="_authService.logout()">
+            <a [routerLink]="'/vk/me'">
+              Мой граф
+            </a>
+          </li>
+          <li class="divider"></li>
+          <li>
+            <a (click)="_authService.logout()">
               Выйти
             </a>
           </li>

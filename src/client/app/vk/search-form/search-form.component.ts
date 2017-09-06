@@ -2,6 +2,7 @@ import {Component, EventEmitter, Output} from "@angular/core";
 import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import {VkDataService} from "../../services/vk-data.sevice";
 import {Title} from "@angular/platform-browser";
+import {PropertyHandler} from "../../util/property-handler";
 
 @Component({
   moduleId: module.id,
@@ -14,7 +15,14 @@ export class SearchFormComponent {
   @Output()
   onSearch: EventEmitter<any> = new EventEmitter<any>();
 
+  @PropertyHandler({
+    afterChange() {
+      this._notFound = false;
+    }
+  })
   _searchQuery: string;
+
+  _notFound: boolean = false;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -40,10 +48,23 @@ export class SearchFormComponent {
   }
 
   async _onSearch(query: string) {
-    this._searchQuery = query;
+    if (query == 'me') {
+      query = '';
+    }
 
-    let targetUser = await this.dataService.getUser(query);
-    console.log(targetUser);
+    this._searchQuery = query;
+    this._notFound = false;
+
+    let targetUser;
+    try {
+      targetUser = await this.dataService.getUser(query);
+    } catch (error) {
+      console.log(error);
+      if (error.error_code == 113) {
+        this._notFound = true;
+      }
+      return;
+    }
 
     let userPath = `id${targetUser.uid}`;
     this._searchQuery = userPath;
