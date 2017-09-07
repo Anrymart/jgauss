@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Output} from "@angular/core";
 import {ActivatedRoute, ParamMap, Router} from "@angular/router";
-import {VkDataService} from "../../services/vk-data.sevice";
+import {VkDataService} from "../services/vk-data.sevice";
 import {Title} from "@angular/platform-browser";
 import {PropertyHandler} from "../../util/property-handler";
 

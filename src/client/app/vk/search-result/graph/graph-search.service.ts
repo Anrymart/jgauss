@@ -93,8 +93,6 @@ export class GraphSearchService {
       return COLORS.grey;
     };
 
-    this.getBestFriends();
-
     return this;
   }
 
@@ -120,27 +118,5 @@ export class GraphSearchService {
           return COLORS.blue;
       }
     };
-  }
-
-  private getBestFriends(): number[] {
-    if (this.data.target.bestFriends) {
-      return this.data.target.bestFriends;
-    }
-    let rankedFriends = this.data.nodes
-      .filter((node: any) => {
-        return node.uid != this.data.target.uid
-      })
-      .map((node: any) => {
-        return {
-          name: node.first_name + ' ' + node.last_name,
-          id: node.uid,
-          rank: node.common_friends.length / Math.cbrt(node.friends.length)
-        };
-      })
-      .sort((a: any, b: any): number => {
-        return b.rank - a.rank;
-      });
-    console.log(rankedFriends);
-    return this.data.target.bestFriends;
   }
 }

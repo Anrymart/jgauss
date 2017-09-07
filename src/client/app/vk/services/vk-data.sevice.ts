@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {VkOpenApi} from "../../../types/vk";
+import {VkCity, VkOpenApi, VkResponse} from "../types/vk";
 import {Observable} from "rxjs/Observable";
 import {Observer} from "rxjs/Observer";
 
@@ -34,16 +34,13 @@ export class VkDataService {
     let domainQueryResult = linkRegExp.exec(query);
 
     let getUserByDomain = (domain: string): any => {
-      return new Promise((resolve, reject) => {
+      return this.promisifyRequest(function (handleResponse) {
         VK.Api.call('users.get', {
           user_ids: [domain],
           fields: VkDataService.USER_FIELDS
-        }, function handleResponse(data: any) {
-          if (data.error) {
-            return reject(data.error);
-          }
-          return resolve(data.response[0]);
-        });
+        }, handleResponse);
+      }).then((users: any) => {
+        return users[0];
       });
     };
 
@@ -57,13 +54,11 @@ export class VkDataService {
   }
 
   getUserFriends(params?: any): Promise<any> {
-    return new Promise((resolve) => {
+    return this.promisifyRequest(function (handleResponse) {
       if (params.fields == '*') {
         params.fields = VkDataService.FRIENDS_FIELDS;
       }
-      VK.Api.call('friends.get', params, function handleResponse({response}: any) {
-        resolve(response);
-      });
+      VK.Api.call('friends.get', params, handleResponse);
     });
   }
 
@@ -105,18 +100,98 @@ export class VkDataService {
   }
 
   getCitiesById(cityIds: number[]): Promise<VkCity[]> {
-    return new Promise((resolve) => {
-      VK.Api.call('database.getCitiesById', {city_ids: cityIds},
-        function handleResponse({response}: any) {
-          resolve(response);
-        });
+    return this.promisifyRequest(function (handleResponse) {
+      VK.Api.call('database.getCitiesById', {city_ids: cityIds}, handleResponse);
     });
   }
-}
 
-export interface VkCity {
-  cid: number;
-  name: string;
+  async getFriendLikesCount(userId: number) {
+    let [posts, photos] = await Promise.all([this.getWallPosts(userId), this.getPhotos(userId)]);
+    console.log(posts, photos);
+  }
+
+  private getWallPosts(userId: number): Promise<any> {
+    return this.promisifyRequest(function (handleResponse) {
+      VK.Api.call('wall.get', {
+        owner_id: userId,
+        filter: 'owner'
+      }, handleResponse);
+    });
+  }
+
+  private getPhotos(userId: number): Promise<any> {
+    return this.promisifyRequest(function (handleResponse) {
+      VK.Api.call('photos.getAll', {
+        owner_id: userId
+      }, handleResponse);
+    });
+  }
+
+  private promisifyRequest<T>(makeRequest: (handleResponse: Function) => void): Promise<T> {
+    return new Promise((resolve, reject) => {
+
+      let handleResponse = (response: VkResponse) => {
+        if (response.response) {
+          resolve(response.response);
+          return;
+        }
+
+        // too many requests error
+        if (response.error && response.error.error_code == 6) {
+          makeRequest(handleResponse);
+          return;
+        }
+
+        // another error
+        console.log(response.error);
+        reject(response.error);
+      };
+
+      makeRequest(handleResponse);
+    });
+  }
+
+  private observableRequests<T>(requests: ((handleResponse: Function) => void)[]): Observable<T> {
+    const INTERVAL = 100;
+
+    let successfulRequest = 0;
+    let requestQueue: Function[] = [];
+
+    let timerId = setInterval(() => {
+      if (requestQueue.length) {
+        requestQueue.shift()();
+      }
+    }, INTERVAL);
+
+    return Observable.create((observer: Observer<any>) => {
+
+      for (let makeRequest of requests) {
+        let handleResponse = (response: VkResponse) => {
+
+          // correct response
+          if (response.response) {
+            observer.next(response.response);
+            if (++successfulRequest == requests.length) {
+              observer.complete();
+              clearInterval(timerId);
+            }
+            return;
+          }
+
+          // too-many-requests error
+          if (response.error && response.error.error_code == 6) {
+            requestQueue.push(function () {
+              makeRequest(handleResponse);
+            });
+            return;
+          }
+
+          // another error
+          console.log(response.error);
+        };
+      }
+    });
+  }
 }
 
 class RequestQueue {

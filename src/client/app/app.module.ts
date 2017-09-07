@@ -9,8 +9,8 @@ import {AboutModule} from './about/about.module';
 import {HomeModule} from './home/home.module';
 import {VkModule} from './vk/vk.module';
 import {SharedModule} from './shared/shared.module';
-import {VkDataService} from "./services/vk-data.sevice";
-import {VkAuthService} from "./services/vk-auth.sevice";
+import {VkDataService} from "./vk/services/vk-data.sevice";
+import {VkAuthService} from "./vk/services/vk-auth.sevice";
 
 @NgModule({
   imports: [BrowserModule, HttpModule, AppRoutingModule, SharedModule.forRoot(), AboutModule, HomeModule, VkModule],

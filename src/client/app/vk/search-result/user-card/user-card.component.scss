@@ -2,9 +2,6 @@
 @import "../../../../scss/mixins";
 @import "../../../../scss/variables";
 
-:host {
-}
-
 .user-card {
   position: fixed;
   overflow: auto;
@@ -34,6 +31,6 @@
 
 jg-image {
   align-self: center;
-  min-height: 200px;
   border-radius: $border-radius;
+  @include visibility-transition(.2s);
 }

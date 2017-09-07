@@ -1,5 +1,8 @@
 import {Component, DoCheck} from "@angular/core";
-import {VkAuthService} from "../services/vk-auth.sevice";
+import {VkAuthService} from "./services/vk-auth.sevice";
+import {VkOpenApi} from "./types/vk";
+
+declare const VK: VkOpenApi;
 
 @Component({
   moduleId: module.id,

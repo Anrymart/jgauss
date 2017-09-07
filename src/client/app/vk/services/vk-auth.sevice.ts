@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs/Observable";
 import {Observer} from "rxjs/Observer";
-import {VkOpenApi} from "../../../types/vk";
+import {VkOpenApi} from "../types/vk";
 
 declare const VK: VkOpenApi;
 

@@ -1,9 +1,9 @@
-import {ChangeDetectorRef, Component, ElementRef, Input, ViewChild} from "@angular/core";
+import {ChangeDetectorRef, Component, Input} from "@angular/core";
 import {GraphData} from "./graph/graph-data.model";
 import {Subscription} from "rxjs/Subscription";
-import {VkCity, VkDataService} from "../../services/vk-data.sevice";
 import {PropertyHandler} from "../../util/property-handler";
-import {VkOpenApi} from "../../../../types/vk";
+import {VkOpenApi} from "../types/vk";
+import {VkCity, VkDataService} from "../services/vk-data.sevice";
 
 declare const VK: VkOpenApi;
 
@@ -167,6 +167,11 @@ export class SearchResultComponent {
     this._targetUser = null;
     this._graphData = null;
     this.changeDetectorRef.detectChanges();
+  }
+
+  //todo: remove
+  _loadLikes(): void {
+    this.dataService.getFriendLikesCount(this._targetUser.uid);
   }
 
 }

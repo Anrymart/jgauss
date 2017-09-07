@@ -102,3 +102,13 @@ export declare type VkObservableEventType =
   "widgets.like.unshared" |
   "widgets.subscribed" |
   "widgets.unsubscribed";
+
+export interface VkResponse {
+  error?: { error_code: number };
+  response?: any;
+}
+
+export interface VkCity {
+  cid: number;
+  name: string;
+}

@@ -1,6 +1,6 @@
-import {Component, NgZone, Renderer2} from "@angular/core";
-import {VkAuthService} from "../../services/vk-auth.sevice";
-import {VkDataService} from "../../services/vk-data.sevice";
+import {Component} from "@angular/core";
+import {VkAuthService} from "../../vk/services/vk-auth.sevice";
+import {VkDataService} from "../../vk/services/vk-data.sevice";
 
 @Component({
   moduleId: module.id,
@@ -17,8 +17,7 @@ export class HeaderComponent {
   _menuOpened: boolean;
 
   constructor(public _authService: VkAuthService,
-              public _dataService: VkDataService,
-              private zone: NgZone) {
+              public _dataService: VkDataService) {
     //todo: getUser is not optimal, add field params
     this._authService.getSessionChange().subscribe((response: any) => {
       if (response.session && !this._currentUser) {

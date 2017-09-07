@@ -1,7 +1,9 @@
 # TODO list
 
 ### Major priority
-- Make clever main-page authorization
+- Add like-based sorting to graph
+- Add page-not-found module
+- Stylize main page
 - Refactor user card
 - Make user-panel on body level
 - Add possibility to show friends of every person
