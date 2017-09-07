@@ -2,8 +2,8 @@ import {ChangeDetectorRef, Component, Input} from "@angular/core";
 import {GraphData} from "./graph/graph-data.model";
 import {Subscription} from "rxjs/Subscription";
 import {PropertyHandler} from "../../util/property-handler";
-import {VkOpenApi} from "../types/vk";
-import {VkCity, VkDataService} from "../services/vk-data.sevice";
+import {VkCity, VkOpenApi} from "../types/vk";
+import {VkDataService} from "../services/vk-data.sevice";
 
 declare const VK: VkOpenApi;
 
@@ -72,7 +72,7 @@ export class SearchResultComponent {
       .getSocialInfo(targetFriendIds)
       .subscribe((data: any) => {
           let secondaryLinks: { source: number, target: number }[] = [];
-          data.response.forEach(function (friend: { id: number, l: number[] }) {
+          data.forEach(function (friend: { id: number, l: number[] }) {
 
             // add loaded friends to graph node
             for (let f of targetUserFriends) {
