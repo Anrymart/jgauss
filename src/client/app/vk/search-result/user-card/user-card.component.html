@@ -2,13 +2,32 @@
   <jg-image [src]="userData.photo_200_orig"></jg-image>
   <h4 class="user-name">
     <a [routerLink]="'/vk/id' + userData.uid">{{userData.first_name + " " + userData.last_name}}</a>
-    <a class="fa fa-external-link" target="_blank" href="//vk.com/{{userData.domain}}">
-    </a>
   </h4>
+  <jg-social-icon [service]="'vk'" [profile]="userData.domain"></jg-social-icon>
   <button (click)="visible = false">Close</button>
-  <ul>
-    <li *ngFor="let entry of _userCardData">
-      {{entry.key}}: {{entry.value}}
-    </li>
-  </ul>
+  <div class="profile-params">
+
+    <p *ngIf="userData.city_name"><span>Город:</span> {{userData.city_name}}</p>
+    <p *ngIf="userData.home_town && userData.home_town != userData.city_name">
+      <span>Родной город:</span> {{userData.home_town}}
+    </p>
+    <p *ngIf="userData.occupation">
+      <ng-container [ngSwitch]="userData.occupation.type">
+        <ng-container *ngSwitchCase="'work'">
+          <span>Место работы:</span> {{userData.occupation.name}}
+        </ng-container>
+        <ng-container *ngSwitchCase="'school'">
+          <span>Школа:</span> {{userData.occupation.name}}
+        </ng-container>
+      </ng-container>
+    </p>
+    <p *ngIf="userData.university_name"><span>Вуз:</span> {{userData.university_name}}</p>
+    <p *ngIf="!userData.university_name && userData.occupation?.type == 'university'">
+      <span>Место учёбы:</span> {{userData.occupation.name}}</p>
+    <p *ngIf="userData.faculty_name"><span>Факультет:</span> {{userData.faculty_name}}</p>
+  </div>
+
+  <div class="user-property" *ngFor="let entry of _userCardData">
+    <span class="property-key">{{entry.key}}:</span> {{entry.value}}
+  </div>
 </div>

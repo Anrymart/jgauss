@@ -6,8 +6,9 @@
        [routerLinkActiveOptions]="{exact:true}">О сервисе</a>
   </nav>
   <div class="right">
-    <div class="user-block" [ngClass]="{'_menu_opened': _menuOpened}" *ngIf="_currentUser">
-      <div class="user-title" (click)="_onUserMenuClick($event)">
+    <div class="user-block" [ngClass]="{'_menu_opened': _menuOpened}" *ngIf="_currentUser"
+         (click)="_onUserMenuClick($event)">
+      <div class="user-title">
         {{_currentUser?.first_name}}
         <jg-image class="user-picture" [src]="_currentUser?.photo_50"></jg-image>
         <i class="fa fa-caret-down" aria-hidden="true"></i>

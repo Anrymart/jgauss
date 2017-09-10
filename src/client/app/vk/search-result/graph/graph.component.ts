@@ -29,6 +29,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         {name: 'default', text: 'Я', active: true},
         {name: 'owner-friends', text: 'Мои друзья'},
         {name: 'sex', text: 'Девушки/парни'},
+        {name: 'target-likes', text: 'Лайкающие друзья'},
         {name: 'online', text: 'Пользователи онлайн'}];
       this.searchService.setData(this.data);
     }
@@ -233,7 +234,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     let height = document.documentElement.clientHeight;
     let graphElement = document.getElementById('jgauss-graph');
     if (graphElement) {
-      let graphHeight = .7 * height + 'px';
+      let graphHeight = .8 * height + 'px';
       graphElement.style.height = graphHeight;
       graphElement.parentElement.style.height = graphHeight;
     }

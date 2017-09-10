@@ -1,9 +1,11 @@
 @import "../../../scss/mixins";
 @import "../../../scss/colors";
 
-.social-icon {
-  margin-right: 12px;
+:host {
   display: inline-block;
+}
+
+.social-icon {
 
   a {
     font-size: 18px;

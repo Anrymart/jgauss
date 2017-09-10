@@ -40,13 +40,20 @@ jg-image {
 .profile-name {
   display: flex;
   align-items: center;
-  //flex-wrap: wrap;
 
-  h2 {
-    //width: 100%;
+  h1 {
     font-size: 20px;
     font-weight: normal;
   }
+}
+
+.online-indicator {
+  margin-left: 6px;
+  content: '•';
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background-color: $accent-color;
 }
 
 .profile-params {
@@ -64,6 +71,10 @@ jg-image {
 jg-graph {
   margin: 40px 0;
   display: block;
+}
+
+jg-social-icon {
+  margin-right: 12px;
 }
 
 .comments {

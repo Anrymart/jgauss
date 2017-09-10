@@ -116,16 +116,23 @@ export class SearchResultComponent {
     this.getCityTitles();
 
     this.updateWidgets(targetUserId);
+
+    this.dataService.getFriendLikesCount(targetUserId).then((friendLikes: any) => {
+      this._graphData.target.friendLikes = friendLikes;
+      this._graphData.nodes.forEach((node: any) => {
+        node.likesCount = friendLikes[node.uid];
+      });
+    });
   }
 
   async getOwnerInfo(): Promise<{ friends: any[] }> {
     //todo: simplify request
     let owner = this._graphData.owner = await this.dataService.getUser('');
-    console.log(owner);
-    return owner.friends = await this.dataService.getUserFriends(
+    owner.friends = await this.dataService.getUserFriends(
       {
         uid: owner.uid
       });
+    return this._graphData.owner = owner;
   }
 
   async getCityTitles() {
@@ -147,7 +154,7 @@ export class SearchResultComponent {
     });
   }
 
-  private updateWidgets(userId: number) {
+  private updateWidgets(userId: number): void {
     let removeChildren = (element: HTMLElement) => {
       while (element.firstChild) {
         element.removeChild(element.firstChild);
@@ -167,11 +174,6 @@ export class SearchResultComponent {
     this._targetUser = null;
     this._graphData = null;
     this.changeDetectorRef.detectChanges();
-  }
-
-  //todo: remove
-  _loadLikes(): void {
-    this.dataService.getFriendLikesCount(this._targetUser.uid);
   }
 
 }

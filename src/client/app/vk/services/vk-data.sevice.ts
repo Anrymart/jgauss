@@ -94,9 +94,59 @@ export class VkDataService {
     });
   }
 
-  async getFriendLikesCount(userId: number) {
+  async getFriendLikesCount(userId: number): Promise<any> {
     let [posts, photos] = await Promise.all([this.getWallPosts(userId), this.getPhotos(userId)]);
     console.log(posts, photos);
+
+    let requests: ((handleResponse: Function) => void)[] = [];
+
+    const step = 25;
+    for (let i = 0; i < posts.length; i += step) {
+      let requestCode = posts.slice(i, i + step).reduce(function reducer(code: string, post: any) {
+        if (post.id) {
+          return code + `{id:${post.id},l:API.likes.getList({type:"post",item_id:${post.id},owner_id:${userId},item_id:${post.id},count:1000}).users},`;
+        }
+        return code;
+      }, '');
+
+      requests.push(function makeRequest(handleResponse: Function) {
+        VK.Api.call('execute', {code: `return [${requestCode}];`}, handleResponse);
+      });
+    }
+
+    for (let i = 0; i < photos.length; i += step) {
+      let requestCode = photos.slice(i, i + step).reduce(function reducer(code: string, photo: any) {
+        if (photo.pid) {
+          return code + `{id:${photo.pid},l:API.likes.getList({type:"photo",item_id:${photo.pid},owner_id:${userId},count:1000}).users},`;
+        }
+        return code;
+      }, '');
+
+      requests.push(function makeRequest(handleResponse: Function) {
+        VK.Api.call('execute', {code: `return [${requestCode}];`}, handleResponse);
+      });
+    }
+
+    let likes: any = {};
+
+    return new Promise((resolve) => {
+      this.observableRequests(requests).subscribe(function next(data: any) {
+        console.log(data);
+        data.forEach((object: { l: number[] }) => {
+          object.l.forEach((userId: number) => {
+            if (!likes[userId]) {
+              likes[userId] = 0;
+            }
+            likes[userId]++;
+            likes.max = Math.max(likes.max || 0, likes[userId]);
+          });
+        })
+      }, null, function complete() {
+        resolve(likes);
+        console.log(likes);
+      });
+    });
+
   }
 
   private getWallPosts(userId: number): Promise<any> {

@@ -1,5 +1,6 @@
 import {Injectable} from "@angular/core";
 import {GraphData} from "./graph-data.model";
+import * as d3 from 'd3';
 
 const COLORS = {
   blue: '#206caf',
@@ -13,7 +14,7 @@ const COLORS = {
 export class GraphSearchService {
 
   private static readonly SEARCH_FIELDS: string[] =
-    ['first_name', 'last_name', 'domain', 'university_name', 'faculty_name', 'city_name', 'home_town'];
+    ['uid', 'first_name', 'last_name', 'domain', 'university_name', 'faculty_name', 'city_name', 'home_town'];
 
   private data: GraphData;
 
@@ -29,6 +30,19 @@ export class GraphSearchService {
     let colorFunction: (d: any) => string = this.getDefaultColorFunction();
 
     switch (type) {
+      case 'owner-friends':
+        if (this.data.owner && this.data.owner.friends) {
+          colorFunction = (d: { uid: number }) => {
+            if (~this.data.owner.friends.indexOf(d.uid)) {
+              return COLORS.blue;
+            }
+            if (d.uid == this.data.owner.uid) {
+              return COLORS.orange;
+            }
+            return COLORS.grey;
+          };
+        }
+        break;
       case 'sex':
         colorFunction = (d: { sex: 1 | 2 }) => {
           switch (+d.sex) {
@@ -51,20 +65,15 @@ export class GraphSearchService {
           }
         };
         break;
-      case 'owner-friends':
-        if (this.data.owner && this.data.owner.friends) {
+      case 'target-likes':
+        if (this.data.target.friendLikes) {
+          let color = d3.scaleLinear()
+            .domain([0, this.data.target.friendLikes.max / 2])
+            .range(<any>[COLORS.grey, COLORS.red]);
           colorFunction = (d: { uid: number }) => {
-            if (~this.data.owner.friends.indexOf(d.uid)) {
-              return COLORS.blue;
-            }
-            if (d.uid == this.data.owner.uid) {
-              return COLORS.orange;
-            }
-            return COLORS.grey;
+            return <any>color(this.data.target.friendLikes[d.uid] || 0);
           };
         }
-        break;
-      case 'recent-friends':
         break;
     }
 
@@ -79,7 +88,7 @@ export class GraphSearchService {
 
     this.data.nodes.forEach((node: any) => {
       for (let field of GraphSearchService.SEARCH_FIELDS) {
-        if (typeof node[field] == 'string' && node[field].search(searchRegexp) != -1) {
+        if (String(node[field]).search(searchRegexp) != -1) {
           matchedNodes.push(node.uid);
           break;
         }

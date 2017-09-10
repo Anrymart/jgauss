@@ -9,7 +9,7 @@
   bottom: 0;
   right: 0;
   @include light-shadow();
-  max-width: 240px;
+  max-width: 250px;
   background: $background-primary-color;
   border-radius: $border-radius;
   padding: 20px;
@@ -23,6 +23,7 @@
   text-align: center;
   font-weight: normal;
   font-size: 16px;
+  margin: 20px 0 6px;
 }
 
 .profile-link {
@@ -33,4 +34,14 @@ jg-image {
   align-self: center;
   border-radius: $border-radius;
   @include visibility-transition(.2s);
+}
+
+jg-social-icon {
+  align-self: center;
+}
+
+.profile-params {
+  span {
+    color: $font-disguise-color;
+  }
 }
