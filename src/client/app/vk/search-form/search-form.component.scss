@@ -3,7 +3,7 @@
 @import "../../../scss/mixins";
 
 .search-form-container {
-  padding: 60px 0 80px;
+  padding: 60px 0;
   text-align: center;
 }
 
@@ -73,7 +73,14 @@
   }
 }
 
+.loading-indicator {
+  margin-top: 20px;
+  @include visibility-transition();
+  color: $primary-color;
+
+}
+
 .not-found-error {
+  @include visibility-transition();
   color: $error-color;
-  padding-top: 60px;
 }

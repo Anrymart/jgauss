@@ -68,7 +68,7 @@ export class GraphSearchService {
       case 'target-likes':
         if (this.data.target.friendLikes) {
           let color = d3.scaleLinear()
-            .domain([0, this.data.target.friendLikes.max / 2])
+            .domain([0, this.data.target.friendLikes.max / 2 || 1])
             .range(<any>[COLORS.grey, COLORS.red]);
           colorFunction = (d: { uid: number }) => {
             return <any>color(this.data.target.friendLikes[d.uid] || 0);

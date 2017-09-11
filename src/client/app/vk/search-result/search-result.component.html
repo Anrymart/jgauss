@@ -16,10 +16,13 @@
         </span>
       </div>
       <div style="flex-basis: 100%; margin-bottom: 8px;">
-        <jg-social-icon [service]="'vk'" [profile]="_targetUser.domain"></jg-social-icon>
-        <jg-social-icon [service]="'facebook'" [profile]="_targetUser.facebook"></jg-social-icon>
-        <jg-social-icon [service]="'instagram'" [profile]="_targetUser.instagram"></jg-social-icon>
-        <jg-social-icon [service]="'twitter'" [profile]="_targetUser.twitter"></jg-social-icon>
+        <jg-social-icon *ngIf="_targetUser.domain" [service]="'vk'" [profile]="_targetUser.domain"></jg-social-icon>
+        <jg-social-icon *ngIf="_targetUser.facebook" [service]="'facebook'"
+                        [profile]="_targetUser.facebook"></jg-social-icon>
+        <jg-social-icon *ngIf="_targetUser.instagram" [service]="'instagram'"
+                        [profile]="_targetUser.instagram"></jg-social-icon>
+        <jg-social-icon *ngIf="_targetUser.twitter" [service]="'twitter'"
+                        [profile]="_targetUser.twitter"></jg-social-icon>
       </div>
     </div>
     <div class="profile-params">

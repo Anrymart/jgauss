@@ -1,4 +1,7 @@
-<jg-auth-form *ngIf="!_authorized"></jg-auth-form>
+<div *ngIf="!_authorized">
+  <h1>ВКонтакте</h1>
+  <jg-auth-form></jg-auth-form>
+</div>
 <div *ngIf="_authorized">
   <jg-search-form #searchForm
                   (onSearch)="searchResult.load($event)">

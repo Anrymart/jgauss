@@ -81,7 +81,7 @@ export class SearchResultComponent {
                   friend.l = [];
                 }
                 f.friends = friend.l;
-                f.common_friends = friend.l.filter((id) => {
+                f.commonFriends = friend.l.filter((id) => {
                   return targetFriendIds.includes(id);
                 });
                 break;

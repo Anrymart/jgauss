@@ -24,6 +24,8 @@ export class SearchFormComponent {
 
   _notFound: boolean = false;
 
+  _loading: boolean = false;
+
   constructor(private route: ActivatedRoute,
               private router: Router,
               private title: Title,
@@ -48,6 +50,8 @@ export class SearchFormComponent {
   }
 
   async _onSearch(query: string) {
+    this._loading = true;
+
     if (query == 'me') {
       query = '';
     }
@@ -59,6 +63,7 @@ export class SearchFormComponent {
     try {
       targetUser = await this.dataService.getUser(query);
     } catch (error) {
+      this._loading = false;
       console.log(error);
       if (error.error_code == 113) {
         this._notFound = true;
@@ -73,5 +78,6 @@ export class SearchFormComponent {
     // noinspection JSIgnoredPromiseFromCall
     this.router.navigate(['vk/', userPath]);
     this.onSearch.emit(targetUser);
+    this._loading = false;
   }
 }

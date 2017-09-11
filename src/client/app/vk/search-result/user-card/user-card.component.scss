@@ -4,26 +4,50 @@
 
 .user-card {
   position: fixed;
-  overflow: auto;
-  z-index: 5;
-  bottom: 0;
-  right: 0;
-  @include light-shadow();
+  z-index: 1;
+  bottom: 10px;
+  right: 10px;
   max-width: 250px;
-  background: $background-primary-color;
-  border-radius: $border-radius;
-  padding: 20px;
+  max-height: 80%;
+  padding: 0;
+
   display: flex;
   flex-direction: column;
-  max-height: 100%;
 
+  @include light-shadow();
+  background: $background-primary-color;
+  border-radius: $border-radius;
+}
+
+.close-icon {
+  position: absolute;
+  top: 0;
+  cursor: pointer;
+  color: $border-color;
+  font-size: 20px;
+}
+
+.user-card-header {
+  padding: 8px 20px;
+  border-bottom: 1px solid $border-color;
+  text-align: center;
+}
+
+.user-card-content {
+  display: flex;
+  overflow: auto;
+  padding: 8px 20px;
 }
 
 .user-name {
   text-align: center;
   font-weight: normal;
-  font-size: 16px;
-  margin: 20px 0 6px;
+  font-size: 18px;
+  margin: 6px 0;
+
+  a {
+    color: $font-default-color;
+  }
 }
 
 .profile-link {
@@ -40,8 +64,20 @@ jg-social-icon {
   align-self: center;
 }
 
+.delimiter {
+  height: 1px;
+  border-bottom: 1px solid $border-color;
+  margin: 8px 10%;
+}
+
 .profile-params {
+  & > div {
+    margin: 8px 0;
+  }
+
   span {
     color: $font-disguise-color;
+    display: block;
+    font-size: 12px;
   }
 }

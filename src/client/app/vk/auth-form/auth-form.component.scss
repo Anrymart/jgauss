@@ -1,1 +1,10 @@
 @import "../../../scss/colors";
+
+.vk-auth-button {
+  background-color: $vk-color;
+  color: white;
+
+  i {
+    margin-right: 8px;
+  }
+}
