@@ -1,10 +1,12 @@
 <div class="user-card" *ngIf="visible" [@flyInOut]>
   <div class="user-card-header">
-    <i class="fa fa-times close-icon" aria-hidden="true" (click)="visible = false"></i>
-    <h3 class="user-name">
-      <a [routerLink]="'/vk/id' + userData.uid" title="Перейти к графу">{{userData.first_name + " " +
-        userData.last_name}}</a>
-    </h3>
+    <div class="user-name-group">
+      <h3 class="user-name">
+        <a [routerLink]="'/vk/id' + userData.uid" title="Перейти к графу">{{userData.first_name + " " +
+          userData.last_name}}</a>
+      </h3>
+      <i class="fa fa-times close-icon" aria-hidden="true" (click)="visible = false"></i>
+    </div>
     <jg-social-icon [service]="'vk'" [profile]="userData.domain"></jg-social-icon>
   </div>
   <div class="user-card-content">
@@ -31,7 +33,7 @@
           <span>Место учёбы:</span> {{userData.occupation.name}}
         </div>
         <div *ngIf="userData.faculty_name"><span>Факультет:</span> {{userData.faculty_name}}</div>
-        <div *ngIf="userData.bdate"><span>Дата рождения:</span> {{userData.bdate}}</div>
+        <div *ngIf="userData.bdate"><span>Дата рождения:</span> {{userData.bdate | birthDate}}</div>
         <div *ngIf="userData.friends?.length"><span>Друзья:</span> {{userData.friends?.length}}</div>
         <div *ngIf="userData.commonFriends"><span>Общие друзья:</span> {{userData.commonFriends?.length || 'Нет'}}</div>
         <div *ngIf="userData.likesCount"><span>Лайки:</span> {{userData.likesCount}}</div>
@@ -40,8 +42,4 @@
   </div>
 
   <!--<button (click)="visible = false">Close</button>-->
-
-  <!--<div class="user-property" *ngFor="let entry of _userCardData">-->
-  <!--<span class="property-key">{{entry.key}}:</span> {{entry.value}}-->
-  <!--</div>-->
 </div>

@@ -19,18 +19,9 @@
   border-radius: $border-radius;
 }
 
-.close-icon {
-  position: absolute;
-  top: 0;
-  cursor: pointer;
-  color: $border-color;
-  font-size: 20px;
-}
-
 .user-card-header {
   padding: 8px 20px;
   border-bottom: 1px solid $border-color;
-  text-align: center;
 }
 
 .user-card-content {
@@ -39,8 +30,24 @@
   padding: 8px 20px;
 }
 
+.user-name-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-icon {
+  cursor: pointer;
+  color: $border-dark-color;
+  transition: $icon-button-transition;
+  font-size: 18px;
+
+  &:hover {
+    color: $primary-color;
+  }
+}
+
 .user-name {
-  text-align: center;
   font-weight: normal;
   font-size: 18px;
   margin: 6px 0;

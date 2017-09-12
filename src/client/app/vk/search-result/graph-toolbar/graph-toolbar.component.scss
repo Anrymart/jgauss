@@ -2,7 +2,6 @@
 @import "../../../../scss/mixins";
 @import "../../../../scss/variables";
 
-$transition: all .4s ease;
 $icon-size: 30px;
 
 .graph-toolbar {
@@ -16,7 +15,7 @@ $icon-size: 30px;
 i {
   width: $icon-size;
   height: $icon-size;
-  transition: $transition;
+  transition: $icon-button-transition;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -38,7 +37,7 @@ i {
   input {
     width: $icon-size;
     opacity: 0;
-    transition: $transition;
+    transition: $icon-button-transition;
     height: $icon-size;
 
     &:focus {

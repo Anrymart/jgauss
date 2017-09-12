@@ -3,7 +3,6 @@ import {Pipe, PipeTransform} from '@angular/core';
 @Pipe({name: 'numeral'})
 export class NumeralPipe implements PipeTransform {
   transform(value: number, numerals: string): string {
-    numerals = JSON.parse(numerals);
     let tenRemainder = value % 10;
     let hundredRemainder = value % 100;
     if (hundredRemainder > 10 && hundredRemainder < 20) {

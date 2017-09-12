@@ -9,10 +9,10 @@
       </div>
       <div class="focus-out">
         <span *ngIf="_targetUser?.friendsCount">
-          {{_targetUser.friendsCount | numeral: '{"1": "друг", "2": "друга", "5": "друзей"}'}},
+          {{_targetUser.friendsCount | numeral: ({"1": "друг", "2": "друга", "5": "друзей"})}},
         </span>
         <span *ngIf="_graphData?.links">
-          {{_graphData.links.length | numeral: '{"1": "связь", "2": "связи", "5": "связей"}'}}
+          {{_graphData.links.length | numeral: ({"1": "связь", "2": "связи", "5": "связей"})}}
         </span>
       </div>
       <div style="flex-basis: 100%; margin-bottom: 8px;">

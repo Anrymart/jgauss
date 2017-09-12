@@ -1,7 +1,6 @@
 # TODO list
 
 ### Major priority
-- Add birth date and service for decoding
 - Add page-not-found module
 - Fix "trying to use destroyed components": add ngOnDestroy method
 - Stylize main page
