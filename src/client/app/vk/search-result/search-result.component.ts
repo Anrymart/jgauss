@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, Input} from "@angular/core";
+import {ChangeDetectorRef, Component, Input, OnDestroy} from "@angular/core";
 import {GraphData} from "./graph/graph-data.model";
 import {Subscription} from "rxjs/Subscription";
 import {PropertyHandler} from "../../util/property-handler";
@@ -13,7 +13,7 @@ declare const VK: VkOpenApi;
   templateUrl: 'search-result.component.html',
   styleUrls: ['search-result.component.css']
 })
-export class SearchResultComponent {
+export class SearchResultComponent implements OnDestroy {
 
   @PropertyHandler({
     afterChange(query: string) {
@@ -26,7 +26,9 @@ export class SearchResultComponent {
   _targetUser: any;
 
   _graphData: GraphData = {nodes: [], links: []};
+
   _loading: boolean;
+  _errorMessage: string;
 
   private friendsSubscription: Subscription;
 
@@ -34,7 +36,6 @@ export class SearchResultComponent {
               private changeDetectorRef: ChangeDetectorRef) {
   }
 
-  //todo: replace to service
   async load(targetUser: any) {
 
     this.refresh();
@@ -46,11 +47,24 @@ export class SearchResultComponent {
 
     let targetUserId = targetUser.uid;
 
-    let targetUserFriends = await this.dataService.getUserFriends(
-      {
-        uid: targetUserId,
-        fields: '*'
-      });
+    let targetUserFriends: any;
+    try {
+      targetUserFriends = await this.dataService.getUserFriends(
+        {
+          uid: targetUserId,
+          fields: '*'
+        });
+    } catch (error) {
+      switch (error.error_code) {
+        case 18:
+          this._errorMessage = 'Профиль был удалён или забанен';
+          break;
+        default:
+          this._errorMessage = 'Произошла ошибка при загрузке данных';
+      }
+      this._loading = false;
+      return;
+    }
 
     targetUser.friendsCount = targetUserFriends.length;
 
@@ -107,7 +121,6 @@ export class SearchResultComponent {
           //   Math.round(2 * this._graphData.links.length / (targetUserFriends.length * (targetUserFriends.length - 1)) * 100);
           this.changeDetectorRef.detectChanges();
         });
-    //todo: manage errors
 
     // noinspection JSIgnoredPromiseFromCall
     this.getOwnerInfo();
@@ -126,7 +139,6 @@ export class SearchResultComponent {
   }
 
   async getOwnerInfo(): Promise<{ friends: any[] }> {
-    //todo: simplify request
     let owner = this._graphData.owner = await this.dataService.getUser('');
     owner.friends = await this.dataService.getUserFriends(
       {
@@ -176,4 +188,9 @@ export class SearchResultComponent {
     this.changeDetectorRef.detectChanges();
   }
 
+  ngOnDestroy(): void {
+    if (this.friendsSubscription) {
+      this.friendsSubscription.unsubscribe();
+    }
+  }
 }

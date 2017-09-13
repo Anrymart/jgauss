@@ -118,9 +118,24 @@ button.accent {
   border-radius: $border-radius;
   background-color: $border-dark-color;
   cursor: nw-resize;
-  transition: all .4s ease;
+  transition: $icon-button-transition;
 
   &._active, &:hover {
     background-color: $primary-color;
+  }
+}
+
+.page-loading {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &-indicator {
+    font-size: 32px;
+    color: $primary-color;
+    margin: 16px;
   }
 }

@@ -29,7 +29,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         {name: 'default', text: 'Я', active: true},
         {name: 'owner-friends', text: 'Мои друзья'},
         {name: 'sex', text: 'Девушки/парни'},
-        {name: 'target-likes', text: 'Лайкающие друзья'},
+        {name: 'target-likes', text: 'Лайки'},
         {name: 'online', text: 'Пользователи онлайн'}];
       this.searchService.setData(this.data);
     }
@@ -76,14 +76,12 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   }
 
   restart(): void {
-    console.log('restart graph');
-
     if (this._simulationState.paused) {
       return;
     }
 
     this.zone.runOutsideAngular(() => {
-        let svg = d3.select('svg');
+        let svg = d3.select('#jgauss-graph');
         let {width, height} = (<Element>svg.node()).getBoundingClientRect();
 
         let color = d3.scaleOrdinal(d3.schemeCategory20);

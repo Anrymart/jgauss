@@ -10,13 +10,13 @@ export class NumeralPipe implements PipeTransform {
     }
     switch (tenRemainder) {
       case 1:
-        return value + " " + numerals[1];
+        return value + ' ' + numerals[1];
       case 2:
       case 3:
       case 4:
-        return value + " " + numerals[2];
+        return value + ' ' + numerals[2];
       default:
-        return value + " " + numerals[5];
+        return value + ' ' + numerals[5];
     }
   }
 }

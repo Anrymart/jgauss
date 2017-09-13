@@ -1,6 +1,6 @@
 import {NgModule} from "@angular/core";
-import {ImageComponent} from "./image.component";
 import {CommonModule} from "@angular/common";
+import {ImageComponent} from "./image.component";
 
 @NgModule({
   imports: [CommonModule],

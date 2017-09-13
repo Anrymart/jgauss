@@ -12,10 +12,12 @@ import {SharedModule} from './shared/shared.module';
 import {VkDataService} from "./vk/services/vk-data.sevice";
 import {VkAuthService} from "./vk/services/vk-auth.sevice";
 import {PageNotFoundModule} from "./page-not-found/page-not-found.module";
+import {HeaderModule} from "./shared/header/header.module";
+import {FooterModule} from "./shared/footer/footer.module";
 
 @NgModule({
-  imports: [BrowserModule, HttpModule, AppRoutingModule, SharedModule.forRoot(),
-    AboutModule, HomeModule, PageNotFoundModule, VkModule],
+  imports: [BrowserModule, HttpModule, AppRoutingModule, SharedModule,
+    AboutModule, HomeModule, VkModule, PageNotFoundModule, HeaderModule, FooterModule],
   declarations: [AppComponent],
   providers: [{
     provide: APP_BASE_HREF,

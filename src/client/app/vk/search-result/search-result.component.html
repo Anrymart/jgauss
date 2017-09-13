@@ -26,6 +26,7 @@
       </div>
     </div>
     <div class="profile-params">
+      <p *ngIf="_errorMessage">{{_errorMessage}}</p>
       <p *ngIf="_targetUser.city_name"><span>Город:</span> {{_targetUser.city_name}}</p>
       <p *ngIf="_targetUser.home_town && _targetUser.home_town != _targetUser.city_name">
         <span>Родной город:</span> {{_targetUser.home_town}}
@@ -44,6 +45,7 @@
       <p *ngIf="!_targetUser.university_name && _targetUser.occupation?.type == 'university'">
         <span>Место учёбы:</span> {{_targetUser.occupation.name}}</p>
       <p *ngIf="_targetUser.faculty_name"><span>Факультет:</span> {{_targetUser.faculty_name}}</p>
+      <p *ngIf="_targetUser.bdate"><span>Дата рождения:</span> {{_targetUser.bdate | birthDate}}</p>
     </div>
   </div>
 </div>

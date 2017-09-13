@@ -44,7 +44,7 @@
     "serve.compodoc": "./node_modules/.bin/compodoc -s"
   },
   "author": "Andrey Martynenko",
-  "license": "MIT",
+  "license": "Proprietary",
   "devDependencies": {
     "@angular/compiler-cli": "^4.2.3",
     "@angular/platform-server": "^4.2.3",
