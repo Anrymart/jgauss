@@ -3,6 +3,7 @@ import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import {VkDataService} from "../services/vk-data.sevice";
 import {Title} from "@angular/platform-browser";
 import {PropertyHandler} from "../../util/property-handler";
+import {Subscription} from "rxjs/Subscription";
 
 @Component({
   moduleId: module.id,
@@ -26,6 +27,8 @@ export class SearchFormComponent {
 
   _loading: boolean = false;
 
+  private routeSubscription: Subscription;
+
   constructor(private route: ActivatedRoute,
               private router: Router,
               private title: Title,
@@ -33,7 +36,7 @@ export class SearchFormComponent {
   }
 
   ngOnInit() {
-    this.route.paramMap.subscribe((params: ParamMap) => {
+    this.routeSubscription = this.route.paramMap.subscribe((params: ParamMap) => {
       let urlParam = params.get('id');
 
       if (urlParam == 'go') {
@@ -79,5 +82,9 @@ export class SearchFormComponent {
     this.router.navigate(['vk/', userPath]);
     this.onSearch.emit(targetUser);
     this._loading = false;
+  }
+
+  ngOnDestroy(): void {
+    this.routeSubscription.unsubscribe();
   }
 }

@@ -16,6 +16,7 @@ body {
 a {
   color: $base-color;
   text-decoration: none;
+  cursor: pointer;
 
   &:hover {
     text-decoration: underline;

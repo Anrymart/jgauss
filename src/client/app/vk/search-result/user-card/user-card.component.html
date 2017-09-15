@@ -2,7 +2,7 @@
   <div class="user-card-header">
     <div class="user-name-group">
       <h3 class="user-name">
-        <a [routerLink]="'/vk/id' + userData.uid" title="Перейти к графу">{{userData.first_name + " " +
+        <a [routerLink]="'/vk/id' + userData.uid" title="Загрузить граф">{{userData.first_name + " " +
           userData.last_name}}</a>
       </h3>
       <i class="fa fa-times close-icon" aria-hidden="true" (click)="visible = false"></i>
@@ -14,6 +14,9 @@
       <jg-image [src]="userData.photo_200_orig"></jg-image>
 
       <div class="profile-params">
+        <div>
+          <a (click)="onFriendsShow.emit(userData)">Показать друзей</a>
+        </div>
         <div *ngIf="userData.city_name"><span>Город:</span> {{userData.city_name}}</div>
         <div *ngIf="userData.home_town && userData.home_town != userData.city_name">
           <span>Родной город:</span> {{userData.home_town}}
@@ -40,6 +43,4 @@
       </div>
     </div>
   </div>
-
-  <!--<button (click)="visible = false">Close</button>-->
 </div>

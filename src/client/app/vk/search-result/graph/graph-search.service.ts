@@ -25,7 +25,7 @@ export class GraphSearchService {
     return this;
   }
 
-  sort(type: string): this {
+  sort(type: string, data?: any): this {
 
     let colorFunction: (d: any) => string = this.getDefaultColorFunction();
 
@@ -75,6 +75,15 @@ export class GraphSearchService {
           };
         }
         break;
+      case 'friends':
+        colorFunction = (d: { uid: number }) => {
+          if (data.friends.includes(d.uid)) {
+            return COLORS.blue;
+          } else if (data.uid == d.uid) {
+            return COLORS.green;
+          }
+          return COLORS.grey;
+        }
     }
 
     this.colorFunction = colorFunction;

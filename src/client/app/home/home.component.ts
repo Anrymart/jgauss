@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import {Title} from "@angular/platform-browser";
 
 @Component({
   moduleId: module.id,
@@ -7,4 +8,9 @@ import {Component} from '@angular/core';
   styleUrls: ['home.component.css']
 })
 export class HomeComponent {
+
+  constructor(title: Title) {
+    title.setTitle('Jgauss – социальные графы');
+  }
+
 }

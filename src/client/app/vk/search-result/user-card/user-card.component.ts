@@ -40,7 +40,7 @@ export class UserCardComponent {
   visible: boolean = false;
 
   @Output()
-  onUserSwitch: EventEmitter<any> = new EventEmitter<any>();
+  onFriendsShow: EventEmitter<any> = new EventEmitter<any>();
 
   _userCardData: any[];
 

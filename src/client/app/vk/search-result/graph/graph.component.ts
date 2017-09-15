@@ -138,19 +138,15 @@ export class GraphComponent implements AfterViewInit, OnChanges {
           })
           .on('mouseover', (data: any) => {
             if (!this._simulationState.nodeDrag) {
-              // this.zone.run(() => {
               data.event = d3.event;
               this._tipData = data;
               this._tipVisible = true;
               this.changeDetectorRef.detectChanges();
-              // });
             }
           })
           .on('mouseout', (data: any) => {
-            // this.zone.run(() => {
             this._tipVisible = false;
             this.changeDetectorRef.detectChanges();
-            // });
           });
 
         node = addedNode.merge(node)
@@ -254,8 +250,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     this.repaint(color);
   }
 
-  _sort(sortType?: string): void {
-    let color = this.searchService.sort(sortType).getColorFunction();
+  _sort(sortType?: string, data?: any): void {
+    console.log(sortType, data);
+    let color = this.searchService.sort(sortType, data).getColorFunction();
     this.repaint(color);
   }
 

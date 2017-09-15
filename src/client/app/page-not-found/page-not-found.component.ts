@@ -1,5 +1,6 @@
 import {AfterViewInit, Component, NgZone} from '@angular/core';
 import * as d3 from 'd3';
+import {Title} from "@angular/platform-browser";
 
 const data = {
   "nodes": [
@@ -47,7 +48,8 @@ const data = {
 })
 export class PageNotFoundComponent implements AfterViewInit {
 
-  constructor(private zone: NgZone) {
+  constructor(private zone: NgZone, title: Title) {
+    title.setTitle('Страница не найдена | Jgauss');
   }
 
   ngAfterViewInit(): void {

@@ -51,7 +51,7 @@
 </div>
 
 <ng-container *ngIf="_targetUser">
-  <jg-user-card (onUserSwitch)="search($event.domain)" #userCard></jg-user-card>
+  <jg-user-card (onFriendsShow)="graph._sort('friends', $event)" #userCard></jg-user-card>
   <jg-graph #graph [data]="_graphData" [loading]="_loading"
             (onUserClick)="userCard.show($event)"></jg-graph>
 
