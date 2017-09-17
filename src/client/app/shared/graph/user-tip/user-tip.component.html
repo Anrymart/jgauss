@@ -3,5 +3,6 @@
     <img [hidden]="!_imageLoaded" (load)="_onLoad()" [src]="userData.photo_50"/>
     <div [hidden]="_imageLoaded" class="loading"></div>
   </ng-container>
-  <div class="label">{{userData.first_name}} {{userData.last_name}}</div>
+  <div class="label" *ngIf="!userData.label">{{userData.first_name}} {{userData.last_name}}</div>
+  <div class="label" *ngIf="userData.label">{{userData.label}}</div>
 </div>

@@ -11,7 +11,7 @@ const COLORS = {
 };
 
 @Injectable()
-export class VkGraphSearchService implements GraphSearchService {
+export class HomeGraphSearchService implements GraphSearchService {
 
   private static readonly SEARCH_FIELDS: string[] = ['label'];
 
@@ -29,11 +29,13 @@ export class VkGraphSearchService implements GraphSearchService {
   }
 
   search(query: string): this {
+    console.log('query');
+
     let searchRegexp = new RegExp(query, 'i');
-    let matchedNodes: number[] = [];
+    let matchedNodes: string[] = [];
 
     this.data.nodes.forEach((node: any) => {
-      for (let field of VkGraphSearchService.SEARCH_FIELDS) {
+      for (let field of HomeGraphSearchService.SEARCH_FIELDS) {
         if (String(node[field]).search(searchRegexp) != -1) {
           matchedNodes.push(node.uid);
           break;
@@ -41,8 +43,8 @@ export class VkGraphSearchService implements GraphSearchService {
       }
     });
 
-    this.colorFunction = (d: { uid: number }) => {
-      if (matchedNodes.includes(+d.uid)) {
+    this.colorFunction = (d: { uid: string }) => {
+      if (matchedNodes.includes(d.uid)) {
         return COLORS.blue;
       }
       return COLORS.grey;
