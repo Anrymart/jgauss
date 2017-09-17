@@ -16,7 +16,7 @@ export class ProjectConfig extends SeedConfig {
   constructor() {
     super();
     this.APP_TITLE = 'Jgauss – социальные графы';
-    // this.GOOGLE_ANALYTICS_ID = 'Your site's ID';
+    this.GOOGLE_ANALYTICS_ID = 'UA-106591728-1';
 
     /* Enable typeless compiler runs (faster) between typed compiler runs. */
     // this.TYPED_COMPILE_INTERVAL = 5;

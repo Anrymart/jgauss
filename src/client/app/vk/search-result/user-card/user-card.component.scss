@@ -41,6 +41,7 @@
   color: $border-dark-color;
   transition: $icon-button-transition;
   font-size: 18px;
+  margin-left: 8px;
 
   &:hover {
     color: $primary-color;
@@ -65,16 +66,11 @@ jg-image {
   align-self: center;
   border-radius: $border-radius;
   @include visibility-transition(.2s);
+  max-height: 300px;
 }
 
 jg-social-icon {
   align-self: center;
-}
-
-.delimiter {
-  height: 1px;
-  border-bottom: 1px solid $border-color;
-  margin: 8px 10%;
 }
 
 .profile-params {
