@@ -2,6 +2,7 @@
 
 ### Major priority
 - Add initial data to graph, for example from star wars or game of thrones.
+- Add limits to resize
 - Create e-mail hello@jgauss and set up mx-records
 - Set up password access
 

@@ -51,10 +51,18 @@
 </div>
 
 <ng-container *ngIf="_targetUser">
-  <jg-user-card (onFriendsShow)="graph._sort('friends', $event)" #userCard></jg-user-card>
-  <jg-graph #graph [data]="_graphData" [loading]="_loading"
-            (onUserClick)="userCard.show($event)"></jg-graph>
 
+  <div class="graph-container">
+    <jg-button-group class="graph-sort-toolbar"
+                     [buttons]="_buttonGroupModel"
+                     (onClick)="graph._sort($event)">
+    </jg-button-group>
+    <jg-user-card (onFriendsShow)="graph._sort('friends', $event)" #userCard></jg-user-card>
+    <jg-graph #graph [data]="_graphData" [loading]="_loading"
+              (onUserClick)="userCard.show($event)"></jg-graph>
+
+    <div id="vk-like"></div>
+  </div>
   <div class="comments">
     <div id="vk-comments"></div>
   </div>

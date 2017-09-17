@@ -1,14 +1,21 @@
 import {
-  AfterViewInit, ChangeDetectorRef, Component, EventEmitter, HostListener, Input, NgZone, OnChanges,
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  HostListener,
+  Inject,
+  Input,
+  NgZone,
+  OnChanges,
   Output
 } from '@angular/core';
 import * as d3 from 'd3';
 import {Simulation, SimulationLinkDatum, SimulationNodeDatum} from 'd3-force';
 import {BaseType, Selection} from 'd3-selection';
 import {GraphData} from './graph-data.model';
-import {PropertyHandler} from '../../../util/property-handler';
+import {PropertyHandler} from '../../util/property-handler';
 import {GraphSearchService} from "./graph-search.service";
-import {ButtonGroupButtonModel} from "../../../shared/button-group/button-group.component";
 
 @Component({
   moduleId: module.id,
@@ -25,12 +32,6 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         this._simulationState.paused = false;
       }
       this.searchService.reset();
-      this._buttonGroupModel = [
-        {name: 'default', text: 'Я', active: true},
-        {name: 'owner-friends', text: 'Мои друзья'},
-        {name: 'sex', text: 'Девушки/парни'},
-        {name: 'target-likes', text: 'Лайки'},
-        {name: 'online', text: 'Пользователи онлайн'}];
       this.searchService.setData(this.data);
     }
   })
@@ -51,8 +52,6 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     paused?: boolean // is simulation paused
   } = {};
 
-  _buttonGroupModel: ButtonGroupButtonModel[] = [];
-
   private simulation: Simulation<SimulationNodeDatum, SimulationLinkDatum<SimulationNodeDatum>>;
 
   private groups: {
@@ -63,7 +62,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
   constructor(private zone: NgZone,
               private changeDetectorRef: ChangeDetectorRef,
-              private searchService: GraphSearchService) {
+              @Inject('GraphSearchService') private searchService: GraphSearchService) {
   }
 
   ngAfterViewInit(): void {
@@ -76,7 +75,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   }
 
   restart(): void {
-    if (this._simulationState.paused) {
+    if (!this.data || this._simulationState.paused) {
       return;
     }
 
@@ -251,7 +250,6 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   }
 
   _sort(sortType?: string, data?: any): void {
-    console.log(sortType, data);
     let color = this.searchService.sort(sortType, data).getColorFunction();
     this.repaint(color);
   }

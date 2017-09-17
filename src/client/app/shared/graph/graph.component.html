@@ -1,8 +1,4 @@
-<jg-button-group class="graph-sort-toolbar"
-                 [buttons]="_buttonGroupModel"
-                 (onClick)="_sort($event)">
-</jg-button-group>
-<div class="graph-container">
+<div class="graph-content">
   <jg-graph-toolbar [loading]="loading"
                     [paused]="_simulationState.paused"
                     (onSearch)="_search($event)"
@@ -11,4 +7,3 @@
   <svg id="jgauss-graph" resize></svg>
   <jg-user-tip [visible]="_tipVisible" [userData]="_tipData"></jg-user-tip>
 </div>
-<div id="vk-like"></div>

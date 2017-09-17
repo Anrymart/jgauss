@@ -1,8 +1,8 @@
-@import "../../../../scss/colors";
-@import "../../../../scss/variables";
-@import "../../../../scss/mixins";
+@import "../../../scss/colors";
+@import "../../../scss/variables";
+@import "../../../scss/mixins";
 
-.graph-container {
+.graph-content {
   position: relative;
   display: flex;
   margin: 0;
@@ -19,9 +19,4 @@ svg {
   margin: 10px 0;
   display: flex;
   align-items: center;
-}
-
-#vk-like {
-
-  margin-top: 10px;
 }

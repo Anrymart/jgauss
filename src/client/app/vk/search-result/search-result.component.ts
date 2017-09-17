@@ -1,9 +1,9 @@
 import {ChangeDetectorRef, Component, Input, OnDestroy} from "@angular/core";
-import {GraphData} from "./graph/graph-data.model";
 import {Subscription} from "rxjs/Subscription";
 import {PropertyHandler} from "../../util/property-handler";
 import {VkCity, VkOpenApi} from "../types/vk";
 import {VkDataService} from "../services/vk-data.sevice";
+import {GraphData} from "../../shared/graph/graph-data.model";
 
 declare const VK: VkOpenApi;
 
@@ -29,6 +29,8 @@ export class SearchResultComponent implements OnDestroy {
 
   _loading: boolean;
   _errorMessage: string;
+
+  _buttonGroupModel: [{ name: string, text: string, active?: boolean }];
 
   private friendsSubscription: Subscription;
 
@@ -117,8 +119,6 @@ export class SearchResultComponent implements OnDestroy {
         () => {
           console.log('complete');
           this._loading = false;
-          // targetUser.linkDensity =
-          //   Math.round(2 * this._graphData.links.length / (targetUserFriends.length * (targetUserFriends.length - 1)) * 100);
           this.changeDetectorRef.detectChanges();
         });
 
@@ -185,6 +185,12 @@ export class SearchResultComponent implements OnDestroy {
     this._loading = true;
     this._targetUser = null;
     this._graphData = null;
+    this._buttonGroupModel = [
+      {name: 'default', text: 'Я', active: true},
+      {name: 'owner-friends', text: 'Мои друзья'},
+      {name: 'sex', text: 'Девушки/парни'},
+      {name: 'target-likes', text: 'Лайки'},
+      {name: 'online', text: 'Пользователи онлайн'}];
     this.changeDetectorRef.detectChanges();
   }
 

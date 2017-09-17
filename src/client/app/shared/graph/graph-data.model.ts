@@ -1,6 +1,6 @@
 export interface GraphData {
-  links: any[],
   nodes: any[],
+  links: any[],
   target?: any,
   owner?: any,
   errorMessage?: string

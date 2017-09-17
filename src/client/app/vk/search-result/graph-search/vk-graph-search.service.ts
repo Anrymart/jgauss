@@ -1,6 +1,7 @@
 import {Injectable} from "@angular/core";
-import {GraphData} from "./graph-data.model";
 import * as d3 from 'd3';
+import {GraphData} from "../../../shared/graph/graph-data.model";
+import {GraphSearchService} from "../../../shared/graph/graph-search.service";
 
 const COLORS = {
   blue: '#206caf',
@@ -11,7 +12,7 @@ const COLORS = {
 };
 
 @Injectable()
-export class GraphSearchService {
+export class VkGraphSearchService implements GraphSearchService {
 
   private static readonly SEARCH_FIELDS: string[] =
     ['uid', 'first_name', 'last_name', 'domain', 'university_name', 'faculty_name', 'city_name', 'home_town'];
@@ -96,7 +97,7 @@ export class GraphSearchService {
     let matchedNodes: number[] = [];
 
     this.data.nodes.forEach((node: any) => {
-      for (let field of GraphSearchService.SEARCH_FIELDS) {
+      for (let field of VkGraphSearchService.SEARCH_FIELDS) {
         if (String(node[field]).search(searchRegexp) != -1) {
           matchedNodes.push(node.uid);
           break;

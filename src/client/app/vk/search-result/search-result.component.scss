@@ -69,9 +69,13 @@ jg-image {
   color: $font-disguise-color;
 }
 
-jg-graph {
+.graph-container {
   margin: 40px 0;
-  display: block;
+
+  jg-graph {
+    display: block;
+    margin: 10px 0;
+  }
 }
 
 jg-social-icon {

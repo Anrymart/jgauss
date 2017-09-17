@@ -1,5 +1,6 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Title} from "@angular/platform-browser";
+import {HttpClient} from "@angular/common/http";
 
 @Component({
   moduleId: module.id,
@@ -7,10 +8,14 @@ import {Title} from "@angular/platform-browser";
   templateUrl: 'home.component.html',
   styleUrls: ['home.component.css']
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
 
-  constructor(title: Title) {
+  constructor(title: Title, private http: HttpClient) {
     title.setTitle('Jgauss – социальные графы');
+  }
+
+  ngOnInit(): void {
+
   }
 
 }
