@@ -83,15 +83,13 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         let svg = d3.select('#jgauss-graph');
         let {width, height} = (<Element>svg.node()).getBoundingClientRect();
 
-        let color = d3.scaleOrdinal(d3.schemeCategory20);
-
         if (!this.groups.container) {
           this.groups.container = svg.append('g');
         }
         let container = this.groups.container;
 
         let zoom = d3.zoom()
-          .scaleExtent([0.3, 5])
+          .scaleExtent([0.2, 5])
           .on('zoom', () => {
             this.groups.container.attr('transform', d3.event.transform);
           });
@@ -116,7 +114,14 @@ export class GraphComponent implements AfterViewInit, OnChanges {
           .selectAll('line')
           .data(this.data.links);
         link.exit().remove();
-        link = link.enter().append('line').merge(link);
+        link = link.enter().append('line')
+          .attr("stroke-width", function (d) {
+            if (d.weight) {
+              return Math.sqrt(d.weight) / 2;
+            }
+            return .5;
+          })
+          .merge(link);
 
         if (!this.groups.node) {
           this.groups.node = container.append('g')

@@ -25,8 +25,8 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     let check = () => {
       if (this._graphData.nodes.length && this._graphData.links.length) {
-        this._graphData = Object.assign({}, this._graphData);
         this._loading = false;
+        this._graphData = Object.assign({}, this._graphData);
       }
     };
 

@@ -119,6 +119,7 @@ export class SearchResultComponent implements OnDestroy {
         () => {
           console.log('complete');
           this._loading = false;
+          this._errorMessage = JSON.stringify(this._graphData);
           this.changeDetectorRef.detectChanges();
         });
 

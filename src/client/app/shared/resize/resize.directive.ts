@@ -9,6 +9,9 @@ export class ResizeDirective implements AfterViewInit, OnDestroy {
   @Input('resizeDisabled')
   public disabled: boolean = false;
 
+  @Input('resizeMinHeight')
+  public minHeight: number = 0;
+
   private container: HTMLDivElement;
   private resizeHandle: HTMLDivElement;
   private eventListeners: Function[];
@@ -67,7 +70,7 @@ export class ResizeDirective implements AfterViewInit, OnDestroy {
           let elementDimensions = element.getBoundingClientRect();
 
           // let width = event.clientX - elementDimensions.left + state.handleOffset.x + "px";
-          let height = event.clientY - elementDimensions.top + state.handleOffset.y + "px";
+          let height = Math.max(event.clientY - elementDimensions.top + state.handleOffset.y, this.minHeight) + "px";
 
           // element.style.width = width;
           element.style.height = height;

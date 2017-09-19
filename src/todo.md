@@ -1,10 +1,13 @@
 # TODO list
 
 ### Major priority
-- Add initial data to graph, for example from star wars or game of thrones.
-- Add limits to resize
-- Create e-mail hello@jgauss and set up mx-records
-- Set up password access
+- Replace svg with canvas
+- Fix font-awesome
+- Remove logging
+- Add share button
+- Promotion: build DREC-graph and share with sup
+- Beautify links in social networks
+- Create e-mail hello@jgauss.com and set up mx-records
 
 ### Minor priority
 - Fix user param position if they dont't fit

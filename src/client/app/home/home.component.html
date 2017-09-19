@@ -2,8 +2,18 @@
   Находите знакомых, стройте социальные графы и исследуйте дружеские связи и социальные группы.
   Войдите, чтобы начать.
 </h3>
-<h3>
-  <a routerLink="vk">Войти через ВКонтакте</a>
-</h3>
+<button routerLink="vk" class="vk-auth-button">
+  <i class="fa fa-vk" aria-hidden="true"></i>
+  Войти через ВКонтакте
+</button>
 
-<jg-graph [data]="_graphData" [loading]="_loading"></jg-graph>
+<div class="graph-container">
+  <jg-graph [data]="_graphData" [loading]="_loading"></jg-graph>
+  <p>
+    Социальный граф героев 5 серии романа "Песнь Льда и Пламени" (A Song of Ice and Fire) Джорджа Мартина, на котором
+    основывается телесериал "Игра престолов".
+    Герои соединяются, если их имена встречаются в тексте на расстоянии менее 15 слов.
+    Чем больше таких встреч, тем толще рёбра между героями.
+    Граф построен по данным <a target="_blank" href="https://github.com/mathbeveridge/asoiaf">mathbeveridge</a>.
+  </p>
+</div>

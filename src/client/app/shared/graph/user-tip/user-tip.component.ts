@@ -36,8 +36,9 @@ export class UserTipComponent {
   private updatePosition() {
     if (this.userData) {
       let elementStyle = this.elementRef.nativeElement.style;
-      elementStyle.left = this.userData.event.offsetX + "px";
-      elementStyle.top = this.userData.event.offsetY + "px";
+      let event = this.userData.event;
+      elementStyle.left = event.pageX + "px";
+      elementStyle.top = event.pageY + "px";
     }
   }
 

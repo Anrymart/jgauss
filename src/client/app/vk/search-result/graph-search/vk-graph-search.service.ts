@@ -15,7 +15,7 @@ const COLORS = {
 export class VkGraphSearchService implements GraphSearchService {
 
   private static readonly SEARCH_FIELDS: string[] =
-    ['uid', 'first_name', 'last_name', 'domain', 'university_name', 'faculty_name', 'city_name', 'home_town'];
+    ['uid', 'first_name', 'last_name', 'domain', 'university_name', 'faculty_name', 'city_name', 'home_town', 'labels'];
 
   private data: GraphData;
 
@@ -106,7 +106,7 @@ export class VkGraphSearchService implements GraphSearchService {
     });
 
     this.colorFunction = (d: { uid: number }) => {
-      if (matchedNodes.includes(+d.uid)) {
+      if (matchedNodes.includes(d.uid)) {
         return COLORS.blue;
       }
       return COLORS.grey;

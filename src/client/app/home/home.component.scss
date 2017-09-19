@@ -7,3 +7,17 @@
 h3 {
   color: $font-disguise-color;
 }
+
+.graph-container {
+  display: block;
+  margin: 40px 0;
+}
+
+.vk-auth-button {
+  background-color: $vk-color;
+  color: white;
+
+  i {
+    margin-right: 8px;
+  }
+}
