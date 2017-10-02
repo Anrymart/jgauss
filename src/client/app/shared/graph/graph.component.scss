@@ -11,6 +11,8 @@
 canvas {
   border: 1px solid $border-color;
   border-radius: $border-radius;
+  width: 100%;
+  box-sizing: content-box;
 }
 
 .graph-sort-toolbar {

@@ -12,7 +12,6 @@ import {
 } from '@angular/core';
 import * as d3 from 'd3';
 import {Simulation, SimulationLinkDatum, SimulationNodeDatum} from 'd3-force';
-import {BaseType, Selection} from 'd3-selection';
 import {GraphData} from './graph-data.model';
 import {PropertyHandler} from '../../util/property-handler';
 import {GraphSearchService} from "./graph-search.service";
@@ -53,12 +52,12 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   } = {};
 
   private simulation: Simulation<SimulationNodeDatum, SimulationLinkDatum<SimulationNodeDatum>>;
-
-  private groups: {
-    container: Selection<BaseType, {}, BaseType, any>,
-    node: Selection<BaseType, {}, BaseType, any>,
-    link: Selection<BaseType, {}, BaseType, any>
-  } = {node: null, link: null, container: null};
+  private canvas: HTMLCanvasElement;
+  private properties: {
+    pixelRatio?: number,
+    width?: number
+    height?: number
+  } = {};
 
   constructor(private zone: NgZone,
               private changeDetectorRef: ChangeDetectorRef,
@@ -66,6 +65,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   }
 
   ngAfterViewInit(): void {
+    this.canvas = <HTMLCanvasElement>document.getElementById('jgauss-graph');
+    this.resize();
     this.restart();
   }
 
@@ -74,16 +75,19 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   }
 
   restart(): void {
-    if (!this.data || this._simulationState.paused) {
+    if (!this.data || !this.canvas || this._simulationState.paused) {
       return;
     }
 
+    let self = this;
+
     this.zone.runOutsideAngular(() => {
         let d3canvas = d3.select('#jgauss-graph');
-        let canvas = <HTMLCanvasElement>d3canvas.node();
+        let canvas = this.canvas;
         let context = canvas.getContext("2d");
-        let {width, height} = (<Element>canvas).getBoundingClientRect();
         const radius = 5;
+
+        console.log(this.properties);
 
         if (!this.simulation) {
           this.simulation = d3.forceSimulation()
@@ -91,7 +95,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
               return d.uid;
             }))
             .force('charge', d3.forceManyBody())
-            .force('center', d3.forceCenter(width / 2, height / 2));
+            .force('center', d3.forceCenter(this.properties.width / 2, this.properties.height / 2));
         }
         let simulation = this.simulation;
 
@@ -103,11 +107,11 @@ export class GraphComponent implements AfterViewInit, OnChanges {
             .on("end", dragended));
 
         let ticked = () => {
-          context.clearRect(0, 0, width, height);
+          context.clearRect(0, 0, this.properties.width, this.properties.height);
 
           context.beginPath();
           this.data.links.forEach(drawLink);
-          context.strokeStyle = "#999";
+          context.strokeStyle = "#aaa";
           context.stroke();
 
           context.beginPath();
@@ -129,7 +133,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         }
 
         function dragsubject() {
-          let subject = simulation.find(d3.event.x, d3.event.y, radius);
+          let subject = simulation.find(d3.event.x * self.properties.pixelRatio, d3.event.y * self.properties.pixelRatio, radius + 2);
           console.log(subject);
           return subject;
         }
@@ -249,10 +253,21 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   }
 
   private repaint(color: (data: any) => string): void {
-    this.groups.node
-      .selectAll('circle')
-      .transition()
-      .duration(500)
-      .attr('fill', color)
+  }
+
+  @HostListener('window: resize')
+  resize(): void {
+    let {width, height} = this.canvas.getBoundingClientRect();
+
+    let pixelRatio = this.properties.pixelRatio = window.devicePixelRatio || 1;
+
+    this.canvas.width = this.properties.width = width * pixelRatio;
+    this.canvas.height = this.properties.height = height * pixelRatio;
+
+    this.canvas.style.height = height + 'px';
+
+    console.log(width, height, this.properties);
+
+    this.restart();
   }
 }
