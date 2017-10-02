@@ -4,6 +4,6 @@
                     (onSearch)="_search($event)"
                     (onPause)="_pause($event)">
   </jg-graph-toolbar>
-  <svg id="jgauss-graph" resize [resizeMinHeight]="80"></svg>
+  <canvas width="1200" height="800" id="jgauss-graph" resize [resizeMinHeight]="80"></canvas>
 </div>
 <jg-user-tip [visible]="_tipVisible" [userData]="_tipData"></jg-user-tip>

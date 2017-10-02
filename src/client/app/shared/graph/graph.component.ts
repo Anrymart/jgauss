@@ -66,7 +66,6 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   }
 
   ngAfterViewInit(): void {
-    this.resize();
     this.restart();
   }
 
@@ -80,20 +79,11 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     }
 
     this.zone.runOutsideAngular(() => {
-        let svg = d3.select('#jgauss-graph');
-        let {width, height} = (<Element>svg.node()).getBoundingClientRect();
-
-        if (!this.groups.container) {
-          this.groups.container = svg.append('g');
-        }
-        let container = this.groups.container;
-
-        let zoom = d3.zoom()
-          .scaleExtent([0.2, 5])
-          .on('zoom', () => {
-            this.groups.container.attr('transform', d3.event.transform);
-          });
-        svg.call(zoom);
+        let d3canvas = d3.select('#jgauss-graph');
+        let canvas = <HTMLCanvasElement>d3canvas.node();
+        let context = canvas.getContext("2d");
+        let {width, height} = (<Element>canvas).getBoundingClientRect();
+        const radius = 5;
 
         if (!this.simulation) {
           this.simulation = d3.forceSimulation()
@@ -105,90 +95,62 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         }
         let simulation = this.simulation;
 
-        if (!this.groups.link) {
-          this.groups.link = container.append('g')
-            .attr('class', 'links');
+        d3canvas
+          .call(d3.drag()
+            .subject(dragsubject)
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended));
+
+        let ticked = () => {
+          context.clearRect(0, 0, width, height);
+
+          context.beginPath();
+          this.data.links.forEach(drawLink);
+          context.strokeStyle = "#999";
+          context.stroke();
+
+          context.beginPath();
+          this.data.nodes.forEach(drawNode);
+          context.fillStyle = '#206caf';
+          context.strokeStyle = "#fff";
+          context.fill();
+          context.stroke();
+        };
+
+        function drawLink(d: any) {
+          context.moveTo(d.source.x, d.source.y);
+          context.lineTo(d.target.x, d.target.y);
         }
 
-        let link = this.groups.link
-          .selectAll('line')
-          .data(this.data.links);
-        link.exit().remove();
-        link = link.enter().append('line')
-          .attr("stroke-width", function (d) {
-            if (d.weight) {
-              return Math.sqrt(d.weight) / 2;
-            }
-            return .5;
-          })
-          .merge(link);
-
-        if (!this.groups.node) {
-          this.groups.node = container.append('g')
-            .attr('class', 'nodes');
+        function drawNode(d: any) {
+          context.moveTo(d.x + radius, d.y);
+          context.arc(d.x, d.y, radius, 0, 2 * Math.PI);
         }
 
-        let node = this.groups.node
-          .selectAll('circle')
-          .data(this.data.nodes);
-        node.exit().remove();
-        let addedNode = node.enter().append('circle')
-          .on('click', (data: any) => {
-            d3.event.preventDefault();
-            this.zone.run(() => {
-              this._tipVisible = false;
-              this.onUserClick.emit(data);
-            });
-          })
-          .on('mouseover', (data: any) => {
-            if (!this._simulationState.nodeDrag) {
-              data.event = d3.event;
-              this._tipData = data;
-              this._tipVisible = true;
-              this.changeDetectorRef.detectChanges();
-            }
-          })
-          .on('mouseout', (data: any) => {
-            this._tipVisible = false;
-            this.changeDetectorRef.detectChanges();
-          });
+        function dragsubject() {
+          let subject = simulation.find(d3.event.x, d3.event.y, radius);
+          console.log(subject);
+          return subject;
+        }
 
-        node = addedNode.merge(node)
-          .attr('r', 5)
-          .attr('fill', this.searchService.getColorFunction());
+        function dragstarted() {
+          console.log(d3.event);
+          if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+          d3.event.subject.fx = d3.event.subject.x;
+          d3.event.subject.fy = d3.event.subject.y;
+        }
 
-        let dragstarted = (d: any) => {
-          if (this._simulationState.paused) {
-            return;
-          }
-          if (!d3.event.active) {
-            simulation.alphaTarget(0.3).restart();
-          }
-          d.fx = d.x;
-          d.fy = d.y;
+        function dragged() {
+          d3.event.subject.fx = d3.event.x;
+          d3.event.subject.fy = d3.event.y;
+        }
 
-          this._simulationState.nodeDrag = true;
-        };
-
-        let dragged = (d: any) => {
-          d.fx = d3.event.x;
-          d.fy = d3.event.y;
-        };
-
-        let dragended = (d: any) => {
-          if (!d3.event.active) {
-            simulation.alphaTarget(0);
-          }
-          d.fx = null;
-          d.fy = null;
-
-          this._simulationState.nodeDrag = false;
-        };
-
-        node.call(d3.drag()
-          .on('start', dragstarted)
-          .on('drag', dragged)
-          .on('end', dragended));
+        function dragended() {
+          if (!d3.event.active) simulation.alphaTarget(0);
+          d3.event.subject.fx = null;
+          d3.event.subject.fy = null;
+        }
 
         simulation
           .nodes(this.data.nodes)
@@ -200,42 +162,69 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
         simulation.alphaTarget(0.3).restart();
 
-        function ticked() {
-          link
-            .attr('x1', function (d: any) {
-              return d.source.x;
-            })
-            .attr('y1', function (d: any) {
-              return d.source.y;
-            })
-            .attr('x2', function (d: any) {
-              return d.target.x;
-            })
-            .attr('y2', function (d: any) {
-              return d.target.y;
-            });
+        // .on('click', (data: any) => {
+        //   d3.event.preventDefault();
+        //   this.zone.run(() => {
+        //     this._tipVisible = false;
+        //     this.onUserClick.emit(data);
+        //   });
+        // })
+        // .on('mouseover', (data: any) => {
+        //   if (!this._simulationState.nodeDrag) {
+        //     data.event = d3.event;
+        //     this._tipData = data;
+        //     this._tipVisible = true;
+        //     this.changeDetectorRef.detectChanges();
+        //   }
+        // })
+        // .on('mouseout', (data: any) => {
+        //   this._tipVisible = false;
+        //   this.changeDetectorRef.detectChanges();
+        // });
 
-          node
-            .attr('cx', function (d: any) {
-              return d.x;
-            })
-            .attr('cy', function (d: any) {
-              return d.y;
-            });
-        }
+        //   let dragstarted = (d: any) => {
+        //     if (this._simulationState.paused) {
+        //       return;
+        //     }
+        //     if (!d3.event.active) {
+        //       simulation.alphaTarget(0.3).restart();
+        //     }
+        //     d.fx = d.x;
+        //     d.fy = d.y;
+        //
+        //     this._simulationState.nodeDrag = true;
+        //   };
+        //
+        //   let dragged = (d: any) => {
+        //     d.fx = d3.event.x;
+        //     d.fy = d3.event.y;
+        //   };
+        //
+        //   let dragended = (d: any) => {
+        //     if (!d3.event.active) {
+        //       simulation.alphaTarget(0);
+        //     }
+        //     d.fx = null;
+        //     d.fy = null;
+        //
+        //     this._simulationState.nodeDrag = false;
+        //   };
+        //
+        //   node.call(d3.drag()
+        //     .on('start', dragstarted)
+        //     .on('drag', dragged)
+        //     .on('end', dragended));
+        //
+        // simulation.alphaTarget(0.3).restart();
+        //
+        //   d3.select(canvas)
+        //     .call(d3.drag()
+        //       .subject(dragsubject)
+        //       .on("start", dragstarted)
+        //       .on("drag", dragged)
+        //       .on("end", dragended));
       }
     );
-  }
-
-  @HostListener('window: resize')
-  resize(): void {
-    let height = document.documentElement.clientHeight;
-    let graphElement = document.getElementById('jgauss-graph');
-    if (graphElement) {
-      let graphHeight = .8 * height + 'px';
-      graphElement.style.height = graphHeight;
-      graphElement.parentElement.style.height = graphHeight;
-    }
   }
 
   _pause(isPaused: boolean) {
