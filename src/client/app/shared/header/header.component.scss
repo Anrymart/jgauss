@@ -19,9 +19,8 @@ $item-hover-background: $base-transparent-color;
   background-color: $base-color;
   color: $font-light-color;
   display: block;
-  justify-content: center;
-  align-items: stretch;
   font-size: 14px;
+  min-width: $page-min-width;
 }
 
 .page-margin-container {

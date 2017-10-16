@@ -6,11 +6,11 @@
   position: relative;
   display: flex;
   margin: 0;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
 }
 
 canvas {
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
   width: 100%;
   box-sizing: content-box;
 }

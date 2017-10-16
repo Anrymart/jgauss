@@ -1,6 +1,5 @@
 import {
   AfterViewInit,
-  ChangeDetectorRef,
   Component,
   EventEmitter,
   HostListener,
@@ -14,7 +13,7 @@ import * as d3 from 'd3';
 import {Simulation, SimulationLinkDatum, SimulationNodeDatum} from 'd3-force';
 import {GraphData} from './graph-data.model';
 import {PropertyHandler} from '../../util/property-handler';
-import {GraphSearchService} from "./graph-search.service";
+import {GraphSearchService} from './graph-search.service';
 
 @Component({
   moduleId: module.id,
@@ -48,7 +47,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
   _simulationState: {
     nodeDrag?: boolean,   // is node being dragged by user, responsible for hiding user tip.
-    paused?: boolean // is simulation paused
+    paused?: boolean      // is simulation paused
   } = {};
 
   private simulation: Simulation<SimulationNodeDatum, SimulationLinkDatum<SimulationNodeDatum>>;
@@ -60,7 +59,6 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   } = {};
 
   constructor(private zone: NgZone,
-              private changeDetectorRef: ChangeDetectorRef,
               @Inject('GraphSearchService') private searchService: GraphSearchService) {
   }
 
@@ -84,10 +82,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     this.zone.runOutsideAngular(() => {
         let d3canvas = d3.select('#jgauss-graph');
         let canvas = this.canvas;
-        let context = canvas.getContext("2d");
+        let context = canvas.getContext('2d');
         const radius = 5;
-
-        console.log(this.properties);
 
         if (!this.simulation) {
           this.simulation = d3.forceSimulation()
@@ -102,22 +98,27 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         d3canvas
           .call(d3.drag()
             .subject(dragsubject)
-            .on("start", dragstarted)
-            .on("drag", dragged)
-            .on("end", dragended));
+            .on('start', dragstarted)
+            .on('drag', dragged)
+            .on('end', dragended));
 
         let ticked = () => {
           context.clearRect(0, 0, this.properties.width, this.properties.height);
 
           context.beginPath();
-          this.data.links.forEach(drawLink);
-          context.strokeStyle = "#aaa";
+          for (let link of this.data.links) {
+            drawLink(link);
+          }
+          context.strokeStyle = '#aaa';
           context.stroke();
 
           context.beginPath();
-          this.data.nodes.forEach(drawNode);
+          for (let node of this.data.nodes) {
+            drawNode(node);
+          }
+
           context.fillStyle = '#206caf';
-          context.strokeStyle = "#fff";
+          context.strokeStyle = '#fff';
           context.fill();
           context.stroke();
         };
@@ -133,21 +134,21 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         }
 
         function dragsubject() {
+          console.log(d3.event);
           let subject = simulation.find(d3.event.x * self.properties.pixelRatio, d3.event.y * self.properties.pixelRatio, radius + 2);
           console.log(subject);
           return subject;
         }
 
         function dragstarted() {
-          console.log(d3.event);
           if (!d3.event.active) simulation.alphaTarget(0.3).restart();
           d3.event.subject.fx = d3.event.subject.x;
           d3.event.subject.fy = d3.event.subject.y;
         }
 
         function dragged() {
-          d3.event.subject.fx = d3.event.x;
-          d3.event.subject.fy = d3.event.y;
+          d3.event.subject.fx += d3.event.dx * self.properties.pixelRatio;
+          d3.event.subject.fy += d3.event.dy * self.properties.pixelRatio;
         }
 
         function dragended() {
@@ -224,9 +225,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         //   d3.select(canvas)
         //     .call(d3.drag()
         //       .subject(dragsubject)
-        //       .on("start", dragstarted)
-        //       .on("drag", dragged)
-        //       .on("end", dragended));
+        //       .on('start', dragstarted)
+        //       .on('drag', dragged)
+        //       .on('end', dragended));
       }
     );
   }
