@@ -58,6 +58,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     height?: number
   } = {};
 
+  private transform = d3.zoomIdentity;
+
   constructor(private zone: NgZone,
               @Inject('GraphSearchService') private searchService: GraphSearchService) {
   }
@@ -95,26 +97,37 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         }
         let simulation = this.simulation;
 
-        d3canvas
-          .call(d3.drag()
-            .subject(dragsubject)
-            .on('start', dragstarted)
-            .on('drag', dragged)
-            .on('end', dragended));
+        let render = () => {
+          context.clearRect(-5, -5, this.properties.width + 10, this.properties.height + 10);
 
-        let ticked = () => {
-          context.clearRect(0, 0, this.properties.width, this.properties.height);
+          let transform = this.transform;
+          let pixelRatio = this.properties.pixelRatio;
+          let translate = {
+            x: transform.x * pixelRatio,
+            y: transform.y * pixelRatio
+          };
+          let scale = transform.k;
+
+          // context.translate(this.transform.x * this.properties.pixelRatio, this.transform.y * this.properties.pixelRatio);
+          // context.scale(this.transform.k, this.transform.k);
 
           context.beginPath();
           for (let link of this.data.links) {
-            drawLink(link);
+            context.moveTo(link.source.x * scale + translate.x, link.source.y * scale + translate.y);
+            context.lineTo(link.target.x * scale + translate.x, link.target.y * scale + translate.y);
+
           }
           context.strokeStyle = '#aaa';
           context.stroke();
 
           context.beginPath();
           for (let node of this.data.nodes) {
-            drawNode(node);
+            context.moveTo((node.x + radius) * scale + translate.x, node.y * scale + translate.y);
+            context.arc(
+              node.x * scale + translate.x,
+              node.y * scale + translate.y,
+              radius * scale,
+              0, 2 * Math.PI);
           }
 
           context.fillStyle = '#206caf';
@@ -123,21 +136,35 @@ export class GraphComponent implements AfterViewInit, OnChanges {
           context.stroke();
         };
 
-        function drawLink(d: any) {
-          context.moveTo(d.source.x, d.source.y);
-          context.lineTo(d.target.x, d.target.y);
-        }
+        d3canvas
+          .call(d3.drag().subject(dragsubject)
+            .on('start', dragstarted)
+            .on('drag', dragged)
+            .on('end', dragended)
+          )
+          .call(d3.zoom().scaleExtent([.3, 8]).on("zoom", zoomed))
+          .call(render);
 
-        function drawNode(d: any) {
-          context.moveTo(d.x + radius, d.y);
-          context.arc(d.x, d.y, radius, 0, 2 * Math.PI);
+        function zoomed() {
+          self.transform = d3.event.transform;
+          render();
         }
 
         function dragsubject() {
-          console.log(d3.event);
-          let subject = simulation.find(d3.event.x * self.properties.pixelRatio, d3.event.y * self.properties.pixelRatio, radius + 2);
-          console.log(subject);
-          return subject;
+          let i,
+            x = self.transform.invertX(d3.event.x) * self.properties.pixelRatio,
+            y = self.transform.invertY(d3.event.y) * self.properties.pixelRatio,
+            dx, dy;
+
+          for (let node of self.data.nodes) {
+            dx = x - node.x;
+            dy = y - node.y;
+            if (dx * dx + dy * dy < radius * radius) {
+              // node.x = transform.applyX(node.x);
+              // node.y = transform.applyY(node.y);
+              return node;
+            }
+          }
         }
 
         function dragstarted() {
@@ -147,8 +174,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         }
 
         function dragged() {
-          d3.event.subject.fx += d3.event.dx * self.properties.pixelRatio;
-          d3.event.subject.fy += d3.event.dy * self.properties.pixelRatio;
+          d3.event.subject.fx += d3.event.dx * self.properties.pixelRatio / self.transform.k;
+          d3.event.subject.fy += d3.event.dy * self.properties.pixelRatio / self.transform.k;
         }
 
         function dragended() {
@@ -159,7 +186,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
         simulation
           .nodes(this.data.nodes)
-          .on('tick', ticked);
+          .on('tick', render);
 
         simulation
           .force<any>('link')
