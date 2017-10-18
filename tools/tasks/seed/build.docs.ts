@@ -28,7 +28,7 @@
 //       includeDeclarations: true,
 //       // Output options (see typedoc docs)
 //       out: DOCS_DEST,
-//       json: join(DOCS_DEST, 'data/docs.json'),
+//       json: join(DOCS_DEST, 'user/docs.json'),
 //       name: APP_TITLE,
 //       ignoreCompilerErrors: false,
 //       experimentalDecorators: true,

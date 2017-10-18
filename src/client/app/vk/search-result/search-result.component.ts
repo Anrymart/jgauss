@@ -104,7 +104,7 @@ export class SearchResultComponent implements OnDestroy {
               }
             }
 
-            // add links to graph data
+            // add links to graph user
             for (let targetId of friend.l) {
               if (targetId > friend.id && targetFriendIds.includes(targetId)) {
                 secondaryLinks.push({source: friend.id, target: targetId});

@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   HostListener,
@@ -14,6 +15,7 @@ import {Simulation, SimulationLinkDatum, SimulationNodeDatum} from 'd3-force';
 import {GraphData} from './graph-data.model';
 import {PropertyHandler} from '../../util/property-handler';
 import {GraphSearchService} from './graph-search.service';
+import {TipData} from "./user-tip/user-tip.component";
 
 @Component({
   moduleId: module.id,
@@ -42,8 +44,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   @Output()
   onUserClick: EventEmitter<any> = new EventEmitter<any>();
 
-  _tipData: any;
-  _tipVisible: boolean;
+  _tipData: TipData = {};
 
   _simulationState: {
     nodeDrag?: boolean,   // is node being dragged by user, responsible for hiding user tip.
@@ -61,6 +62,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   private transform = d3.zoomIdentity;
 
   constructor(private zone: NgZone,
+              private changeDetectorRef: ChangeDetectorRef,
               @Inject('GraphSearchService') private searchService: GraphSearchService) {
   }
 
@@ -108,9 +110,6 @@ export class GraphComponent implements AfterViewInit, OnChanges {
           };
           let scale = transform.k;
 
-          // context.translate(this.transform.x * this.properties.pixelRatio, this.transform.y * this.properties.pixelRatio);
-          // context.scale(this.transform.k, this.transform.k);
-
           context.beginPath();
           for (let link of this.data.links) {
             context.moveTo(link.source.x * scale + translate.x, link.source.y * scale + translate.y);
@@ -137,31 +136,54 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         };
 
         d3canvas
-          .call(d3.drag().subject(dragsubject)
+          .call(d3.drag().subject(eventSubject)
             .on('start', dragstarted)
             .on('drag', dragged)
             .on('end', dragended)
           )
           .call(d3.zoom().scaleExtent([.3, 8]).on("zoom", zoomed))
-          .call(render);
+          .call(render)
+          .on('mousemove', () => {
+            if (this._simulationState.nodeDrag) {
+              this._tipData = {};
+              this.changeDetectorRef.detectChanges();
+              return;
+            }
+            let subject = eventSubject();
+            if (this._tipData.user != subject) {
+              this._tipData = {
+                user: subject,
+                event: d3.event
+              };
+              this.changeDetectorRef.detectChanges();
+            }
+          })
+          .on('click', () => {
+            let subject = eventSubject();
+            if (subject) {
+              d3.event.preventDefault();
+              this.zone.run(() => {
+                this._tipData = {};
+                this.onUserClick.emit(subject);
+              });
+            }
+          })
+          .on('mouseout', () => {
+            this._tipData = {};
+            this.changeDetectorRef.detectChanges();
+          });
 
         function zoomed() {
           self.transform = d3.event.transform;
           render();
         }
 
-        function dragsubject() {
-          let i,
-            x = self.transform.invertX(d3.event.x) * self.properties.pixelRatio,
-            y = self.transform.invertY(d3.event.y) * self.properties.pixelRatio,
-            dx, dy;
+        function eventSubject() {
+          let x = self.transform.invertX(d3.event.offsetX || d3.event.x) * self.properties.pixelRatio;
+          let y = self.transform.invertY(d3.event.offsetY || d3.event.y) * self.properties.pixelRatio;
 
           for (let node of self.data.nodes) {
-            dx = x - node.x;
-            dy = y - node.y;
-            if (dx * dx + dy * dy < radius * radius) {
-              // node.x = transform.applyX(node.x);
-              // node.y = transform.applyY(node.y);
+            if ((x - node.x) ** 2 + (y - node.y) ** 2 <= (radius + 1) ** 2) {
               return node;
             }
           }
@@ -171,6 +193,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
           if (!d3.event.active) simulation.alphaTarget(0.3).restart();
           d3.event.subject.fx = d3.event.subject.x;
           d3.event.subject.fy = d3.event.subject.y;
+          self._simulationState.nodeDrag = true;
+          self._tipData = {};
+          self.changeDetectorRef.detectChanges();
         }
 
         function dragged() {
@@ -182,6 +207,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
           if (!d3.event.active) simulation.alphaTarget(0);
           d3.event.subject.fx = null;
           d3.event.subject.fy = null;
+          self._simulationState.nodeDrag = false;
         }
 
         simulation
@@ -193,68 +219,6 @@ export class GraphComponent implements AfterViewInit, OnChanges {
           .links(this.data.links);
 
         simulation.alphaTarget(0.3).restart();
-
-        // .on('click', (data: any) => {
-        //   d3.event.preventDefault();
-        //   this.zone.run(() => {
-        //     this._tipVisible = false;
-        //     this.onUserClick.emit(data);
-        //   });
-        // })
-        // .on('mouseover', (data: any) => {
-        //   if (!this._simulationState.nodeDrag) {
-        //     data.event = d3.event;
-        //     this._tipData = data;
-        //     this._tipVisible = true;
-        //     this.changeDetectorRef.detectChanges();
-        //   }
-        // })
-        // .on('mouseout', (data: any) => {
-        //   this._tipVisible = false;
-        //   this.changeDetectorRef.detectChanges();
-        // });
-
-        //   let dragstarted = (d: any) => {
-        //     if (this._simulationState.paused) {
-        //       return;
-        //     }
-        //     if (!d3.event.active) {
-        //       simulation.alphaTarget(0.3).restart();
-        //     }
-        //     d.fx = d.x;
-        //     d.fy = d.y;
-        //
-        //     this._simulationState.nodeDrag = true;
-        //   };
-        //
-        //   let dragged = (d: any) => {
-        //     d.fx = d3.event.x;
-        //     d.fy = d3.event.y;
-        //   };
-        //
-        //   let dragended = (d: any) => {
-        //     if (!d3.event.active) {
-        //       simulation.alphaTarget(0);
-        //     }
-        //     d.fx = null;
-        //     d.fy = null;
-        //
-        //     this._simulationState.nodeDrag = false;
-        //   };
-        //
-        //   node.call(d3.drag()
-        //     .on('start', dragstarted)
-        //     .on('drag', dragged)
-        //     .on('end', dragended));
-        //
-        // simulation.alphaTarget(0.3).restart();
-        //
-        //   d3.select(canvas)
-        //     .call(d3.drag()
-        //       .subject(dragsubject)
-        //       .on('start', dragstarted)
-        //       .on('drag', dragged)
-        //       .on('end', dragended));
       }
     );
   }

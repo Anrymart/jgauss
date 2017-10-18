@@ -16,9 +16,9 @@
 //     return new Promise(function (resolve, reject) {
 //       let xhr = new XMLHttpRequest;
 //       xhr.open('GET', file);
-//       xhr.onload = (data: any) => resolve(
+//       xhr.onload = (user: any) => resolve(
 //         [
-//           { provide: TRANSLATIONS, useValue: data.target.response },
+//           { provide: TRANSLATIONS, useValue: user.target.response },
 //           { provide: TRANSLATIONS_FORMAT, useValue: 'xlf' },
 //           { provide: LOCALE_ID, useValue: locale }
 //         ]

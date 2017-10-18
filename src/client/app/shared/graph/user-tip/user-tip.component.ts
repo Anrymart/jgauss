@@ -17,7 +17,7 @@ export class UserTipComponent {
     }
   })
   @Input()
-  userData: any;
+  tipData: TipData;
 
   @PropertyHandler({
     afterChange() {
@@ -34,9 +34,9 @@ export class UserTipComponent {
   }
 
   private updatePosition() {
-    if (this.userData) {
+    if (this.tipData.user) {
       let elementStyle = this.elementRef.nativeElement.style;
-      let event = this.userData.event;
+      let event = this.tipData.event;
       elementStyle.left = event.pageX + "px";
       elementStyle.top = event.pageY + "px";
     }
@@ -46,4 +46,9 @@ export class UserTipComponent {
     this._imageLoaded = true;
     this.changeDetectorRef.detectChanges();
   }
+}
+
+export interface TipData {
+  user?: any;
+  event?: any;
 }
