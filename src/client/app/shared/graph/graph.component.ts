@@ -7,7 +7,6 @@ import {
   Inject,
   Input,
   NgZone,
-  OnChanges,
   Output
 } from '@angular/core';
 import * as d3 from 'd3';
@@ -15,7 +14,7 @@ import {Simulation, SimulationLinkDatum, SimulationNodeDatum} from 'd3-force';
 import {GraphData} from './graph-data.model';
 import {PropertyHandler} from '../../util/property-handler';
 import {GraphSearchService} from './graph-search.service';
-import {TipData} from "./user-tip/user-tip.component";
+import {TipData} from './user-tip/user-tip.component';
 
 @Component({
   moduleId: module.id,
@@ -23,13 +22,15 @@ import {TipData} from "./user-tip/user-tip.component";
   templateUrl: 'graph.component.html',
   styleUrls: ['graph.component.css']
 })
-export class GraphComponent implements AfterViewInit, OnChanges {
+export class GraphComponent implements AfterViewInit {
 
   @PropertyHandler({
     afterChange(data: GraphData) {
       if (!data) {
         this.data = {nodes: [], links: []};
         this._simulationState.paused = false;
+      } else {
+        this.initializeAnimation();
       }
       this.searchService.reset();
       this.searchService.setData(this.data);
@@ -47,19 +48,21 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   _tipData: TipData = {};
 
   _simulationState: {
-    nodeDrag?: boolean,   // is node being dragged by user, responsible for hiding user tip.
+    nodeDrag?: boolean,   // is node being dragged by user, responsible for hiding user tip
     paused?: boolean      // is simulation paused
   } = {};
 
   private simulation: Simulation<SimulationNodeDatum, SimulationLinkDatum<SimulationNodeDatum>>;
   private canvas: HTMLCanvasElement;
+
   private properties: {
     pixelRatio?: number,
     width?: number
     height?: number
   } = {};
-
   private transform = d3.zoomIdentity;
+
+  private colorGroups: any;
 
   constructor(private zone: NgZone,
               private changeDetectorRef: ChangeDetectorRef,
@@ -69,71 +72,73 @@ export class GraphComponent implements AfterViewInit, OnChanges {
   ngAfterViewInit(): void {
     this.canvas = <HTMLCanvasElement>document.getElementById('jgauss-graph');
     this.resize();
-    this.restart();
+    this.initializeAnimation();
+    this.redraw();
   }
 
-  ngOnChanges(): void {
-    this.restart();
-  }
-
-  restart(): void {
+  private redraw(): void {
     if (!this.data || !this.canvas || this._simulationState.paused) {
       return;
     }
 
-    let self = this;
+    let canvas = this.canvas;
+    let context = canvas.getContext('2d');
+    const radius = 5;
+
+    context.clearRect(-5, -5, this.properties.width + 10, this.properties.height + 10);
+
+    let transform = this.transform;
+    let pixelRatio = this.properties.pixelRatio;
+    let translate = {
+      x: transform.x * pixelRatio,
+      y: transform.y * pixelRatio
+    };
+    let scale = transform.k;
+
+    context.beginPath();
+    for (let link of this.data.links) {
+      context.moveTo(link.source.x * scale + translate.x, link.source.y * scale + translate.y);
+      context.lineTo(link.target.x * scale + translate.x, link.target.y * scale + translate.y);
+
+    }
+    context.strokeStyle = '#aaa';
+    context.stroke();
+
+    context.beginPath();
+    for (let node of this.data.nodes) {
+      context.moveTo((node.x + radius) * scale + translate.x, node.y * scale + translate.y);
+      context.arc(
+        node.x * scale + translate.x,
+        node.y * scale + translate.y,
+        radius * scale,
+        0, 2 * Math.PI);
+    }
+
+    context.fillStyle = '#206caf';
+    context.strokeStyle = '#fff';
+    context.fill();
+    context.stroke();
+  }
+
+  private initializeAnimation(): void {
+    if (!this.data || !this.canvas || this._simulationState.paused) {
+      return;
+    }
 
     this.zone.runOutsideAngular(() => {
+
+        let self = this;
         let d3canvas = d3.select('#jgauss-graph');
-        let canvas = this.canvas;
-        let context = canvas.getContext('2d');
+        let redraw = this.redraw.bind(this);
+        let simulation = this.simulation;
         const radius = 5;
 
-        if (!this.simulation) {
-          this.simulation = d3.forceSimulation()
-            .force('link', d3.forceLink().id(function (d: any) {
-              return d.uid;
-            }))
-            .force('charge', d3.forceManyBody())
-            .force('center', d3.forceCenter(this.properties.width / 2, this.properties.height / 2));
-        }
-        let simulation = this.simulation;
-
-        let render = () => {
-          context.clearRect(-5, -5, this.properties.width + 10, this.properties.height + 10);
-
-          let transform = this.transform;
-          let pixelRatio = this.properties.pixelRatio;
-          let translate = {
-            x: transform.x * pixelRatio,
-            y: transform.y * pixelRatio
-          };
-          let scale = transform.k;
-
-          context.beginPath();
-          for (let link of this.data.links) {
-            context.moveTo(link.source.x * scale + translate.x, link.source.y * scale + translate.y);
-            context.lineTo(link.target.x * scale + translate.x, link.target.y * scale + translate.y);
-
-          }
-          context.strokeStyle = '#aaa';
-          context.stroke();
-
-          context.beginPath();
-          for (let node of this.data.nodes) {
-            context.moveTo((node.x + radius) * scale + translate.x, node.y * scale + translate.y);
-            context.arc(
-              node.x * scale + translate.x,
-              node.y * scale + translate.y,
-              radius * scale,
-              0, 2 * Math.PI);
-          }
-
-          context.fillStyle = '#206caf';
-          context.strokeStyle = '#fff';
-          context.fill();
-          context.stroke();
-        };
+        this.simulation = d3.forceSimulation()
+          .force('link', d3.forceLink().id(function (d: any) {
+            return d.uid;
+          }))
+          .force('charge', d3.forceManyBody())
+          .force('center', d3.forceCenter(this.properties.width / 2, this.properties.height / 2));
 
         d3canvas
           .call(d3.drag().subject(eventSubject)
@@ -141,8 +146,8 @@ export class GraphComponent implements AfterViewInit, OnChanges {
             .on('drag', dragged)
             .on('end', dragended)
           )
-          .call(d3.zoom().scaleExtent([.3, 8]).on("zoom", zoomed))
-          .call(render)
+          .call(d3.zoom().scaleExtent([.3, 8]).on('zoom', zoomed))
+          .call(redraw)
           .on('mousemove', () => {
             if (this._simulationState.nodeDrag) {
               this._tipData = {};
@@ -175,7 +180,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
         function zoomed() {
           self.transform = d3.event.transform;
-          render();
+          redraw();
         }
 
         function eventSubject() {
@@ -190,7 +195,12 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         }
 
         function dragstarted() {
-          if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+          if (self._simulationState.paused) {
+            return;
+          }
+          if (!d3.event.active) {
+            simulation.alphaTarget(0.3).restart();
+          }
           d3.event.subject.fx = d3.event.subject.x;
           d3.event.subject.fy = d3.event.subject.y;
           self._simulationState.nodeDrag = true;
@@ -204,7 +214,9 @@ export class GraphComponent implements AfterViewInit, OnChanges {
         }
 
         function dragended() {
-          if (!d3.event.active) simulation.alphaTarget(0);
+          if (!d3.event.active) {
+            simulation.alphaTarget(0);
+          }
           d3.event.subject.fx = null;
           d3.event.subject.fy = null;
           self._simulationState.nodeDrag = false;
@@ -212,13 +224,14 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
         simulation
           .nodes(this.data.nodes)
-          .on('tick', render);
+          .on('tick', redraw);
 
         simulation
           .force<any>('link')
           .links(this.data.links);
 
         simulation.alphaTarget(0.3).restart();
+
       }
     );
   }
@@ -229,7 +242,7 @@ export class GraphComponent implements AfterViewInit, OnChanges {
       if (isPaused) {
         this.simulation.stop();
       } else {
-        this.restart();
+        this.simulation.alphaTarget(0.3).restart();
       }
     });
   }
@@ -239,12 +252,21 @@ export class GraphComponent implements AfterViewInit, OnChanges {
     this.repaint(color);
   }
 
-  _sort(sortType?: string, data?: any): void {
+  _sort(sortType ?: string, data ?: any): void {
     let color = this.searchService.sort(sortType, data).getColorFunction();
     this.repaint(color);
   }
 
-  private repaint(color: (data: any) => string): void {
+  repaint(color: (data: any) => string): void {
+    this.colorGroups = {};
+    this.data.nodes.forEach((node: any) => {
+      let nodeColor = color(node);
+      if (!this.colorGroups[nodeColor]) {
+        this.colorGroups[nodeColor] = [node];
+      } else {
+        this.colorGroups[nodeColor].push(node);
+      }
+    });
   }
 
   @HostListener('window: resize')
@@ -258,8 +280,6 @@ export class GraphComponent implements AfterViewInit, OnChanges {
 
     this.canvas.style.height = height + 'px';
 
-    console.log(width, height, this.properties);
-
-    this.restart();
+    this.redraw();
   }
 }
