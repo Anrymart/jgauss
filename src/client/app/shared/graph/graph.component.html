@@ -1,10 +1,10 @@
 <div class="graph-content">
   <jg-graph-toolbar [loading]="loading"
-                    [paused]="_simulationState.paused"
+                    [paused]="_graphState.paused"
                     (onSearch)="_search($event)"
                     (onPause)="_pause($event)">
   </jg-graph-toolbar>
   <canvas height="600" id="jgauss-graph"></canvas>
-  <div class="resize-handle"></div>
+  <!--<div class="resize-handle" (click)="_toggleSizeMode()"></div>-->
 </div>
 <jg-user-tip [visible]="_tipData.user" [tipData]="_tipData"></jg-user-tip>

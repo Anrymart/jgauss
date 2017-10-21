@@ -15,12 +15,14 @@ import {GraphData} from './graph-data.model';
 import {PropertyHandler} from '../../util/property-handler';
 import {GraphSearchService} from './graph-search.service';
 import {TipData} from './user-tip/user-tip.component';
+import {COLORS} from '../../vk/search-result/graph-search/vk-graph-search.service';
 
 @Component({
   moduleId: module.id,
   selector: 'jg-graph',
   templateUrl: 'graph.component.html',
-  styleUrls: ['graph.component.css']
+  styleUrls: ['graph.component.css'],
+  host: {'[class._full-screen]': '_graphState.fullScreen'}
 })
 export class GraphComponent implements AfterViewInit {
 
@@ -28,16 +30,17 @@ export class GraphComponent implements AfterViewInit {
     afterChange(data: GraphData) {
       if (!data) {
         this.data = {nodes: [], links: []};
-        this._simulationState.paused = false;
-      } else {
-        this.initializeAnimation();
+        this._graphState.paused = false;
+      } else if (this.canvas) {
+        this.updateSimulationData();
+        this.repaint();
       }
       this.searchService.reset();
       this.searchService.setData(this.data);
     }
   })
   @Input()
-  data: GraphData;
+  data: GraphData = {nodes: [], links: []};
 
   @Input()
   loading: boolean;
@@ -47,22 +50,25 @@ export class GraphComponent implements AfterViewInit {
 
   _tipData: TipData = {};
 
-  _simulationState: {
+  _graphState: {
     nodeDrag?: boolean,   // is node being dragged by user, responsible for hiding user tip
-    paused?: boolean      // is simulation paused
+    paused?: boolean,     // is simulation paused
+    fullScreen?: boolean,
+    resizeRequired?: boolean
   } = {};
 
   private simulation: Simulation<SimulationNodeDatum, SimulationLinkDatum<SimulationNodeDatum>>;
   private canvas: HTMLCanvasElement;
+  private context: CanvasRenderingContext2D;
+  private transform = d3.zoomIdentity;
+  private colorGroups: any;
 
   private properties: {
     pixelRatio?: number,
     width?: number
-    height?: number
-  } = {};
-  private transform = d3.zoomIdentity;
-
-  private colorGroups: any;
+    height?: number,
+    radius: number
+  } = {radius: 5};
 
   constructor(private zone: NgZone,
               private changeDetectorRef: ChangeDetectorRef,
@@ -72,18 +78,33 @@ export class GraphComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.canvas = <HTMLCanvasElement>document.getElementById('jgauss-graph');
     this.resize();
-    this.initializeAnimation();
-    this.redraw();
+    this.updateSimulationData();
+    this.repaint();
+    this.addEventListeners();
   }
 
-  private redraw(): void {
-    if (!this.data || !this.canvas || this._simulationState.paused) {
+  ngAfterViewChecked(): void {
+    if (this._graphState.resizeRequired) {
+      this.resize();
+      this._graphState.resizeRequired = false;
+    }
+  }
+
+  private redraw(force: boolean = false): void {
+    if (!this.data || !this.canvas) {
       return;
     }
 
-    let canvas = this.canvas;
-    let context = canvas.getContext('2d');
-    const radius = 5;
+    if (this._graphState.paused && !force) {
+      return;
+    }
+
+    if (!this.context) {
+      this.context = this.canvas.getContext('2d');
+    }
+
+    let context = this.context;
+    const radius = this.properties.radius;
 
     context.clearRect(-5, -5, this.properties.width + 10, this.properties.height + 10);
 
@@ -101,126 +122,47 @@ export class GraphComponent implements AfterViewInit {
       context.lineTo(link.target.x * scale + translate.x, link.target.y * scale + translate.y);
 
     }
-    context.strokeStyle = '#aaa';
+    context.strokeStyle = COLORS.darkGrey;
     context.stroke();
+    context.closePath();
 
-    context.beginPath();
-    for (let node of this.data.nodes) {
-      context.moveTo((node.x + radius) * scale + translate.x, node.y * scale + translate.y);
-      context.arc(
-        node.x * scale + translate.x,
-        node.y * scale + translate.y,
-        radius * scale,
-        0, 2 * Math.PI);
+    for (let color in this.colorGroups) {
+      context.beginPath();
+      for (let node of this.colorGroups[color]) {
+        context.moveTo((node.x + radius) * scale + translate.x, node.y * scale + translate.y);
+        context.arc(
+          node.x * scale + translate.x,
+          node.y * scale + translate.y,
+          radius * scale,
+          0, 2 * Math.PI);
+      }
+
+      context.fillStyle = color;
+      context.strokeStyle = COLORS.white;
+      context.fill();
+      context.stroke();
+      context.closePath();
     }
-
-    context.fillStyle = '#206caf';
-    context.strokeStyle = '#fff';
-    context.fill();
-    context.stroke();
   }
 
-  private initializeAnimation(): void {
-    if (!this.data || !this.canvas || this._simulationState.paused) {
+  private updateSimulationData(): void {
+    if (!this.data) {
       return;
     }
 
     this.zone.runOutsideAngular(() => {
 
-        let self = this;
-        let d3canvas = d3.select('#jgauss-graph');
         let redraw = this.redraw.bind(this);
+
+        if (!this.simulation) {
+          this.simulation = d3.forceSimulation()
+            .force('link', d3.forceLink().id(function (d: any) {
+              return d.uid;
+            }))
+            .force('charge', d3.forceManyBody())
+            .force('center', d3.forceCenter(this.properties.width / 2, this.properties.height / 2));
+        }
         let simulation = this.simulation;
-        const radius = 5;
-
-        this.simulation = d3.forceSimulation()
-          .force('link', d3.forceLink().id(function (d: any) {
-            return d.uid;
-          }))
-          .force('charge', d3.forceManyBody())
-          .force('center', d3.forceCenter(this.properties.width / 2, this.properties.height / 2));
-
-        d3canvas
-          .call(d3.drag().subject(eventSubject)
-            .on('start', dragstarted)
-            .on('drag', dragged)
-            .on('end', dragended)
-          )
-          .call(d3.zoom().scaleExtent([.3, 8]).on('zoom', zoomed))
-          .call(redraw)
-          .on('mousemove', () => {
-            if (this._simulationState.nodeDrag) {
-              this._tipData = {};
-              this.changeDetectorRef.detectChanges();
-              return;
-            }
-            let subject = eventSubject();
-            if (this._tipData.user != subject) {
-              this._tipData = {
-                user: subject,
-                event: d3.event
-              };
-              this.changeDetectorRef.detectChanges();
-            }
-          })
-          .on('click', () => {
-            let subject = eventSubject();
-            if (subject) {
-              d3.event.preventDefault();
-              this.zone.run(() => {
-                this._tipData = {};
-                this.onUserClick.emit(subject);
-              });
-            }
-          })
-          .on('mouseout', () => {
-            this._tipData = {};
-            this.changeDetectorRef.detectChanges();
-          });
-
-        function zoomed() {
-          self.transform = d3.event.transform;
-          redraw();
-        }
-
-        function eventSubject() {
-          let x = self.transform.invertX(d3.event.offsetX || d3.event.x) * self.properties.pixelRatio;
-          let y = self.transform.invertY(d3.event.offsetY || d3.event.y) * self.properties.pixelRatio;
-
-          for (let node of self.data.nodes) {
-            if ((x - node.x) ** 2 + (y - node.y) ** 2 <= (radius + 1) ** 2) {
-              return node;
-            }
-          }
-        }
-
-        function dragstarted() {
-          if (self._simulationState.paused) {
-            return;
-          }
-          if (!d3.event.active) {
-            simulation.alphaTarget(0.3).restart();
-          }
-          d3.event.subject.fx = d3.event.subject.x;
-          d3.event.subject.fy = d3.event.subject.y;
-          self._simulationState.nodeDrag = true;
-          self._tipData = {};
-          self.changeDetectorRef.detectChanges();
-        }
-
-        function dragged() {
-          d3.event.subject.fx += d3.event.dx * self.properties.pixelRatio / self.transform.k;
-          d3.event.subject.fy += d3.event.dy * self.properties.pixelRatio / self.transform.k;
-        }
-
-        function dragended() {
-          if (!d3.event.active) {
-            simulation.alphaTarget(0);
-          }
-          d3.event.subject.fx = null;
-          d3.event.subject.fy = null;
-          self._simulationState.nodeDrag = false;
-        }
 
         simulation
           .nodes(this.data.nodes)
@@ -230,14 +172,114 @@ export class GraphComponent implements AfterViewInit {
           .force<any>('link')
           .links(this.data.links);
 
-        simulation.alphaTarget(0.3).restart();
+        if (!this._graphState.paused) {
+          simulation.alphaTarget(0.3).restart();
+        }
+      }
+    );
+  }
 
+  private addEventListeners(): void {
+    let self = this;
+    let d3canvas = d3.select('#jgauss-graph');
+    let redraw = this.redraw.bind(this);
+    const radius = this.properties.radius;
+
+    this.zone.runOutsideAngular(() => {
+        d3canvas
+          .call(d3.drag().subject(getEventSubject)
+            .on('start', onDragStart)
+            .on('drag', onDrag)
+            .on('end', onDragEnd)
+          )
+          .call(d3.zoom().scaleExtent([.3, 8]).on('zoom', onZoom))
+          .call(redraw)
+          .on('mousemove', onMouseMove)
+          .on('click', onClick)
+          .on('mouseout', onMouseOut);
+
+        function getEventSubject() {
+          let x = self.transform.invertX(d3.event.offsetX || d3.event.x) * self.properties.pixelRatio;
+          let y = self.transform.invertY(d3.event.offsetY || d3.event.y) * self.properties.pixelRatio;
+
+          for (let node of self.data.nodes) {
+            if ((x - node.x) ** 2 + (y - node.y) ** 2 <= (radius) ** 2) {
+              return node;
+            }
+          }
+        }
+
+        function onZoom() {
+          self.transform = d3.event.transform;
+          redraw(true);
+        }
+
+        function onDragStart() {
+          if (self._graphState.paused) {
+            return;
+          }
+          if (!d3.event.active) {
+            self.simulation.alphaTarget(0.3).restart();
+          }
+          d3.event.subject.fx = d3.event.subject.x;
+          d3.event.subject.fy = d3.event.subject.y;
+          self._graphState.nodeDrag = true;
+          self._tipData = {};
+          self.changeDetectorRef.detectChanges();
+        }
+
+        function onDrag() {
+          d3.event.subject.fx += d3.event.dx * self.properties.pixelRatio / self.transform.k;
+          d3.event.subject.fy += d3.event.dy * self.properties.pixelRatio / self.transform.k;
+        }
+
+        function onDragEnd() {
+          if (!d3.event.active) {
+            self.simulation.alphaTarget(0);
+          }
+          d3.event.subject.fx = null;
+          d3.event.subject.fy = null;
+          self._graphState.nodeDrag = false;
+        }
+
+        function onMouseMove() {
+          if (self._graphState.nodeDrag) {
+            self._tipData = {};
+            self.changeDetectorRef.detectChanges();
+            return;
+          }
+          let subject = getEventSubject();
+          if (self._tipData.user != subject) {
+            self._tipData = {
+              user: subject,
+              event: d3.event
+            };
+            self.changeDetectorRef.detectChanges();
+          }
+        }
+
+        function onClick() {
+          let subject = getEventSubject();
+          if (subject) {
+            d3.event.preventDefault();
+            self.zone.run(() => {
+              self._tipData = {};
+              self.onUserClick.emit(subject);
+            });
+          }
+
+        }
+
+        function onMouseOut() {
+          self._tipData = {};
+          self.changeDetectorRef.detectChanges();
+        }
       }
     );
   }
 
   _pause(isPaused: boolean) {
-    this._simulationState.paused = isPaused;
+    this._graphState.paused = isPaused;
     this.zone.runOutsideAngular(() => {
       if (isPaused) {
         this.simulation.stop();
@@ -248,16 +290,20 @@ export class GraphComponent implements AfterViewInit {
   }
 
   _search(searchQuery: string) {
-    let color = this.searchService.search(searchQuery).getColorFunction();
-    this.repaint(color);
+    this.searchService.search(searchQuery);
+    this.repaint();
   }
 
   _sort(sortType ?: string, data ?: any): void {
-    let color = this.searchService.sort(sortType, data).getColorFunction();
-    this.repaint(color);
+    this.searchService.sort(sortType, data);
+    this.repaint();
   }
 
-  repaint(color: (data: any) => string): void {
+  repaint(color: (data: any) => string = this.searchService.getColorFunction()): void {
+    if (!this.data) {
+      return;
+    }
+
     this.colorGroups = {};
     this.data.nodes.forEach((node: any) => {
       let nodeColor = color(node);
@@ -267,19 +313,28 @@ export class GraphComponent implements AfterViewInit {
         this.colorGroups[nodeColor].push(node);
       }
     });
+    this.redraw(true);
   }
 
-  @HostListener('window: resize')
+  @HostListener('window:resize')
   resize(): void {
-    let {width, height} = this.canvas.getBoundingClientRect();
+    let {width} = this.canvas.getBoundingClientRect();
 
     let pixelRatio = this.properties.pixelRatio = window.devicePixelRatio || 1;
+
+    let clientHeight = document.documentElement.clientHeight;
+    let height = this._graphState.fullScreen ? clientHeight : Math.round(clientHeight * 0.9);
 
     this.canvas.width = this.properties.width = width * pixelRatio;
     this.canvas.height = this.properties.height = height * pixelRatio;
 
     this.canvas.style.height = height + 'px';
 
-    this.redraw();
+    this.redraw(true);
+  }
+
+  _toggleSizeMode(): void {
+    this._graphState.fullScreen = !this._graphState.fullScreen;
+    this._graphState.resizeRequired = true;
   }
 }

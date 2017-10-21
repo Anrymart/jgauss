@@ -110,22 +110,22 @@ button.accent {
   padding: 0 20px;
 }
 
-.resize-handle {
-  $handle-size: 8px;
-  position: absolute;
-  right: $handle-size;
-  bottom: $handle-size;
-  width: $handle-size;
-  height: $handle-size;
-  border-radius: $border-radius;
-  background-color: $border-dark-color;
-  cursor: nw-resize;
-  transition: $icon-button-transition;
-
-  &._active, &:hover {
-    background-color: $primary-color;
-  }
-}
+//.resize-handle {
+//  $handle-size: 8px;
+//  position: absolute;
+//  right: $handle-size;
+//  bottom: $handle-size;
+//  width: $handle-size;
+//  height: $handle-size;
+//  border-radius: $border-radius;
+//  background-color: $border-dark-color;
+//  cursor: nw-resize;
+//  transition: $icon-button-transition;
+//
+//  &._active, &:hover {
+//    background-color: $primary-color;
+//  }
+//}
 
 .page-loading {
   position: absolute;

@@ -3,12 +3,14 @@ import * as d3 from 'd3';
 import {GraphData} from "../../../shared/graph/graph-data.model";
 import {GraphSearchService} from "../../../shared/graph/graph-search.service";
 
-const COLORS = {
+export const COLORS = {
   blue: '#206caf',
   green: '#8bc34a',
   orange: '#ff5722',
   red: '#f44336',
-  grey: '#cccccc'
+  grey: '#cccccc',
+  white: '#ffffff',
+  darkGrey: '#aaaaaa'
 };
 
 @Injectable()
