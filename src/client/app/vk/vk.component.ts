@@ -18,7 +18,7 @@ export class VkComponent implements DoCheck {
   }
 
   ngDoCheck(): void {
-    console.log("do check");
+    // console.log("do check");
     this._authorized = this._authService.isAuthorized();
   }
 }

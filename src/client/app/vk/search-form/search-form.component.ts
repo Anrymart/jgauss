@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Output} from "@angular/core";
+import {Component, EventEmitter, OnInit, Output} from "@angular/core";
 import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import {VkDataService} from "../services/vk-data.sevice";
 import {Title} from "@angular/platform-browser";
@@ -11,7 +11,7 @@ import {Subscription} from "rxjs/Subscription";
   templateUrl: 'search-form.component.html',
   styleUrls: ['search-form.component.css']
 })
-export class SearchFormComponent {
+export class SearchFormComponent implements OnInit {
 
   @Output()
   onSearch: EventEmitter<any> = new EventEmitter<any>();
@@ -33,6 +33,7 @@ export class SearchFormComponent {
               private router: Router,
               private title: Title,
               private dataService: VkDataService) {
+    this._onSearch('');
   }
 
   ngOnInit() {
