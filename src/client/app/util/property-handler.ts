@@ -13,17 +13,17 @@ export function PropertyHandler<T>(handlers: PropertyHandlers<T>): PropertyDecor
       configurable: true,
       enumerable: false,
       get: function () {
-        return target[spoofPropertyKey];
+        return this[spoofPropertyKey];
       },
       set: function (newValue: T) {
-        let oldValue = target[spoofPropertyKey];
+        let oldValue = this[spoofPropertyKey];
         if (newValue === oldValue) {
           return;
         }
         if (handlers.beforeChange && handlers.beforeChange.call(this, newValue, oldValue) === false) {
           return;
         }
-        target[spoofPropertyKey] = newValue;
+        this[spoofPropertyKey] = newValue;
         if (handlers.afterChange) {
           handlers.afterChange.call(this, newValue, oldValue);
         }
