@@ -5,10 +5,7 @@
     "declaration": false,
     "removeComments": true,
     "noLib": false,
-    "lib": [
-      "es2016",
-      "dom"
-    ],
+    "lib": ["es2016", "dom"],
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "sourceMap": true,
@@ -20,19 +17,9 @@
     "noImplicitUseStrict": false,
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,
-    "typeRoots": [
-      "../../node_modules/@types",
-      "../../node_modules",
-      "../types"
-    ],
-    "types": [
-      "node",
-      "jasmine",
-      "systemjs"
-    ]
+    "typeRoots": ["../../node_modules/@types", "../../node_modules"],
+    "types": ["node", "jasmine", "systemjs"]
   },
   "compileOnSave": false,
-  "exclude": [
-    "app/main-prod.ts"
-  ]
+  "exclude": ["app/main-prod.ts"]
 }
