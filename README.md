@@ -24,7 +24,7 @@ Provides fast, reliable and extensible starter for the development of Angular pr
 - **Tree-Shaking** production builds with Rollup.
 - Uses codelyzer for static code analysis, which verifies that the project follows practices from the Angular style guide.
 - Sample unit tests with Jasmine and Karma including code coverage via [istanbul](https://gotwarlost.github.io/istanbul/).
-- End-to-end tests with Protractor.
+- End-to-end tests with Cypress.
 - Development server with Livereload.
 - Following the [best practices](https://angular.io/styleguide).
 - Provides full Docker support for both development and production environment
@@ -268,21 +268,17 @@ $ ulimit -n 10480
 # view coverage report:
 $ npm run serve.coverage
 
-# e2e (aka. end-to-end, integration) - In three different shell windows
-# Make sure you don't have a global instance of Protractor
-# Make sure you do have Java in your PATH (required for webdriver)
-
-# npm install webdriver-manager <- Install this first for e2e testing
-# npm run webdriver-update <- You will need to run this the first time
-$ npm run webdriver-start
-$ npm run serve.e2e
+# e2e (aka. end-to-end, integration)  - In two different shell windows
+$ npm start
 $ npm run e2e
 
-# e2e live mode - Protractor interactive mode
-# Instead of last command above, you can use:
+# e2e - In one shell window (especially useful for Continuous Integration)
+$ npm run e2e.ci
+
+# e2e live mode - Using Cypress app - In two different shell windows
+$ npm start
 $ npm run e2e.live
 ```
-You can learn more about [Protractor Interactive Mode here](https://github.com/angular/protractor/blob/master/docs/debugging.md#testing-out-protractor-interactively)
 
 # Contributing
 
@@ -325,6 +321,7 @@ Forks of this project demonstrate how to extend and integrate with other librari
  - http://ngbot.io - a chat bot built with angular-seed.
  - [angular-seed-inspinia](https://github.com/DmitriyPotapov/angular-seed-inspinia) - integration with custom design template
  - [telerik/kendo-angular-quickstart-seed](https://github.com/telerik/kendo-angular-quickstart-seed) - integration with Kendo UI for Angular
+ - https://github.com/vyakymenko/angular-lib-starter-pack - sample how to create your library compatible with [Angular Seed](https://github.com/mgechev/angular-seed) with [integration guide](https://github.com/vyakymenko/angular-lib-starter-pack#test-your-library-with-angular-seed-or-angular-seed-express).
 
 # Directory Structure
 
@@ -342,7 +339,20 @@ Forks of this project demonstrate how to extend and integrate with other librari
 ├── gulpfile.ts                <- configuration of the gulp tasks
 ├── karma.conf.js              <- configuration of the test runner
 ├── package.json               <- dependencies of the project
-├── protractor.conf.js         <- e2e tests configuration
+├── cypress
+|   ├── fixtures
+|   |   └── example.json
+|   ├── integration
+|   |   ├── about.component.e2e-spec.ts
+|   |   ├── app.component.e2e-spec.ts
+|   |   └── home.component.e2e-spec.ts
+|   ├── plugins
+|   |   ├── cy-ts-preprocessor.js
+|   |   └── index.js
+|   ├── support
+|   |   ├── commands.js
+|   |   └── index.js
+|   └── tsconfig.json
 ├── src
 │   ├── client
 │   │   ├── app
@@ -398,12 +408,6 @@ Forks of this project demonstrate how to extend and integrate with other librari
 │   │   ├── ngsw-config.json
 │   │   ├── system-config.ts
 │   │   └── tsconfig.json
-│   └── e2e
-│       ├── specs
-│       │   ├── about.component.e2e-spec.ts
-│       │   ├── app.component.e2e-spec.ts
-│       │   └── home.component.e2e-spec.ts
-│       └── tsconfig.json
 ├── test-config.js             <- testing configuration
 ├── test-main.js               <- karma test launcher
 ├── tools
@@ -457,7 +461,6 @@ Forks of this project demonstrate how to extend and integrate with other librari
 │   │   │   ├── build.index.dev.ts
 │   │   │   ├── build.index.prod.ts
 │   │   │   ├── build.js.dev.ts
-│   │   │   ├── build.js.e2e.ts
 │   │   │   ├── build.js.prod.aot.ts
 │   │   │   ├── build.js.prod.rollup.aot.ts
 │   │   │   ├── build.js.prod.ts
@@ -471,7 +474,6 @@ Forks of this project demonstrate how to extend and integrate with other librari
 │   │   │   ├── clean.all.ts
 │   │   │   ├── clean.coverage.ts
 │   │   │   ├── clean.dev.ts
-│   │   │   ├── clean.e2e.ts
 │   │   │   ├── clean.prod.ts
 │   │   │   ├── clean.sme.ts
 │   │   │   ├── clean.tools.ts
@@ -502,9 +504,7 @@ Forks of this project demonstrate how to extend and integrate with other librari
 │   │   │   ├── transpile.bundles.rollup.aot.ts
 │   │   │   ├── tslint.ts
 │   │   │   ├── watch.dev.ts
-│   │   │   ├── watch.e2e.ts
-│   │   │   ├── watch.test.ts
-│   │   │   └── webdriver.ts
+│   │   │   └── watch.test.ts
 │   │   ├── task.ts
 │   │   └── typescript_task.ts
 │   ├── utils                  <- build utils
