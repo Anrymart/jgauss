@@ -157,12 +157,14 @@ export class GraphComponent implements AfterViewInit {
         if (!this.simulation) {
           this.simulation = d3.forceSimulation()
             .force('link', d3.forceLink().id(function (d: any) {
-              return d.uid;
+              return d.id;
             }))
             .force('charge', d3.forceManyBody())
             .force('center', d3.forceCenter(this.properties.width / 2, this.properties.height / 2));
         }
         let simulation = this.simulation;
+
+        console.log(this.data);
 
         simulation
           .nodes(this.data.nodes)

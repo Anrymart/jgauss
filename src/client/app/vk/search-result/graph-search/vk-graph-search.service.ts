@@ -17,7 +17,7 @@ export const COLORS = {
 export class VkGraphSearchService implements GraphSearchService {
 
   private static readonly SEARCH_FIELDS: string[] =
-    ['uid', 'first_name', 'last_name', 'domain', 'university_name', 'faculty_name', 'city_name', 'home_town', 'labels'];
+    ['id', 'first_name', 'last_name', 'domain', 'university_name', 'faculty_name', 'city_name', 'home_town', 'labels'];
 
   private data: GraphData;
 
@@ -35,11 +35,11 @@ export class VkGraphSearchService implements GraphSearchService {
     switch (type) {
       case 'owner-friends':
         if (this.data.owner && this.data.owner.friends) {
-          colorFunction = (d: { uid: number }) => {
-            if (~this.data.owner.friends.indexOf(d.uid)) {
+          colorFunction = (d: { id: number }) => {
+            if (~this.data.owner.friends.indexOf(d.id)) {
               return COLORS.blue;
             }
-            if (d.uid == this.data.owner.uid) {
+            if (d.id == this.data.owner.id) {
               return COLORS.orange;
             }
             return COLORS.grey;
@@ -73,16 +73,16 @@ export class VkGraphSearchService implements GraphSearchService {
           let color = d3.scaleLinear()
             .domain([0, this.data.target.friendLikes.max / 2 || 1])
             .range(<any>[COLORS.grey, COLORS.red]);
-          colorFunction = (d: { uid: number }) => {
-            return <any>color(this.data.target.friendLikes[d.uid] || 0);
+          colorFunction = (d: { id: number }) => {
+            return color(this.data.target.friendLikes[d.id] || 0);
           };
         }
         break;
       case 'friends':
-        colorFunction = (d: { uid: number }) => {
-          if (data.friends.includes(d.uid)) {
+        colorFunction = (d: { id: number }) => {
+          if (data.friends.includes(d.id)) {
             return COLORS.blue;
-          } else if (data.uid == d.uid) {
+          } else if (data.id == d.id) {
             return COLORS.green;
           }
           return COLORS.grey;
@@ -101,14 +101,14 @@ export class VkGraphSearchService implements GraphSearchService {
     this.data.nodes.forEach((node: any) => {
       for (let field of VkGraphSearchService.SEARCH_FIELDS) {
         if (String(node[field]).search(searchRegexp) != -1) {
-          matchedNodes.push(node.uid);
+          matchedNodes.push(node.id);
           break;
         }
       }
     });
 
-    this.colorFunction = (d: { uid: number }) => {
-      if (matchedNodes.includes(d.uid)) {
+    this.colorFunction = (d: { id: number }) => {
+      if (matchedNodes.includes(d.id)) {
         return COLORS.blue;
       }
       return COLORS.grey;
@@ -128,12 +128,12 @@ export class VkGraphSearchService implements GraphSearchService {
     this.colorFunction = null;
   }
 
-  private getDefaultColorFunction(): { (d: { uid: number }): string } {
-    return (d: { uid: number }) => {
-      switch (d.uid) {
-        case this.data.target && this.data.target.uid:
+  private getDefaultColorFunction(): { (d: { id: number }): string } {
+    return (d: { id: number }) => {
+      switch (d.id) {
+        case this.data.target && this.data.target.id:
           return COLORS.green;
-        case this.data.owner && this.data.owner.uid:
+        case this.data.owner && this.data.owner.id:
           return COLORS.orange;
         default:
           return COLORS.blue;

@@ -30,7 +30,7 @@ export class SearchResultComponent implements OnDestroy {
   _loading: boolean;
   _errorMessage: string;
 
-  _buttonGroupModel: [{ name: string, text: string, active?: boolean }];
+  _buttonGroupModel: { name: string, text: string, active?: boolean }[];
 
   private friendsSubscription: Subscription;
 
@@ -46,16 +46,15 @@ export class SearchResultComponent implements OnDestroy {
     }
 
     this._targetUser = targetUser;
-
-    let targetUserId = targetUser.uid;
+    let targetUserId = targetUser.id;
 
     let targetUserFriends: any;
     try {
-      targetUserFriends = await this.dataService.getUserFriends(
+      targetUserFriends = (await this.dataService.getUserFriends(
         {
-          uid: targetUserId,
-          fields: '*'
-        });
+          user_id: targetUserId,
+          fields: VkDataService.FRIENDS_FIELDS
+        })).items;
     } catch (error) {
       switch (error.error_code) {
         case 18:
@@ -71,10 +70,10 @@ export class SearchResultComponent implements OnDestroy {
     targetUser.friendsCount = targetUserFriends.length;
 
     let initialLinks = targetUserFriends.map((friend: any) => {
-      return {source: +targetUserId, target: friend.uid};
+      return {source: +targetUserId, target: friend.id};
     });
 
-    let targetFriendIds = targetUserFriends.map((friend: any) => friend.uid);
+    let targetFriendIds = targetUserFriends.map((friend: any) => friend.id);
 
     targetUserFriends.push(targetUser);
     this._graphData = {
@@ -88,16 +87,15 @@ export class SearchResultComponent implements OnDestroy {
       .getSocialInfo(targetFriendIds)
       .subscribe((data: any) => {
           let secondaryLinks: { source: number, target: number }[] = [];
-          data.forEach(function (friend: { id: number, l: number[] }) {
+          data.forEach(function (friend: { id: number, l: { count: number, items: number[] } }) {
+
+            let items = friend.l.items || [];
 
             // add loaded friends to graph node
             for (let f of targetUserFriends) {
-              if (f.uid == friend.id) {
-                if (!friend.l) {
-                  friend.l = [];
-                }
-                f.friends = friend.l;
-                f.commonFriends = friend.l.filter((id) => {
+              if (f.id == friend.id) {
+                f.friends = items;
+                f.commonFriends = items.filter((id) => {
                   return targetFriendIds.includes(id);
                 });
                 break;
@@ -105,7 +103,7 @@ export class SearchResultComponent implements OnDestroy {
             }
 
             // add links to graph user
-            for (let targetId of friend.l) {
+            for (let targetId of items) {
               if (targetId > friend.id && targetFriendIds.includes(targetId)) {
                 secondaryLinks.push({source: friend.id, target: targetId});
               }
@@ -117,7 +115,6 @@ export class SearchResultComponent implements OnDestroy {
         },
         null,
         () => {
-          console.log('complete');
           this._loading = false;
           this.changeDetectorRef.detectChanges();
         });
@@ -133,17 +130,17 @@ export class SearchResultComponent implements OnDestroy {
     this.dataService.getFriendLikesCount(targetUserId).then((friendLikes: any) => {
       this._graphData.target.friendLikes = friendLikes;
       this._graphData.nodes.forEach((node: any) => {
-        node.likesCount = friendLikes[node.uid];
+        node.likesCount = friendLikes[node.id];
       });
     });
   }
 
   async getOwnerInfo(): Promise<{ friends: any[] }> {
     let owner = this._graphData.owner = await this.dataService.getUser('');
-    owner.friends = await this.dataService.getUserFriends(
+    owner.friends = (await this.dataService.getUserFriends(
       {
-        uid: owner.uid
-      });
+        user_id: owner.id
+      })).items;
     return this._graphData.owner = owner;
   }
 

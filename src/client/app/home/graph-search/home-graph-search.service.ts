@@ -37,14 +37,14 @@ export class HomeGraphSearchService implements GraphSearchService {
     this.data.nodes.forEach((node: any) => {
       for (let field of HomeGraphSearchService.SEARCH_FIELDS) {
         if (String(node[field]).search(searchRegexp) != -1) {
-          matchedNodes.push(node.uid);
+          matchedNodes.push(node.id);
           break;
         }
       }
     });
 
-    this.colorFunction = (d: { uid: string }) => {
-      if (matchedNodes.includes(d.uid)) {
+    this.colorFunction = (d: { id: string }) => {
+      if (matchedNodes.includes(d.id)) {
         return COLORS.blue;
       }
       return COLORS.grey;
@@ -64,8 +64,8 @@ export class HomeGraphSearchService implements GraphSearchService {
     this.colorFunction = null;
   }
 
-  private getDefaultColorFunction(): { (d: { uid: number }): string } {
-    return (d: { uid: number }) => {
+  private getDefaultColorFunction(): { (d: { id: number }): string } {
+    return (d: { id: number }) => {
       return COLORS.blue;
     };
   }

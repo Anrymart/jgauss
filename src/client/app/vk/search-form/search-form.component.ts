@@ -33,7 +33,6 @@ export class SearchFormComponent implements OnInit {
               private router: Router,
               private title: Title,
               private dataService: VkDataService) {
-    this._onSearch('');
   }
 
   ngOnInit() {
@@ -42,7 +41,7 @@ export class SearchFormComponent implements OnInit {
 
       if (urlParam == 'go') {
         this.title.setTitle(`ВКонтакте | Jgauss`);
-        this.onSearch.emit(null);
+        this._onSearch('me');
         return;
       }
 
@@ -75,7 +74,7 @@ export class SearchFormComponent implements OnInit {
       return;
     }
 
-    let userPath = `id${targetUser.uid}`;
+    let userPath = `id${targetUser.id}`;
     this._searchQuery = userPath;
 
     this.title.setTitle(`${targetUser.first_name} ${targetUser.last_name} | Jgauss`);

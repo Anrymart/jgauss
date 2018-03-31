@@ -8,7 +8,11 @@ declare const VK: VkOpenApi;
 @Injectable()
 export class VkDataService {
 
-  private static USER_FIELDS = 'photo_id, verified, sex, bdate, city, country, home_town, has_photo,' +
+  public static readonly FRIENDS_FIELDS = 'nickname, domain, sex, bdate, city, country, timezone, photo_50, photo_100,' +
+    ' photo_200_orig, has_mobile, contacts, education, online, relation, last_seen, status,' +
+    ' can_write_private_message, can_see_all_posts, can_post, universities';
+
+  private static readonly USER_FIELDS = 'photo_id, verified, sex, bdate, city, country, home_town, has_photo,' +
     ' photo_50, photo_100, photo_200_orig, photo_200, photo_400_orig, photo_max, photo_max_orig,' +
     ' online, domain, has_mobile, contacts, site, education, universities, schools, status, last_seen,' +
     ' followers_count, common_count, occupation, nickname, relatives, relation, personal,' +
@@ -17,51 +21,51 @@ export class VkDataService {
     ' can_send_friend_request, is_favorite, is_hidden_from_feed, timezone, screen_name,' +
     ' maiden_name, crop_photo, is_friend, friend_status, career, military, blacklisted, blacklisted_by_me';
 
-  private static FRIENDS_FIELDS = 'nickname, domain, sex, bdate, city, country, timezone, photo_50, photo_100,' +
-    ' photo_200_orig, has_mobile, contacts, education, online, relation, last_seen, status,' +
-    ' can_write_private_message, can_see_all_posts, can_post, universities';
+  private static readonly API_VERSION = '5.73';
 
 
   constructor(private zone: NgZone) {
   }
 
   /**
-   * Searches user for given query. Query can be a src, user id or short name.
+   * Searches user for given query. Query can be a url, user id or short name.
    *
    * @param {string} query
    * @returns {Promise<any>}
    */
   getUser(query?: string): Promise<any> {
 
-    //check if query is src
+    //check if query is url
     let linkRegExp = /vk.com\/([^?/]*)/;
     let domainQueryResult = linkRegExp.exec(query);
 
     let getUserByDomain = (domain: string): any => {
       return this.promisifyRequest(function (handleResponse) {
-        VK.Api.call('users.get', {
-          user_ids: [domain],
-          fields: VkDataService.USER_FIELDS
-        }, handleResponse);
+        let params: any = {
+          fields: VkDataService.USER_FIELDS,
+          v: VkDataService.API_VERSION
+        };
+        if (domain) {
+          params.user_ids = domain;
+        }
+        VK.Api.call('users.get', params, handleResponse);
       }).then((users: any) => {
         return users[0];
       });
     };
 
     if (domainQueryResult) {
-      //query is src-like
+      //query is url-like
       return getUserByDomain(domainQueryResult[1]);
     }
 
-    //query is not src-like
+    //query is not url-like
     return getUserByDomain(query);
   }
 
   getUserFriends(params?: any): Promise<any> {
     return this.promisifyRequest(function (handleResponse) {
-      if (params.fields == '*') {
-        params.fields = VkDataService.FRIENDS_FIELDS;
-      }
+      params.v = params.v || VkDataService.API_VERSION;
       VK.Api.call('friends.get', params, handleResponse);
     });
   }
@@ -81,7 +85,12 @@ export class VkDataService {
       }, '');
 
       requests.push(function makeRequest(handleResponse: Function) {
-        VK.Api.call('execute', {code: `return [${requestCode}];`}, handleResponse);
+        VK.Api.call('execute',
+          {
+            code: `return [${requestCode}];`,
+            v: VkDataService.API_VERSION
+          },
+          handleResponse);
       });
     }
 
@@ -90,13 +99,18 @@ export class VkDataService {
 
   getCitiesById(cityIds: number[]): Promise<VkCity[]> {
     return this.promisifyRequest(function (handleResponse) {
-      VK.Api.call('database.getCitiesById', {city_ids: cityIds}, handleResponse);
+      VK.Api.call('database.getCitiesById',
+        {
+          city_ids: cityIds,
+          v: VkDataService.API_VERSION
+        }, handleResponse);
     });
   }
 
   async getFriendLikesCount(userId: number): Promise<any> {
     let [posts, photos] = await Promise.all([this.getWallPosts(userId), this.getPhotos(userId)]);
-    console.log(posts, photos);
+    posts = posts.items;
+    photos = photos.items;
 
     let requests: ((handleResponse: Function) => void)[] = [];
 
@@ -104,26 +118,34 @@ export class VkDataService {
     for (let i = 0; i < posts.length; i += step) {
       let requestCode = posts.slice(i, i + step).reduce(function reducer(code: string, post: any) {
         if (post.id) {
-          return code + `{id:${post.id},l:API.likes.getList({type:"post",item_id:${post.id},owner_id:${userId},item_id:${post.id},count:1000}).users},`;
+          return code + `{id:${post.id},l:API.likes.getList({type:"post",item_id:${post.id},owner_id:${userId},count:1000}).items},`;
         }
         return code;
       }, '');
 
       requests.push(function makeRequest(handleResponse: Function) {
-        VK.Api.call('execute', {code: `return [${requestCode}];`}, handleResponse);
+        VK.Api.call('execute',
+          {
+            code: `return [${requestCode}];`,
+            v: VkDataService.API_VERSION
+          }, handleResponse);
       });
     }
 
     for (let i = 0; i < photos.length; i += step) {
       let requestCode = photos.slice(i, i + step).reduce(function reducer(code: string, photo: any) {
-        if (photo.pid) {
-          return code + `{id:${photo.pid},l:API.likes.getList({type:"photo",item_id:${photo.pid},owner_id:${userId},count:1000}).users},`;
+        if (photo.id) {
+          return code + `{id:${photo.id},l:API.likes.getList({type:"photo",item_id:${photo.id},owner_id:${userId},count:1000}).items},`;
         }
         return code;
       }, '');
 
       requests.push(function makeRequest(handleResponse: Function) {
-        VK.Api.call('execute', {code: `return [${requestCode}];`}, handleResponse);
+        VK.Api.call('execute',
+          {
+            code: `return [${requestCode}];`,
+            v: VkDataService.API_VERSION
+          }, handleResponse);
       });
     }
 
@@ -131,7 +153,6 @@ export class VkDataService {
 
     return new Promise((resolve) => {
       this.observableRequests(requests).subscribe(function next(data: any) {
-        console.log(data);
         data.forEach((object: { l: number[] }) => {
           object.l.forEach((userId: number) => {
             if (!likes[userId]) {
@@ -143,7 +164,6 @@ export class VkDataService {
         })
       }, null, function complete() {
         resolve(likes);
-        console.log(likes);
       });
     });
 
@@ -153,7 +173,8 @@ export class VkDataService {
     return this.promisifyRequest(function (handleResponse) {
       VK.Api.call('wall.get', {
         owner_id: userId,
-        filter: 'owner'
+        filter: 'owner',
+        v: VkDataService.API_VERSION
       }, handleResponse);
     });
   }
@@ -161,7 +182,8 @@ export class VkDataService {
   private getPhotos(userId: number): Promise<any> {
     return this.promisifyRequest(function (handleResponse) {
       VK.Api.call('photos.getAll', {
-        owner_id: userId
+        owner_id: userId,
+        v: VkDataService.API_VERSION
       }, handleResponse);
     });
   }
