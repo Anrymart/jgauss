@@ -164,8 +164,6 @@ export class GraphComponent implements AfterViewInit {
         }
         let simulation = this.simulation;
 
-        console.log(this.data);
-
         simulation
           .nodes(this.data.nodes)
           .on('tick', redraw);

@@ -1,4 +1,4 @@
-interface PropertyHandlers<T> {
+export interface PropertyHandlers<T> {
   beforeChange?: { (newValue: T, oldValue: T): boolean | void },
   afterChange?: { (newValue: T, oldValue: T): void }
 }

@@ -74,7 +74,7 @@ export class VkGraphSearchService implements GraphSearchService {
             .domain([0, this.data.target.friendLikes.max / 2 || 1])
             .range(<any>[COLORS.grey, COLORS.red]);
           colorFunction = (d: { id: number }) => {
-            return color(this.data.target.friendLikes[d.id] || 0);
+            return "" + color(this.data.target.friendLikes[d.id] || 0);
           };
         }
         break;
