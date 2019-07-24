@@ -1,5 +1,5 @@
 # Jgauss
 
-Jgauss is a social graph tool for *vk.com* written in Angular.
+Jgauss is an application for visualizing social graphs based on data from *vk.com*. Jgauss is written in Angular and d3.js.
 
-Try it: [jgauss.com](https://jgauss.com)
+Try it here: [https://jgauss.firebaseapp.com/](https://jgauss.firebaseapp.com/)
