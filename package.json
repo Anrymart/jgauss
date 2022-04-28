@@ -72,7 +72,7 @@
     "@types/run-sequence": "^0.0.30",
     "@types/systemjs": "^0.20.6",
     "@types/yargs": "^11.0.0",
-    "async": "^2.6.0",
+    "async": "^2.6.4",
     "autoprefixer": "^8.0.0",
     "browser-sync": "^2.23.6",
     "codelyzer": "^4.1.0",
